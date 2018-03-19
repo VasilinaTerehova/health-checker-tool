@@ -1,0 +1,91 @@
+<div class="container col-sm-12 col-md-12 col-xs-12">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h2>{{ 'home.label.cluster.check' | translate }}</h2>
+        </div>
+        <div class="panel-body">
+            <div class="input-group" style="margin-bottom: 2%">
+                <input type="text" class="form-control" [(ngModel)]="clusterSearch" placeholder="{{ 'home.placeholder.cluster.search' | translate }}">
+                <div class="input-group-btn">
+                    <button class="btn btn-default" type="submit">
+                        <i class="glyphicon glyphicon-search"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="list-group">
+                <div class="table-responsive" style="margin-top: 1%">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>{{ 'home.label.cluster.name' | translate }}</th>
+                            <th>{{ 'home.label.cluster.action' | translate }}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr style="margin-bottom: 2%" *ngFor="let x of clusters | clusterListSearchByName : clusterSearch">
+                            <td class="col-sm-10"><a routerLink="cluster/{{x.name}}" class="list-group-item">{{x.name}} <span class="label label-primary pull-right">{{x.clusterType}}</span></a></td>
+                            <td class="col-sm-2" style="vertical-align: middle">
+                                <div class="input-group">
+                                    <div class="input-group-btn">
+                                        <button class="btn btn-default" (click)="checkClusterHealth(x.name)" type="button">
+                                            <i class="glyphicon glyphicon-repeat"></i>
+                                        </button>
+                                    </div>
+                                    <div class="input-group-btn">
+                                        <button class="btn btn-default" (click)="showEditCluster(x.name)" type="submit">
+                                            <i class="glyphicon glyphicon-edit"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="editClusterModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h3 class="modal-title">{{ 'home.label.cluster.edit' | translate }}</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="panel-body">
+                        <form name="ClusterEdit" #f="ngForm" novalidate>
+                            <div class="row">
+                                <div class="form-group col-sm-12" [ngClass]="{ 'has-error': f.submitted && !name.valid }">
+                                    <label for="name">{{ 'home.label.cluster.name' | translate}}</label>
+                                    <input type="text" class="form-control" id="name" name="name" required pattern="[a-zA-Zа-яА-я0-9]{3,20}" [(ngModel)]="tempCluster.name" #name="ngModel" placeholder="{{ 'home.placeholder.cluster.name' | translate }}">
+                                    <span class="help-block" *ngIf="f.submitted && !name.valid">{{ 'home.error.cluster.name' | translate }}</span>
+                                </div>
+                                <div class="form-group col-sm-12" [ngClass]="{ 'has-error': f.submitted && !host.valid }">
+                                    <label for="host">{{ 'home.label.cluster.host' | translate}}</label>
+                                    <input type="text" class="form-control" id="host" name="host" required pattern="[a-zA-Z0-9]{3,20}" [(ngModel)]="tempCluster.host" #host="ngModel" placeholder="{{ 'home.placeholder.cluster.host' | translate }}">
+                                    <span class="help-block" *ngIf="f.submitted && !host.valid">{{ 'home.error.cluster.host' | translate }}</span>
+                                </div>
+                                <div class="form-group col-sm-12" [ngClass]="{ 'has-error': f.submitted && !username.valid }">
+                                    <label for="username">{{ 'home.label.cluster.username' | translate}}</label>
+                                    <input type="text" class="form-control" id="username" name="username" required pattern="[a-zA-Z0-9]{3,20}" [(ngModel)]="tempCluster.username" #username="ngModel" placeholder="{{ 'home.placeholder.cluster.username' | translate }}">
+                                    <span class="help-block" *ngIf="f.submitted && !username.valid">{{ 'home.error.cluster.username' | translate }}</span>
+                                </div>
+                                <div class="form-group col-sm-12" [ngClass]="{ 'has-error': f.submitted && !password.valid }">
+                                    <label for="password">{{ 'home.label.cluster.password' | translate}}</label>
+                                    <input type="password" class="form-control" id="password" name="password" required [(ngModel)]="tempCluster.password" #password="ngModel" placeholder="{{ 'home.placeholder.cluster.password' | translate }}">
+                                    <span class="help-block" *ngIf="f.submitted && !password.valid">{{ 'home.error.cluster.password' | translate }}</span>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block-xs submit" [disabled]="true">{{ 'home.button.cluster.edit' | translate }}</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

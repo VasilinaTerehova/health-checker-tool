@@ -1,0 +1,96 @@
+{
+  "menu" : {
+    "brand" : "HEALTH CHECKER TOOL",
+    "lang" : {
+      "lang" : "Language",
+      "ru" : "Russian",
+      "en" : "English"
+    }
+  },
+  "home" : {
+    "label": {
+      "cluster": {
+        "check": "Check health",
+        "list": "Cluster list",
+        "clusters": "Clusters",
+        "name": "Cluster name",
+        "host": "Cluster host",
+        "password": "Rest password",
+        "username": "Rest username",
+        "result": "Health cluster result",
+        "number": "Number",
+        "action": "Action",
+        "state": "State",
+        "service": "Service",
+        "edit": "Edit cluster",
+        "logs": "Logs location",
+        "path": "Path",
+        "disk": "Disk",
+        "memory": "Memory",
+        "security": "Security",
+        "http": {
+          "username": "Http username",
+          "password": "Http password"
+        }
+      },
+      "service": {
+        "yarn": {
+          "name": "Yarn",
+          "app": {
+            "id": "Application id",
+            "name": "Application name",
+            "state": "Application state",
+            "list": "Application list",
+            "user": "User",
+            "startTime": "Start time"
+          },
+          "apps": "Applications"
+        }
+      },
+      "common": {
+        "danger": "Danger!",
+        "no_problems": "No problems detected"
+      }
+    },
+    "placeholder": {
+      "cluster": {
+        "name": "some_name",
+        "host": "som_host",
+        "password": "some_password",
+        "username": "some_username",
+        "search": "any matching value",
+        "http": {
+          "username": "some http username",
+          "password": "some http password"
+        }
+      }
+    },
+    "error": {
+      "cluster": {
+        "name": "Invalid name",
+        "host": "Invalid host",
+        "password": "Invalid password",
+        "username": "Invalid username",
+        "http": {
+          "username": "Invalid http username",
+          "password": "Invalid http password"
+        }
+      }
+    },
+    "button": {
+      "cluster": {
+        "check": "Check cluster",
+        "edit": "Edit cluster",
+        "restart": "Restart"
+      },
+      "service": {
+        "yarn": {
+          "app": {
+            "kill": "Kill"
+          }
+        }
+      }
+    }
+  }
+
+}

@@ -1,0 +1,54 @@
+[
+  {
+    "cluster": {
+      "name": "CDH513Unsecure",
+      "host": "svqxbdcn6cdh513n1.pentahoqa.com",
+      "clusterType": "CDH",
+      "secured": false
+    },
+    "http": {
+      "username": "*****",
+      "password": "*****"
+    },
+    "ssh": {
+      "username": "*****",
+      "password": "*****"
+    }
+  },
+  {
+    "cluster": {
+      "name": "CDH512Unsecure",
+      "host": "svqxbdcn6cdh512n1.pentahoqa.com",
+      "clusterType": "CDH",
+      "secured": false
+    },
+    "http": {
+      "username": "*****",
+      "password": "*****"
+    },
+    "ssh": {
+      "username": "*****",
+      "password": "*****"
+    }
+  },
+  {
+    "cluster": {
+      "name": "CDH513Secure2",
+      "host": "svqxbdcn6cdh513sn1.pentahoqa.com",
+      "clusterType": "CDH",
+      "secured": true
+    },
+    "http": {
+      "username": "*****",
+      "password": "*****"
+    },
+    "ssh": {
+      "username": "*****",
+      "password": "*****"
+    },
+    "kerberos": {
+      "username": "*****@EXAMPLE.COM",
+      "password": "*****"
+    }
+  }
+]

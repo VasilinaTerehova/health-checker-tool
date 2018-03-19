@@ -1,0 +1,215 @@
+package com.epam.health_tool.kerberos;
+
+import com.epam.health_tool.authenticate.impl.ClusterCredentials;
+import com.epam.health_tool.authenticate.impl.SshCredentials;
+import com.epam.health_tool.model.Cluster;
+import com.epam.health_tool.util.CommonUtilException;
+import com.epam.health_tool.util.CommonUtilHolder;
+import com.epam.health_tool.util.FileCommonUtil;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
+
+public class Krb5Configurator {
+    private static final Logger logger = Logger.getLogger(Krb5Configurator.class);
+    private static String rootUtilityFolder;
+
+    public static void upgradeJavaSecurity() {
+        copyFile("local_policy.jar");
+        copyFile("US_export_policy.jar");
+    }
+
+    public static String getKrb5LocalPath() {
+        return
+                Files.exists(Paths.get(getRootUtilityFolder() + File.separator + "kerberos" + File.separator + "krb5.conf"))
+                        ? getRootUtilityFolder() + File.separator + "kerberos" + File.separator + "krb5.conf"
+                        : Files.exists(Paths.get(findPentahoJavaPath() + File.separator + "krb5.conf"))
+                        ? findPentahoJavaPath() + File.separator + "krb5.conf"
+                        : Files.exists(Paths.get(findJavaSecurityPath()))
+                        ? findJavaSecurityPath() : StringUtils.EMPTY;
+    }
+
+    public static String getOrDownloadKrb5FromCluster(ClusterCredentials clusterCredentials) {
+        try {
+            logger.info("Start download krb5 from cluster!");
+            //String rootUtilFolder = getRootUtilityFolder() + File.separator + "kerberos" + File.separator + "krb5.conf";
+            //String folderToSaveKrb =
+            String fileName = Paths.get(Krb5Configurator.class.getClassLoader().getResource("clusters.json").toURI()).getParent().toString();
+            System.out.println(fileName);
+            Cluster cluster = clusterCredentials.getCluster();
+            String newFileName = "krb" + cluster.getName() + ".conf";
+            String fullKrb5Name = fileName + File.separator + newFileName;
+            if (Files.exists(Paths.get(fullKrb5Name))) {
+                return fullKrb5Name;
+            }
+
+
+            FileCommonUtil.writeStringToFile(fullKrb5Name,
+                    CommonUtilHolder.sshCommonUtilInstance().downloadViaSftp(clusterCredentials.getSsh(), cluster.getHost(), 22, "/etc/krb5.conf"));
+
+            logger.info("Successfully copied to + " + fullKrb5Name);
+            return fullKrb5Name;
+
+            //copyToJavaSecurityHome( rootUtilFolder );
+        } catch (CommonUtilException ex) {
+            logger.warn("Can't save krb5.conf file. Don't worry, check permissions for that path." + ex.getMessage());
+            //loadToJavaHome(cluster.getHost(), sshCredentials);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    private static void copyFile(String fileName) {
+        try {
+            Path mysqlDriverPath = findFileInThisUtilityFolder(fileName);
+            if (Files.exists(mysqlDriverPath)) {
+                Path javaLibSecurityPath = Paths.get(findJavaPath());
+                if (javaLibSecurityPath.toFile().exists()) {
+                    Files.copy(mysqlDriverPath, Paths.get(javaLibSecurityPath.toAbsolutePath().toString()
+                            + mysqlDriverPath.getFileName()));
+                    logger.info("Local policy added "
+                            + Paths.get(javaLibSecurityPath.toAbsolutePath().toString() + mysqlDriverPath.getFileName()));
+                }
+            }
+        } catch (NoSuchElementException nse) {
+            logger.warn("MySQL Driver was not found in ShimConfig folder.");
+        } catch (FileAlreadyExistsException ee) {
+            logger.info("MySQL driver already exists in the destination folder");
+        } catch (IOException e) {
+            logger.error("IOException while copying MySQL driver" + e);
+        } catch (Exception e) {
+            logger.error(e);
+        }
+    }
+
+    private static String findJavaPath() {
+        String javaHome = System.getenv("JAVA_HOME");
+        if (javaHome != null) {
+            javaHome = Paths.get(javaHome + File.separator + "jre").toFile().exists()
+                    ? Paths.get(javaHome + File.separator + "jre" + File.separator + "lib" + File.separator + "security")
+                    .toAbsolutePath().toString()
+                    : Paths.get(javaHome + File.separator + "lib" + File.separator + "security").toAbsolutePath().toString();
+        }
+
+        return javaHome != null ? javaHome : System.getProperty("java.home") + File.separator + "lib" + File.separator
+                + "security" + File.separator;
+    }
+
+//  private static void copyToPentahoJavaHome( String source ) {
+//    String pentahoJavaHome = findPentahoJavaPath();
+//    if ( pentahoJavaHome != null && Files.exists( Paths.get( source ) ) ) {
+//      try {
+//        FileCommonUtil
+//          .writeStringToFile( pentahoJavaHome + File.separator + "krb5.conf", Files.lines( Paths.get( source ) )
+//            .collect( Collectors.joining( "\n" ) ) );
+//        logger.info( "Successfully copied to + " + pentahoJavaHome + File.separator + "krb5.conf" );
+//      } catch ( CommonUtilException | IOException e ) {
+//        logger.error( e.getMessage() );
+//      }
+//    }
+//  }
+
+    private static void copyToJavaSecurityHome(String source) {
+        String javaSecurityLibraryPath;
+        if (System.getProperty("os.name").startsWith("Windows")) {
+            javaSecurityLibraryPath = findJavaPath() + File.separator + "krb5.conf";
+        } else {
+            javaSecurityLibraryPath = "/etc/krb5.conf";
+        }
+
+        if (Files.exists(Paths.get(source))) {
+            try {
+                FileCommonUtil
+                        .writeStringToFile(javaSecurityLibraryPath, Files.lines(Paths.get(source))
+                                .collect(Collectors.joining("\n")));
+                logger.info("Successfully copied to + " + javaSecurityLibraryPath);
+            } catch (CommonUtilException | IOException e) {
+                logger.error(e.getMessage());
+            }
+        }
+    }
+
+//  private static void loadToPentahoJavaHome( String host, SshCredentials sshCredentials ) {
+//    String pentahoJavaHome = findPentahoJavaPath();
+//    if ( pentahoJavaHome != null ) {
+//      try {
+//        FileCommonUtil.writeStringToFile( pentahoJavaHome + File.separator + "krb5.conf",
+//          CommonUtilHolder.sshCommonUtilInstance().downloadViaSftp( sshCredentials, host, 22, "/etc/krb5.conf" ) );
+//        logger.info( "Successfully copied to + " + pentahoJavaHome + File.separator + "krb5.conf" );
+//      } catch ( CommonUtilException e ) {
+//        logger.error( e.getMessage() );
+//      }
+//    }
+//  }
+
+    private static void loadToJavaHome(String host, SshCredentials sshCredentials) {
+        String javaSecurityLibraryPath = findJavaSecurityPath();
+
+        if (javaSecurityLibraryPath != null) {
+            try {
+                FileCommonUtil.writeStringToFile(javaSecurityLibraryPath,
+                        CommonUtilHolder.sshCommonUtilInstance().downloadViaSftp(sshCredentials, host, 22, "/etc/krb5.conf"));
+                logger.info("Successfully copied to + " + javaSecurityLibraryPath);
+            } catch (CommonUtilException e) {
+                logger.error(e.getMessage());
+            }
+        }
+    }
+
+    private static String findJavaSecurityPath() {
+        String javaSecurityLibraryPath;
+        if (System.getProperty("os.name").startsWith("Windows")) {
+            javaSecurityLibraryPath = findJavaPath() + File.separator + "krb5.conf";
+        } else {
+            javaSecurityLibraryPath = "/etc/krb5.conf";
+        }
+
+        return javaSecurityLibraryPath;
+    }
+
+    private static String findPentahoJavaPath() {
+        String javaHome = System.getenv("PENTAHO_JAVA_HOME");
+        if (javaHome != null) {
+            javaHome = Paths.get(javaHome + File.separator + "jre").toFile().exists()
+                    ? Paths.get(javaHome + File.separator + "jre" + File.separator + "lib" + File.separator + "security")
+                    .toAbsolutePath().toString()
+                    : Paths.get(javaHome + File.separator + "lib" + File.separator + "security").toAbsolutePath().toString();
+        }
+
+        return javaHome;
+    }
+
+    private static Path findFileInThisUtilityFolder(String regex)
+            throws Exception {
+        return Files.find(Paths.get(getRootUtilityFolder()), 3, (p, bfa) -> bfa.isRegularFile()
+                && p.getFileName().toString().matches(regex)).findFirst().get();
+    }
+
+    private static String getRootUtilityFolder() {
+        if (rootUtilityFolder == null) {
+            synchronized (Krb5Configurator.class) {
+                if (rootUtilityFolder == null) {
+                    try {
+                        rootUtilityFolder =
+                                Paths.get(Krb5Configurator.class.getProtectionDomain().getCodeSource().getLocation().toURI())
+                                        .getParent().toAbsolutePath().normalize().toString();
+                    } catch (Exception e) {
+                        logger.error("this should never happen... " + e);
+                    }
+                }
+            }
+        }
+        return rootUtilityFolder;
+    }
+}

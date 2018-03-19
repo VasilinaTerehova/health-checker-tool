@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.epam</groupId>
+    <artifactId>health-checker-tool</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>frontend</module>
+        <module>controller</module>
+        <module>facade</module>
+        <module>repository</module>
+        <module>transfer</module>
+    </modules>
+
+    <properties>
+        <!--Project-->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <!--Langs-->
+        <java.version>1.8</java.version>
+        <node.version>v8.9.3</node.version>
+        <npm.version>5.5.1</npm.version>
+        <!--Plugins-->
+        <frontend-maven-plugin.version>1.6</frontend-maven-plugin.version>
+        <maven-compiler-plugin.version>3.6.2</maven-compiler-plugin.version>
+        <maven-assembly-plugin.version>2.5.1</maven-assembly-plugin.version>
+        <maven-jar-plugin.version>3.0.2</maven-jar-plugin.version>
+        <!--Dependencies-->
+        <org.springframework.boot>2.0.0.RELEASE</org.springframework.boot>
+        <org.springframework.security.version>5.0.3.RELEASE</org.springframework.security.version>
+        <hadoop.version>2.7.3</hadoop.version>
+        <org.aspectj.version>1.8.10</org.aspectj.version>
+        <org.apache.httpcomponents.version>4.5.3</org.apache.httpcomponents.version>
+        <commons-compress.version>1.14</commons-compress.version>
+        <org.slf4j.version>1.7.25</org.slf4j.version>
+        <log4j.version>1.2.17</log4j.version>
+        <commons-io.version>2.4</commons-io.version>
+        <commons-lang.version>2.6</commons-lang.version>
+        <com.google.code.gson.version>2.7</com.google.code.gson.version>
+        <com.jcraft.version>0.1.54</com.jcraft.version>
+    </properties>
+
+</project>

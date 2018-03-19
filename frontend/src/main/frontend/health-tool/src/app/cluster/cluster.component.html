@@ -1,0 +1,23 @@
+<div class="container col-sm-12 col-md-12 col-xs-12">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h2>{{ 'home.label.cluster.result' | translate }} - {{cluster?.name}}</h2>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">{{ 'home.label.cluster.disk' | translate }} - 90% used <span data-toggle="tooltip" data-placement="top" title="Not enough space" class="badge badge-pill badge-danger pull-right">!</span></li>
+                <li class="list-group-item">{{ 'home.label.cluster.memory' | translate }} - 11000 MB of 12000 MB <span data-toggle="tooltip" data-placement="top" title="Not enough memory" class="badge badge-pill badge-danger pull-right">!</span></li>
+                <li class="list-group-item">{{ 'home.label.service.yarn.apps' | translate }} - {{yarnAppsCount}}</li>
+                <li class="list-group-item" *ngIf="cluster?.secured">{{ 'home.label.cluster.security' | translate }} - {{ 'home.label.common.no_problems' | translate }} <span class="label label-success pull-right">OK</span></li>
+            </ul>
+        </div>
+        <div class="panel-body">
+          <tabset>
+            <tab heading="{{ 'home.label.cluster.result' | translate }}">
+              <service-list (onClusterChange)="onClusterChange($event)"></service-list>
+            </tab>
+            <tab heading="{{ 'home.label.service.yarn.app.list' | translate }}">
+              <yarn-application-list (onYarnAppsChange)="onYarnAppsCountChange($event)"></yarn-application-list>
+            </tab>
+          </tabset>
+        </div>
+    </div>
+</div>
