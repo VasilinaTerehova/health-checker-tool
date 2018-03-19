@@ -25,6 +25,11 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>com.epam</groupId>
+            <artifactId>health-checker-tool-facade-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <!--Spring-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -109,11 +114,6 @@
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>${com.google.code.gson.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.jcraft</groupId>
-            <artifactId>jsch</artifactId>
-            <version>${com.jcraft.version}</version>
         </dependency>
     </dependencies>
 
@@ -200,7 +200,7 @@
                                 from the lib directory.
                             -->
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>com.epam.health_tool.HealthCheckerToolApplication</mainClass>
+                            <mainClass>com.epam.health.tool.HealthCheckerToolApplication</mainClass>
                         </manifest>
                         <manifestEntries>
                             <Class-Path>conf/</Class-Path>

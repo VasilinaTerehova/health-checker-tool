@@ -3,19 +3,25 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>health-checker-tool-facade</artifactId>
+        <artifactId>health-checker-tool-util</artifactId>
         <groupId>com.epam</groupId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>health-checker-tool-facade-common</artifactId>
+    <artifactId>health-checker-tool-util-http</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>com.epam</groupId>
-            <artifactId>health-checker-tool-facade-api</artifactId>
+            <artifactId>health-checker-tool-util-common</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>${org.apache.httpcomponents.version}</version>
+        </dependency>
     </dependencies>
+
 </project>
