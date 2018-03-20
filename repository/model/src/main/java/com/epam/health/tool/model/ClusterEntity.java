@@ -18,6 +18,8 @@ public class ClusterEntity extends AbstractManagedEntity {
     public static final String COLUMN_CLUSTER_TITLE = "title_";
     public static final String COLUMN_CLUSTER_NAME = "cluster_name_";
     public static final String COLUMN_CLUSTER_TYPE = "cluster_type_";
+    public static final String COLUMN_HOST = "host_";
+    public static final String COLUMN_IS_SECURED = "is_secured_";
 
     @NotNull
     @Column(name = COLUMN_CLUSTER_TITLE)
@@ -40,6 +42,12 @@ public class ClusterEntity extends AbstractManagedEntity {
 
     @OneToOne(mappedBy="cluster")
     private KerberosCredentialsEntity kerberosCredentialsEntity;
+
+    @Column(name = COLUMN_IS_SECURED)
+    private boolean secured;
+
+    @Column(name = COLUMN_HOST)
+    private String host;
 
     public String getTitle() {
         return title;
@@ -87,5 +95,21 @@ public class ClusterEntity extends AbstractManagedEntity {
 
     public void setKerberosCredentialsEntity(KerberosCredentialsEntity kerberosCredentialsEntity) {
         this.kerberosCredentialsEntity = kerberosCredentialsEntity;
+    }
+
+    public boolean isSecured() {
+        return secured;
+    }
+
+    public void setSecured(boolean secured) {
+        this.secured = secured;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
     }
 }
