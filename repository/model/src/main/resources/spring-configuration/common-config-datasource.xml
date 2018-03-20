@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ This Learning Management System (“Software”) is the exclusive and sole property of Baja Education. Inc. (“Baja”).
+  ~ Baja has the sole rights to copy the software, create derivatives or modified versions of it, distribute copies
+  ~ to End Users by license, sale or otherwise. Anyone exercising any of these exclusive rights which also includes
+  ~ indirect copying  such as unauthorized translation of the code into a different programming language without
+  ~ written explicit permission from Baja is an infringer and subject to liability for damages or statutory fines.
+  ~ Interested parties may contact bpozos@gmail.com.
+  ~
+  ~ (c) 2012 Baja Education
+  -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+  <bean id="c3p0DataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+    <description>
+      C3P0 DataSource. Used in hibernate session factory.
+    </description>
+    <property name="driverClass" value="${jdbc.driver.class}"/>
+
+    <property name="jdbcUrl" value="${jdbc.connection.url}"/>
+    <property name="user" value="${jdbc.connection.username}"/>
+    <property name="password" value="${jdbc.connection.password}"/>
+
+    <property name="maxConnectionAge" value="${jdbc.pool.max_connection_age}"/>
+
+    <property name="minPoolSize" value="${jdbc.pool.min_size}"/>
+    <property name="maxPoolSize" value="${jdbc.pool.max_size}"/>
+    <property name="initialPoolSize" value="${jdbc.pool.initial_size}"/>
+    <property name="maxStatements" value="50"/>
+  </bean>
+
+</beans>
