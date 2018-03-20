@@ -1,18 +1,12 @@
-package com.epam.health.tool.model;
+package com.epam.health.tool.facade.application;
 
 import java.util.Date;
 
-/**
- * Created by Vasilina_Terehova on 3/7/2018.
- */
-public class YarnApplicationCdh {
-    String applicationId;
-    String name;
-    Date startTime;
-    String state;
-
-    public YarnApplicationCdh() {
-    }
+public class ApplicationInfo {
+    private String applicationId;
+    private String name;
+    private Date startTime;
+    private String state;
 
     public String getApplicationId() {
         return applicationId;

@@ -1,7 +1,6 @@
 package com.epam.util.common.file;
 
 import com.epam.util.common.copier.ByteCopierUtil;
-import com.epam.util.common.ssh.ByteCopierUtil;
 
 public class DownloadedFileWrapper {
   private byte[] byteFileContent;

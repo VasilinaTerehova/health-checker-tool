@@ -11,6 +11,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.epam.util.http.SslContextCreator.createSslContext;
@@ -19,6 +20,11 @@ public class HttpRequestExecutor {
     private CredentialsProvider credentialsProvider;
     private List<String> authSchemes;
     private List<IHeaderCreator> headerCreatorList;
+
+    private HttpRequestExecutor() {
+        this.authSchemes = new ArrayList<>();
+        this.headerCreatorList = new ArrayList<>();
+    }
 
     public static HttpRequestExecutor get(){
         return new HttpRequestExecutor();

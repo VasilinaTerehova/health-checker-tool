@@ -17,6 +17,9 @@
       <useProjectArtifact>false</useProjectArtifact>
       <outputDirectory>lib</outputDirectory>
       <unpack>false</unpack>
+      <excludes>
+        <exclude>com.epam:health-checker-tool-frontend</exclude>
+      </excludes>
     </dependencySet>
   </dependencySets>
 

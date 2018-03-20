@@ -1,18 +1,21 @@
 package com.epam.health.tool.facade.common.cluster;
 
 import com.epam.health.tool.facade.cluster.IClusterFacade;
+import com.epam.health.tool.model.ClusterEntity;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
 public class ClusterFacadeImpl implements IClusterFacade {
-    public List<Object> getClusterList() {
-        return null;
+    @Override
+    public List<ClusterEntity> getClusterList() {
+        return new ArrayList<>();
     }
 
-    public Object getCluster(String name) {
-        return null;
+    public ClusterEntity getCluster(String name) {
+        return new ClusterEntity();
     }
 
     public void saveCluster(String name) {

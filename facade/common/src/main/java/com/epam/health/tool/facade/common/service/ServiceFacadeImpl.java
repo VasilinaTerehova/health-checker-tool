@@ -1,12 +1,13 @@
 package com.epam.health.tool.facade.common.service;
 
 import com.epam.health.tool.facade.service.IServiceFacade;
+import com.epam.health.tool.model.ClusterServiceEntity;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ServiceFacadeImpl implements IServiceFacade {
 
-    public Object getServiceInfo(String clusterName, String serviceName) {
+    public ClusterServiceEntity getServiceInfo(String clusterName, String serviceName) {
         return null;
     }
 

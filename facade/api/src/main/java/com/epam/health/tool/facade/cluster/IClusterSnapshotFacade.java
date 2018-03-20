@@ -1,6 +1,8 @@
 package com.epam.health.tool.facade.cluster;
 
+import com.epam.health.tool.model.ClusterShapshotEntity;
+
 public interface IClusterSnapshotFacade {
-    Object getLastClusterSnapshot( String clusterName );
-    Object askForCurrentClusterSnapshot( String clusterName );
+    ClusterShapshotEntity getLastClusterSnapshot(String clusterName );
+    ClusterShapshotEntity askForCurrentClusterSnapshot( String clusterName );
 }

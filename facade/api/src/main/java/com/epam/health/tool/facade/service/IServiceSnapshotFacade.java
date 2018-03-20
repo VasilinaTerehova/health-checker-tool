@@ -1,6 +1,8 @@
 package com.epam.health.tool.facade.service;
 
+import com.epam.health.tool.model.ClusterServiceShapshotEntity;
+
 public interface IServiceSnapshotFacade {
-    Object getLastServiceSnapshot( String clusterName, String serviceName );
-    Object askForCurrentServiceSnapshot( String clusterName, String serviceName );
+    ClusterServiceShapshotEntity getLastServiceSnapshot(String clusterName, String serviceName );
+    ClusterServiceShapshotEntity askForCurrentServiceSnapshot( String clusterName, String serviceName );
 }
