@@ -2,17 +2,13 @@ package com.epam.util.common.json;
 
 import com.epam.util.common.CommonUtilException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import reactor.core.publisher.Flux;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.stream.StreamSupport;
 
 public class CommonJsonHandler {
     private ObjectMapper objectMapper;

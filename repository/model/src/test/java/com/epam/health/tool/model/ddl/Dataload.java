@@ -83,7 +83,7 @@ public class Dataload extends AbstractDataLoad {
         ArrayList<ClusterEntity> clusterEntities = new ArrayList<>();
         orderNode.iterator().forEachRemaining(jsonNode -> {
             ModelMapper modelMapper = new ModelMapper();
-            modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STANDARD);
+            modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.LOOSE);
             modelMapper.getConfiguration().addValueReader(new JsonNodeValueReader());
             modelMapper.getConfiguration().setAmbiguityIgnored(true);
             modelMapper.getConfiguration().setSourceNameTokenizer(NameTokenizers.UNDERSCORE);
