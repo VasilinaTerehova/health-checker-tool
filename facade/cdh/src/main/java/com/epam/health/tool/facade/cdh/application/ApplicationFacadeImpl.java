@@ -21,8 +21,8 @@ public class ApplicationFacadeImpl implements IApplicationFacade {
         ClusterEntity clusterEntity = clusterFacade.getCluster( clusterName );
         String url = "http://" + clusterEntity.getHost() + ":7180/api/v10/clusters/" + clusterName + "/services/yarn/yarnApplications";
         String answer = BaseHttpAuthenticatedAction.get()
-                .withUsername( clusterEntity.getHttpCredentialsEntity().getUsername() )
-                .withPassword( clusterEntity.getHttpCredentialsEntity().getPassword() )
+                .withUsername( clusterEntity.getHttp().getUsername() )
+                .withPassword( clusterEntity.getHttp().getPassword() )
                 .makeAuthenticatedRequest( url );
         List<ApplicationInfo> appList = CommonJsonHandler.get().<ApplicationInfo>getListTypedValue( answer, "applications" );
 

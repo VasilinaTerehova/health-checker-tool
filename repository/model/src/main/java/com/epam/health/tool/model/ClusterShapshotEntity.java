@@ -17,7 +17,7 @@ public class ClusterShapshotEntity extends AbstractManagedEntity {
     public static final String TABLE_NAME = "cluster_snapshot";
     public static final String COLUMN_DATE_OF_SNAPSHOT = "date_of_snapshot_";
     public static final String COLUMN_COUNT_OF_RUNNING_APPS = "count_of_runnings_apps_";
-    public static final String COLUMN_USED_MEMORY = "used_memory";
+    public static final String COLUMN_USED_MEMORY = "used_memory_";
     public static final String COLUMN_FK_CLUSTER = ClusterEntity.TABLE_NAME;
 
     @Column(name = COLUMN_DATE_OF_SNAPSHOT)

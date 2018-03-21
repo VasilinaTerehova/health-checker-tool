@@ -28,8 +28,7 @@ public class KerberosCredentialsEntity extends AbstractManagedEntity {
     String krb5FilePath;
 
     @NotNull
-    @OneToOne(fetch = FetchType.LAZY)
-    @PrimaryKeyJoinColumn
+    @OneToOne(mappedBy="kerberos")
     private ClusterEntity cluster;
 
     public String getUsername() {
