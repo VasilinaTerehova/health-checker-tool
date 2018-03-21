@@ -26,11 +26,11 @@ public class ClusterEntity extends AbstractManagedEntity {
 
     @NotNull
     @Column(name = COLUMN_CLUSTER_TITLE)
-    String title;
+    private String title;
 
     @NotNull
     @Column(name = COLUMN_CLUSTER_NAME)
-    String clusterName;
+    private String clusterName;
 
     @NotNull
     @Enumerated(value = EnumType.STRING)

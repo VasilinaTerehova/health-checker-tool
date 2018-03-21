@@ -4,7 +4,6 @@ import com.epam.health.tool.common.AbstractManagedEntity;
 import com.epam.health.tool.model.ClusterEntity;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 
 /**
  * Created by Vasilina_Terehova on 3/20/2018.
@@ -26,9 +25,6 @@ public class SshCredentialsEntity extends AbstractManagedEntity {
 
     @Column(name = COLUMN_PEM_FILE_PATH)
     private String pemFilePath;
-
-    @OneToOne(mappedBy="ssh")
-    private ClusterEntity cluster;
 
     public String getUsername() {
         return username;
@@ -52,13 +48,5 @@ public class SshCredentialsEntity extends AbstractManagedEntity {
 
     public void setPemFilePath(String pemFilePath) {
         this.pemFilePath = pemFilePath;
-    }
-
-    public ClusterEntity getCluster() {
-        return cluster;
-    }
-
-    public void setCluster(ClusterEntity cluster) {
-        this.cluster = cluster;
     }
 }

@@ -1,43 +1,71 @@
 package com.epam.util.common.json;
 
-import com.epam.util.common.CheckingParamsUtil;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
+import com.epam.util.common.CommonUtilException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import reactor.core.publisher.Flux;
 
-import java.lang.reflect.Type;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.stream.StreamSupport;
 
 public class CommonJsonHandler {
-    private Gson gson;
+    private ObjectMapper objectMapper;
 
     private CommonJsonHandler() {
-        this.gson = new Gson();
+        this.objectMapper = new ObjectMapper();
     }
 
     public static CommonJsonHandler get() {
         return new CommonJsonHandler();
     }
 
-    public <T> T getTypedValue( String jsonString, String fieldName ) {
-        Type type = new TypeToken<T>() {}.getType();
-
-        return gson.fromJson( gson.fromJson(jsonString, JsonObject.class ).get( fieldName ), type);
+    public <T> T getTypedValue( String jsonString, Class<T> valueType ) throws CommonUtilException {
+        try {
+            return objectMapper.readValue(jsonString, valueType);
+        }
+        catch ( IOException ex ){
+            return null;
+        }
     }
 
-    public <T> List<T> getListTypedValue( String jsonString, String fieldName ) {
-        Type type = new TypeToken<List<T>>() {}.getType();
+    public <T> T getTypedValueFromField( String jsonString, String fieldName ) throws CommonUtilException {
+        try {
+            JsonNode orderNode = objectMapper.readTree( jsonString );
+            JsonNode source = orderNode.get( fieldName );
 
-        return gson.fromJson( getFieldObject( getJsonObject( jsonString ), fieldName ), type);
+            return objectMapper.readValue(source.toString(), new TypeReference<T>() {});
+        }
+        catch ( IOException ex ){
+            throw new CommonUtilException( ex );
+        }
     }
 
-    private JsonObject getJsonObject( String jsonString ) {
-        return gson.fromJson(jsonString, JsonObject.class );
-    }
+    public <T> List<T> getListTypedValueFromField( String jsonString, String fieldName, Class<T> valueType ) throws CommonUtilException {
+        try {
+            List<T> result = new ArrayList<>();
+            JsonNode orderNode = objectMapper.readTree( jsonString );
+            JsonNode source = orderNode.get( fieldName );
 
-    private JsonElement getFieldObject(JsonObject jsonObject, String fieldName ) {
-        return jsonObject != null ? jsonObject.get( fieldName ) : null;
-    }
+            if ( source.isArray() ) {
+                Iterator iterator = source.elements();
+                while ( iterator.hasNext() ) {
+                    T typedValue = getTypedValue( iterator.next().toString(), valueType );
+                    if ( typedValue != null ) {
+                        result.add( typedValue );
+                    }
+                }
+            }
 
+            return result;
+        }
+        catch ( IOException ex ){
+            throw new CommonUtilException( ex );
+        }
+    }
 }

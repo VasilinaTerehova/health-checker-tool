@@ -20,7 +20,10 @@ export class SideBarComponent implements OnInit{
   ngOnInit() {
     this.errorReportingService.clearError();
     this.clusterService.getClusters().subscribe(
-      data => this.clusters = data,
+      data => {
+        console.log( data );
+        this.clusters = data;
+      },
       error => this.errorReportingService.reportHttpError( error )
     );
     this.tempCluster = new Cluster();

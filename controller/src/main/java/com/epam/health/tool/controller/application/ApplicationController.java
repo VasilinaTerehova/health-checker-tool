@@ -23,11 +23,9 @@ public class ApplicationController {
 
     @CrossOrigin( origins = "http://localhost:4200" )
     @RequestMapping("/getApplicationList")
-    public Flux<List<ApplicationInfo>> getYarnAppList(@RequestParam( "clusterName") String clusterName ) {
-        return Flux.just( applicationFacadeIFacadeImplResolver.resolveFacadeImpl( clusterFacade.getCluster( clusterName ).getClusterTypeEnum().name() ) //Should be changed
-                .getApplicationList( clusterName ) ).doOnError(throwable -> {
-                    throw new RetrievingObjectException( throwable );
-                });
+    public List<ApplicationInfo> getYarnAppList(@RequestParam( "clusterName") String clusterName ) {
+        return applicationFacadeIFacadeImplResolver.resolveFacadeImpl( clusterFacade.getCluster( clusterName ).getClusterType().name() ) //Should be changed
+                .getApplicationList( clusterName );
     }
 
 }

@@ -71,12 +71,32 @@
                                 </div>
                                 <div class="form-group col-sm-12" [ngClass]="{ 'has-error': f.submitted && !username.valid }">
                                     <label for="username">{{ 'home.label.cluster.username' | translate}}</label>
-                                    <input type="text" class="form-control" id="username" name="username" required pattern="[a-zA-Z0-9]{3,20}" [(ngModel)]="tempCluster.username" #username="ngModel" placeholder="{{ 'home.placeholder.cluster.username' | translate }}">
+                                    <input type="text" class="form-control" id="username" name="username" required pattern="[a-zA-Z0-9]{3,20}" [(ngModel)]="tempCluster.http.username" #username="ngModel" placeholder="{{ 'home.placeholder.cluster.username' | translate }}">
                                     <span class="help-block" *ngIf="f.submitted && !username.valid">{{ 'home.error.cluster.username' | translate }}</span>
                                 </div>
                                 <div class="form-group col-sm-12" [ngClass]="{ 'has-error': f.submitted && !password.valid }">
                                     <label for="password">{{ 'home.label.cluster.password' | translate}}</label>
-                                    <input type="password" class="form-control" id="password" name="password" required [(ngModel)]="tempCluster.password" #password="ngModel" placeholder="{{ 'home.placeholder.cluster.password' | translate }}">
+                                    <input type="password" class="form-control" id="password" name="password" required [(ngModel)]="tempCluster.http.password" #password="ngModel" placeholder="{{ 'home.placeholder.cluster.password' | translate }}">
+                                    <span class="help-block" *ngIf="f.submitted && !password.valid">{{ 'home.error.cluster.password' | translate }}</span>
+                                </div>
+                                <div class="form-group col-sm-12" [ngClass]="{ 'has-error': f.submitted && !username.valid }">
+                                    <label for="username">{{ 'home.label.cluster.username' | translate}}</label>
+                                    <input type="text" class="form-control" id="username" name="username" required pattern="[a-zA-Z0-9]{3,20}" [(ngModel)]="tempCluster.ssh.username" #username="ngModel" placeholder="{{ 'home.placeholder.cluster.username' | translate }}">
+                                    <span class="help-block" *ngIf="f.submitted && !username.valid">{{ 'home.error.cluster.username' | translate }}</span>
+                                </div>
+                                <div class="form-group col-sm-12" [ngClass]="{ 'has-error': f.submitted && !password.valid }">
+                                    <label for="password">{{ 'home.label.cluster.password' | translate}}</label>
+                                    <input type="password" class="form-control" id="password" name="password" required [(ngModel)]="tempCluster.ssh.password" #password="ngModel" placeholder="{{ 'home.placeholder.cluster.password' | translate }}">
+                                    <span class="help-block" *ngIf="f.submitted && !password.valid">{{ 'home.error.cluster.password' | translate }}</span>
+                                </div>
+                                <div class="form-group col-sm-12" [ngClass]="{ 'has-error': f.submitted && !username.valid }">
+                                    <label for="username">{{ 'home.label.cluster.username' | translate}}</label>
+                                    <input type="text" class="form-control" id="username" name="username" required pattern="[a-zA-Z0-9]{3,20}" [(ngModel)]="tempCluster.kerberos.username" #username="ngModel" placeholder="{{ 'home.placeholder.cluster.username' | translate }}">
+                                    <span class="help-block" *ngIf="f.submitted && !username.valid">{{ 'home.error.cluster.username' | translate }}</span>
+                                </div>
+                                <div class="form-group col-sm-12" [ngClass]="{ 'has-error': f.submitted && !password.valid }">
+                                    <label for="password">{{ 'home.label.cluster.password' | translate}}</label>
+                                    <input type="password" class="form-control" id="password" name="password" required [(ngModel)]="tempCluster.kerberos.password" #password="ngModel" placeholder="{{ 'home.placeholder.cluster.password' | translate }}">
                                     <span class="help-block" *ngIf="f.submitted && !password.valid">{{ 'home.error.cluster.password' | translate }}</span>
                                 </div>
                             </div>

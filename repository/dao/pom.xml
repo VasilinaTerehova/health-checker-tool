@@ -19,7 +19,12 @@
         <dependency>
             <groupId>com.epam</groupId>
             <artifactId>health-checker-tool-repository-model</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.epam</groupId>
+            <artifactId>health-checker-tool-facade-model</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
@@ -33,6 +38,8 @@
             <artifactId>spring-data-jpa</artifactId>
             <version>2.0.5.RELEASE</version>
         </dependency>
+
+
     </dependencies>
 
 

@@ -4,7 +4,6 @@ import com.epam.health.tool.common.AbstractManagedEntity;
 import com.epam.health.tool.model.ClusterEntity;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 
 /**
  * Created by Vasilina_Terehova on 3/20/2018.
@@ -26,10 +25,6 @@ public class KerberosCredentialsEntity extends AbstractManagedEntity {
 
     @Column(name = COLUMN_KRB5_FILE_PATH)
     String krb5FilePath;
-
-    @NotNull
-    @OneToOne(mappedBy="kerberos")
-    private ClusterEntity cluster;
 
     public String getUsername() {
         return username;
@@ -53,13 +48,5 @@ public class KerberosCredentialsEntity extends AbstractManagedEntity {
 
     public void setKrb5FilePath(String krb5FilePath) {
         this.krb5FilePath = krb5FilePath;
-    }
-
-    public ClusterEntity getCluster() {
-        return cluster;
-    }
-
-    public void setCluster(ClusterEntity cluster) {
-        this.cluster = cluster;
     }
 }

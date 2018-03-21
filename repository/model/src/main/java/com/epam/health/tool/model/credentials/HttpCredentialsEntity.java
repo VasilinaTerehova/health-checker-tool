@@ -4,7 +4,6 @@ import com.epam.health.tool.common.AbstractManagedEntity;
 import com.epam.health.tool.model.ClusterEntity;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 
 /**
  * Created by Vasilina_Terehova on 3/20/2018.
@@ -18,13 +17,10 @@ public class HttpCredentialsEntity extends AbstractManagedEntity {
     public static final String COLUMN_FK_CLUSTER = ClusterEntity.TABLE_NAME;
 
     @Column(name = COLUMN_USERNAME)
-    String username;
+    private String username;
 
     @Column(name = COLUMN_PASSWORD)
-    String password;
-
-    @OneToOne(mappedBy="http")
-    private ClusterEntity cluster;
+    private String password;
 
     public String getUsername() {
         return username;
@@ -40,13 +36,5 @@ public class HttpCredentialsEntity extends AbstractManagedEntity {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public ClusterEntity getCluster() {
-        return cluster;
-    }
-
-    public void setCluster(ClusterEntity cluster) {
-        this.cluster = cluster;
     }
 }

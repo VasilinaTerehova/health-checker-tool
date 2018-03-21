@@ -9,6 +9,7 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -52,7 +53,7 @@ public class HttpRequestExecutor {
 
     public String executeUrlRequest(String url ) throws CommonUtilException {
         try {
-            return createHttpClient().execute( createHttpUriRequest( url ) ).getEntity().toString();
+            return EntityUtils.toString(  createHttpClient().execute( createHttpUriRequest( url ) ).getEntity() );
         } catch (IOException e) {
             throw new CommonUtilException( e );
         }

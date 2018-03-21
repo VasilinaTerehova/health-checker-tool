@@ -1,4 +1,4 @@
 export class ServiceStatus {
-  name: string;
+  displayName: string;
   healthSummary: string;
 }

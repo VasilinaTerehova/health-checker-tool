@@ -25,7 +25,7 @@ export class ServiceListComponent implements OnInit, OnDestroy {
   }
 
   isShowServiceActionAllow(name: string) {
-    return name == "hbase" || name == "hive"
+    return name && (name.toUpperCase() == "HBASE" || name.toUpperCase() == "HIVE");
   }
 
   restartService( serviceName: string ) {

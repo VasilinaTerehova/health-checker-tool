@@ -1,5 +1,6 @@
 package com.epam.health.tool.facade.common.resolver.impl;
 
+import com.epam.facade.model.ClusterHealthSummary;
 import com.epam.health.tool.facade.cluster.IClusterSnapshotFacade;
 import com.epam.health.tool.facade.resolver.IFacadeImplResolver;
 import com.epam.health.tool.facade.common.resolver.ImplementationNotResolvedException;
@@ -25,7 +26,7 @@ public class ClusterSnapshotFacadeImplResolver implements IFacadeImplResolver<IC
                     }
 
                     @Override
-                    public ClusterShapshotEntity askForCurrentClusterSnapshot(String clusterName) {
+                    public ClusterHealthSummary askForCurrentClusterSnapshot(String clusterName) {
                         throw new ImplementationNotResolvedException(  );
                     }
                 });
