@@ -37,16 +37,16 @@ public class ClusterEntity extends AbstractManagedEntity {
     @Column(name = COLUMN_CLUSTER_TYPE)
     private ClusterTypeEnum clusterTypeEnum;
 
-    @OneToOne
-    @JoinColumn(name=TABLE_NAME + DELIMITER_INDEX + COLUMN_FK_HTTP_CREDENTIALS, unique=true, nullable=false, updatable=false)
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name=TABLE_NAME + DELIMITER_INDEX + COLUMN_FK_HTTP_CREDENTIALS, unique=true, nullable=false, updatable=true)
     private HttpCredentialsEntity http;
 
-    @OneToOne
-    @JoinColumn(name=TABLE_NAME + DELIMITER_INDEX + COLUMN_FK_SSH_CREDENTIALS, unique=true, nullable=false, updatable=false)
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name=TABLE_NAME + DELIMITER_INDEX + COLUMN_FK_SSH_CREDENTIALS, unique=true, nullable=false, updatable=true)
     private SshCredentialsEntity ssh;
 
-    @OneToOne
-    @JoinColumn(name=TABLE_NAME + DELIMITER_INDEX + COLUMN_FK_KERBEROS_CREDENTIALS, unique=true, nullable=false, updatable=false)
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name=TABLE_NAME + DELIMITER_INDEX + COLUMN_FK_KERBEROS_CREDENTIALS, unique=true, nullable=true, updatable=true)
     private KerberosCredentialsEntity kerberos;
 
     @Column(name = COLUMN_IS_SECURED)

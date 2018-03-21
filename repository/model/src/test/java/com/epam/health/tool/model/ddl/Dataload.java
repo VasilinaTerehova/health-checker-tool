@@ -5,8 +5,13 @@ import com.epam.health.tool.model.ClusterTypeEnum;
 import com.epam.health.tool.model.common.AbstractDataLoad;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.PropertyMap;
+import org.modelmapper.TypeMap;
 import org.modelmapper.convention.MatchingStrategies;
+import org.modelmapper.convention.NameTokenizers;
 import org.modelmapper.jackson.JsonNodeValueReader;
 
 import javax.persistence.EntityManager;
@@ -15,6 +20,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Vasilina_Terehova on 3/20/2018.
@@ -35,12 +42,12 @@ public class Dataload extends AbstractDataLoad {
         if (args.length > 1) {
             propertiesFolder = args[1];
         }
-        //Dataload ddl = new Dataload(propertiesFileName, propertiesFolder);
+        Dataload ddl = new Dataload(propertiesFileName, propertiesFolder);
 
         //recreateTablesCurrent();
 
-        //ddl.recreateTables();
-        readClusterCredentials("test");
+        ddl.recreateTables();
+        //readClusterCredentials();
 
     }
 
@@ -56,28 +63,38 @@ public class Dataload extends AbstractDataLoad {
     }
 
     protected void createDatabaseData(EntityManager entityManager) {
-        importClustersFromJson();
+        importClustersFromJson(entityManager);
     }
 
-    private void importClustersFromJson() {
-
+    private void importClustersFromJson(EntityManager entityManager) {
+        try {
+            List<ClusterEntity> clusterEntities = readClusterCredentials();
+            clusterEntities.forEach(entityManager::persist);
+        } catch (IOException | URISyntaxException e) {
+            e.printStackTrace();
+        }
     }
 
-    public static void readClusterCredentials(String clusterName) throws IOException, FileNotFoundException, URISyntaxException {
+    private static List<ClusterEntity> readClusterCredentials() throws IOException, URISyntaxException {
         String fileName = null;
         fileName = Paths.get(Dataload.class.getClassLoader().getResource("clusters.json").toURI()).toString();
-        ModelMapper modelMapper = new ModelMapper();
-        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.LOOSE);
-        modelMapper.getConfiguration().addValueReader(new JsonNodeValueReader());
+
         JsonNode orderNode = new ObjectMapper().readTree(new FileInputStream(fileName));
-        JsonNode source = orderNode.get(2);
-        System.out.println(source);
-        modelMapper.createTypeMap(source, ClusterEntity.class).setPostConverter(context -> {
-            context.getDestination().setClusterTypeEnum(ClusterTypeEnum.parse(context.getSource().get("cluster").get("type").asText()));
-            return context.getDestination();
+        ArrayList<ClusterEntity> clusterEntities = new ArrayList<>();
+        orderNode.iterator().forEachRemaining(jsonNode -> {
+            ModelMapper modelMapper = new ModelMapper();
+            modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STANDARD);
+            modelMapper.getConfiguration().addValueReader(new JsonNodeValueReader());
+            modelMapper.getConfiguration().setAmbiguityIgnored(true);
+            modelMapper.getConfiguration().setSourceNameTokenizer(NameTokenizers.UNDERSCORE);
+            modelMapper.createTypeMap(jsonNode, ClusterEntity.class).setPostConverter(context -> {
+                context.getDestination().setClusterTypeEnum(ClusterTypeEnum.parse(context.getSource().get("cluster").get("type").asText()));
+                return context.getDestination();
+            });
+            //modelMapper.createTypeMap(jsonNode, ClusterEntity.class).set
+            clusterEntities.add(modelMapper.map(jsonNode, ClusterEntity.class));
         });
-        ClusterEntity order = modelMapper.map(source, ClusterEntity.class);
-        System.out.println(order);
+        return clusterEntities;
     }
 
 
