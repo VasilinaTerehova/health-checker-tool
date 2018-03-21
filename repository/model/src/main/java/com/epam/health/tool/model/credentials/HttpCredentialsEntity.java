@@ -23,9 +23,7 @@ public class HttpCredentialsEntity extends AbstractManagedEntity {
     @Column(name = COLUMN_PASSWORD)
     String password;
 
-    @NotNull
-    @OneToOne(fetch = FetchType.LAZY)
-    @PrimaryKeyJoinColumn
+    @OneToOne(mappedBy="http")
     private ClusterEntity cluster;
 
     public String getUsername() {

@@ -27,9 +27,7 @@ public class SshCredentialsEntity extends AbstractManagedEntity {
     @Column(name = COLUMN_PEM_FILE_PATH)
     private String pemFilePath;
 
-    @NotNull
-    @OneToOne(fetch = FetchType.LAZY)
-    @PrimaryKeyJoinColumn
+    @OneToOne(mappedBy="ssh")
     private ClusterEntity cluster;
 
     public String getUsername() {

@@ -20,6 +20,9 @@ public class ClusterEntity extends AbstractManagedEntity {
     public static final String COLUMN_CLUSTER_TYPE = "cluster_type_";
     public static final String COLUMN_HOST = "host_";
     public static final String COLUMN_IS_SECURED = "is_secured_";
+    public static final String COLUMN_FK_HTTP_CREDENTIALS= HttpCredentialsEntity.TABLE_NAME;
+    public static final String COLUMN_FK_SSH_CREDENTIALS= SshCredentialsEntity.TABLE_NAME;
+    public static final String COLUMN_FK_KERBEROS_CREDENTIALS= KerberosCredentialsEntity.TABLE_NAME;
 
     @NotNull
     @Column(name = COLUMN_CLUSTER_TITLE)
@@ -34,14 +37,17 @@ public class ClusterEntity extends AbstractManagedEntity {
     @Column(name = COLUMN_CLUSTER_TYPE)
     private ClusterTypeEnum clusterTypeEnum;
 
-    @OneToOne(mappedBy="cluster")
-    private HttpCredentialsEntity httpCredentialsEntity;
+    @OneToOne
+    @JoinColumn(name=TABLE_NAME + DELIMITER_INDEX + COLUMN_FK_HTTP_CREDENTIALS, unique=true, nullable=false, updatable=false)
+    private HttpCredentialsEntity http;
 
-    @OneToOne(mappedBy="cluster")
-    private SshCredentialsEntity sshCredentialsEntity;
+    @OneToOne
+    @JoinColumn(name=TABLE_NAME + DELIMITER_INDEX + COLUMN_FK_SSH_CREDENTIALS, unique=true, nullable=false, updatable=false)
+    private SshCredentialsEntity ssh;
 
-    @OneToOne(mappedBy="cluster")
-    private KerberosCredentialsEntity kerberosCredentialsEntity;
+    @OneToOne
+    @JoinColumn(name=TABLE_NAME + DELIMITER_INDEX + COLUMN_FK_KERBEROS_CREDENTIALS, unique=true, nullable=false, updatable=false)
+    private KerberosCredentialsEntity kerberos;
 
     @Column(name = COLUMN_IS_SECURED)
     private boolean secured;
@@ -73,28 +79,28 @@ public class ClusterEntity extends AbstractManagedEntity {
         this.clusterTypeEnum = clusterTypeEnum;
     }
 
-    public HttpCredentialsEntity getHttpCredentialsEntity() {
-        return httpCredentialsEntity;
+    public HttpCredentialsEntity getHttp() {
+        return http;
     }
 
-    public void setHttpCredentialsEntity(HttpCredentialsEntity httpCredentialsEntity) {
-        this.httpCredentialsEntity = httpCredentialsEntity;
+    public void setHttp(HttpCredentialsEntity http) {
+        this.http = http;
     }
 
-    public SshCredentialsEntity getSshCredentialsEntity() {
-        return sshCredentialsEntity;
+    public SshCredentialsEntity getSsh() {
+        return ssh;
     }
 
-    public void setSshCredentialsEntity(SshCredentialsEntity sshCredentialsEntity) {
-        this.sshCredentialsEntity = sshCredentialsEntity;
+    public void setSsh(SshCredentialsEntity ssh) {
+        this.ssh = ssh;
     }
 
-    public KerberosCredentialsEntity getKerberosCredentialsEntity() {
-        return kerberosCredentialsEntity;
+    public KerberosCredentialsEntity getKerberos() {
+        return kerberos;
     }
 
-    public void setKerberosCredentialsEntity(KerberosCredentialsEntity kerberosCredentialsEntity) {
-        this.kerberosCredentialsEntity = kerberosCredentialsEntity;
+    public void setKerberos(KerberosCredentialsEntity kerberos) {
+        this.kerberos = kerberos;
     }
 
     public boolean isSecured() {
