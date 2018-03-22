@@ -15,4 +15,16 @@ export class ClusterService {
   getClusterState( clusterName: string ) {
     return this.http.get<ClusterState>("http://localhost:8888/getClusterStatus", { params: { "clusterName": clusterName } });
   }
+
+  updateCluster( cluster: Cluster ) {
+    return this.http.post<Cluster>("http://localhost:8888/cluster", { params: { "cluster": cluster } })
+  }
+
+  deleteCluster( clusterName: string ) {
+    return this.http.delete<Cluster>("http://localhost:8888/cluster", { params: { "clusterName": clusterName } })
+  }
+
+  saveCluster( cluster: Cluster ) {
+    return this.http.put<Cluster>("http://localhost:8888/cluster", { params: { "cluster": cluster } })
+  }
 }

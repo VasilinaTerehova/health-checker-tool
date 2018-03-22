@@ -10,6 +10,7 @@
   "home" : {
     "label": {
       "cluster": {
+        "clusters": "Cluster list",
         "check": "Check health",
         "list": "Cluster list",
         "clusters": "Clusters",
@@ -29,9 +30,18 @@
         "memory": "Memory",
         "security": "Security",
         "http": {
-          "username": "Http username",
-          "password": "Http password"
-        }
+          "username": "Username",
+          "password": "Password"
+        },
+        "credentials": {
+          "http": "Http",
+          "ssh": "Ssh",
+          "kerberos": {
+            "name": "Kerberos",
+            "secure": "Is kerberos secure"
+          }
+        },
+        "type": "Cluster type"
       },
       "service": {
         "yarn": {

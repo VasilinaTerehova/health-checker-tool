@@ -8,6 +8,7 @@ import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { ButtonsModule } from 'ngx-bootstrap/buttons';
 import { AlertModule } from 'ngx-bootstrap/alert';
+import { ModalModule } from 'ngx-bootstrap/modal';
 //Components
 import { AppComponent } from './app.component';
 import { TopMenuComponent } from './shared/menu/top/top-menu.component';
@@ -17,6 +18,7 @@ import { ClusterComponent } from './cluster/cluster.component';
 import { ErrorReportingComponent } from './shared/error/error-reporting.component';
 import { YarnApplicationListComponent } from './service/yarn/yarn-application-list.component';
 import { ServiceListComponent } from './service/list/service-list.component';
+import { ClusterEditComponent } from './shared/cluster/edit/cluster-edit.component';
 //Directives and pipes
 import { ClusterListSearchByNamePipe } from './shared/menu/side/cluster-list.pipe';
 //Services
@@ -24,6 +26,8 @@ import { ClusterService } from './cluster/cluster.service';
 import { YarnApplicationService } from './service/yarn/yarn-application.service';
 import { RouteService } from './shared/menu/side/route.service';
 import { ErrorReportingService } from './shared/error/error-reporting.service';
+import { ClusterTypeExService } from './shared/cluster/cluster-type-ex.service';
+import { ClusterComparatorService } from './shared/cluster/cluster-comparator.service';
 //Routing
 import { routing } from './app-routing.module';
 
@@ -34,8 +38,9 @@ export function createTranslateLoader(http: HttpClient) {
 @NgModule({
   declarations: [
     AppComponent, TopMenuComponent, SideBarComponent, HomeComponent, ClusterListSearchByNamePipe, ClusterComponent, ErrorReportingComponent, YarnApplicationListComponent,
-    ServiceListComponent
+    ServiceListComponent, ClusterEditComponent
   ],
+  entryComponents: [ ClusterEditComponent ],
   imports: [
     BrowserModule, FormsModule, HttpClientModule, routing, TranslateModule.forRoot({
         loader: {
@@ -43,9 +48,9 @@ export function createTranslateLoader(http: HttpClient) {
             useFactory: (createTranslateLoader),
             deps: [HttpClient]
         }
-    }), TabsModule.forRoot(), ButtonsModule.forRoot(), AlertModule.forRoot()
+    }), TabsModule.forRoot(), ButtonsModule.forRoot(), AlertModule.forRoot(), ModalModule.forRoot()
   ],
-  providers: [ClusterService, YarnApplicationService, RouteService, ErrorReportingService],
+  providers: [ClusterService, YarnApplicationService, RouteService, ErrorReportingService, ClusterTypeExService, ClusterComparatorService],
   bootstrap: [AppComponent]
 })
 export class AppModule {
