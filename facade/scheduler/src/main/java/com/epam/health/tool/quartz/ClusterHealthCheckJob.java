@@ -53,24 +53,28 @@ public class ClusterHealthCheckJob {
     @Autowired
     ClusterServiceSnapshotDao clusterServiceSnapshotDao;
 
-    @Scheduled(fixedDelay = 1000 * 30)
+    @Scheduled(fixedDelay = 30 * 60 * 1000)
     public void reportCurrentTime() {
         log.info("The time is now {}", dateFormat.format(new Date()));
-        List<ClusterEntityProjection> clusterList = clusterFacade.getClusterList();
-        clusterList.stream().forEach(clusterEntityProjection -> {
-            ClusterHealthSummary clusterHealthSummary = clusterSnapshotFacade.askForCurrentClusterSnapshot(clusterEntityProjection.getName());
+        //List<ClusterEntityProjection> clusterList = clusterFacade.getClusterList();
+        Date hourAgo = new Date(System.currentTimeMillis() - 3600 * 1000);
+
+        List<ClusterEntity> clusterEntities = clusterServiceSnapshotDao.findClustersForSnapshot(hourAgo);
+        clusterEntities.stream().forEach(clusterEntity -> {
+            ClusterHealthSummary clusterHealthSummary = clusterSnapshotFacade.askForCurrentClusterSnapshot(clusterEntity.getClusterName());
             ModelMapper modelMapper = new ModelMapper();
             modelMapper.getConfiguration().setAmbiguityIgnored(true);
             modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.LOOSE);
             ClusterShapshotEntity clusterShapshotEntity = modelMapper.map(clusterHealthSummary, ClusterShapshotEntity.class);
             clusterShapshotEntity.setDateOfSnapshot(new Date());
-            Long clusterId = clusterEntityProjection.getId();
-            ClusterEntity clusterEntity = clusterDao.findById(clusterId).get();
+            Long clusterId = clusterEntity.getId();
+            //ClusterEntity clusterEntity = clusterDao.findById(clusterId).get();
             clusterShapshotEntity.setClusterEntity(clusterEntity);
-            //clusterSnapshotDao.save(clusterShapshotEntity);
+            clusterSnapshotDao.save(clusterShapshotEntity);
             clusterHealthSummary.getServiceStatusList().stream().forEach(serviceStatus -> {
                 ClusterServiceEntity clusterServiceEntity = clusterServiceDao.findByClusterIdAndServiceType(clusterId, serviceStatus.getServiceType());
                 ClusterServiceShapshotEntity clusterServiceShapshotEntity = modelMapper.map(serviceStatus, ClusterServiceShapshotEntity.class);
+                clusterServiceShapshotEntity.setClusterShapshotEntity(clusterShapshotEntity);
                 if (clusterServiceEntity == null) {
                     ClusterServiceEntity clusterServiceEntity1 = clusterServiceShapshotEntity.getClusterServiceEntity();
                     clusterServiceEntity1.setClusterEntity(clusterEntity);
