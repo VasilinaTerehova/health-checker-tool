@@ -9,17 +9,19 @@ import javax.validation.constraints.NotNull;
  * Created by Vasilina_Terehova on 3/19/2018.
  */
 @Entity
-@Table(name = ClusterServiceEntity.TABLE_NAME)
+@Table(name = ClusterServiceEntity.TABLE_NAME, uniqueConstraints =
+@UniqueConstraint(columnNames = {ClusterServiceEntity.JOIN_COLUMN_CLUSTER, ClusterServiceEntity.COLUMN_SERVICE_TYPE}))
 public class ClusterServiceEntity extends AbstractManagedEntity {
     public static final String TABLE_NAME = "cluster_service";
     public static final String COLUMN_LOG_FILE_PATH = "log_file_path_";
     public static final String COLUMN_CLUSTER_NODE = "cluster_node_";
     public static final String COLUMN_SERVICE_TYPE = "service_type_";
     public static final String COLUMN_FK_CLUSTER = ClusterEntity.TABLE_NAME;
+    public static final String JOIN_COLUMN_CLUSTER = TABLE_NAME + DELIMITER_INDEX + COLUMN_FK_CLUSTER;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = TABLE_NAME + DELIMITER_INDEX + COLUMN_FK_CLUSTER)
+    @JoinColumn(name = JOIN_COLUMN_CLUSTER)
     private ClusterEntity clusterEntity;
 
     @NotNull

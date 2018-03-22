@@ -12,7 +12,10 @@ import javax.validation.constraints.NotNull;
  * Created by Vasilina_Terehova on 3/19/2018.
  */
 @Entity
-@Table(name = ClusterEntity.TABLE_NAME)
+@Table(name = ClusterEntity.TABLE_NAME, uniqueConstraints =
+        {
+                @UniqueConstraint(columnNames = ClusterEntity.COLUMN_CLUSTER_NAME)
+        })
 public class ClusterEntity extends AbstractManagedEntity {
     public static final String TABLE_NAME = "cluster";
     public static final String COLUMN_CLUSTER_TITLE = "title_";
@@ -20,9 +23,9 @@ public class ClusterEntity extends AbstractManagedEntity {
     public static final String COLUMN_CLUSTER_TYPE = "cluster_type_";
     public static final String COLUMN_HOST = "host_";
     public static final String COLUMN_IS_SECURED = "is_secured_";
-    public static final String COLUMN_FK_HTTP_CREDENTIALS= HttpCredentialsEntity.TABLE_NAME;
-    public static final String COLUMN_FK_SSH_CREDENTIALS= SshCredentialsEntity.TABLE_NAME;
-    public static final String COLUMN_FK_KERBEROS_CREDENTIALS= KerberosCredentialsEntity.TABLE_NAME;
+    public static final String COLUMN_FK_HTTP_CREDENTIALS = HttpCredentialsEntity.TABLE_NAME;
+    public static final String COLUMN_FK_SSH_CREDENTIALS = SshCredentialsEntity.TABLE_NAME;
+    public static final String COLUMN_FK_KERBEROS_CREDENTIALS = KerberosCredentialsEntity.TABLE_NAME;
 
     @NotNull
     @Column(name = COLUMN_CLUSTER_TITLE)
@@ -38,15 +41,15 @@ public class ClusterEntity extends AbstractManagedEntity {
     private ClusterTypeEnum clusterTypeEnum;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name=TABLE_NAME + DELIMITER_INDEX + COLUMN_FK_HTTP_CREDENTIALS, unique=true, nullable=false, updatable=true)
+    @JoinColumn(name = TABLE_NAME + DELIMITER_INDEX + COLUMN_FK_HTTP_CREDENTIALS, unique = true, nullable = false, updatable = true)
     private HttpCredentialsEntity http;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name=TABLE_NAME + DELIMITER_INDEX + COLUMN_FK_SSH_CREDENTIALS, unique=true, nullable=false, updatable=true)
+    @JoinColumn(name = TABLE_NAME + DELIMITER_INDEX + COLUMN_FK_SSH_CREDENTIALS, unique = true, nullable = false, updatable = true)
     private SshCredentialsEntity ssh;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name=TABLE_NAME + DELIMITER_INDEX + COLUMN_FK_KERBEROS_CREDENTIALS, unique=true, nullable=true, updatable=true)
+    @JoinColumn(name = TABLE_NAME + DELIMITER_INDEX + COLUMN_FK_KERBEROS_CREDENTIALS, unique = true, nullable = true, updatable = true)
     private KerberosCredentialsEntity kerberos;
 
     @Column(name = COLUMN_IS_SECURED)
