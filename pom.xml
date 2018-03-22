@@ -8,16 +8,6 @@
     <artifactId>health-checker-tool</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
-
-    <modules>
-        <module>frontend</module>
-        <module>controller</module>
-        <module>facade</module>
-        <module>repository</module>
-        <module>transfer</module>
-        <module>util</module>
-    </modules>
-
     <properties>
         <!--Project-->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -65,4 +55,38 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <!-- DO NOT CHANGE THE *ORDER* IN WHICH THESE PROFILES ARE DEFINED! -->
+        <profile>
+            <id>frontend</id>
+            <modules>
+                <module>frontend</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>backend</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>controller</module>
+                <module>facade</module>
+                <module>repository</module>
+                <module>transfer</module>
+                <module>util</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>all</id>
+            <modules>
+                <module>frontend</module>
+                <module>controller</module>
+                <module>facade</module>
+                <module>repository</module>
+                <module>transfer</module>
+                <module>util</module>
+            </modules>
+        </profile>
+    </profiles>
 </project>
