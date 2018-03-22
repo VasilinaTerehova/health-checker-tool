@@ -4,9 +4,6 @@ import com.epam.health.tool.common.AbstractManagedEntity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
-
-import static com.epam.health.tool.common.AbstractEntity.DELIMITER_INDEX;
 
 /**
  * Created by Vasilina_Terehova on 3/19/2018.
@@ -26,7 +23,7 @@ public class ClusterServiceShapshotEntity extends AbstractManagedEntity {
     @NotNull
     @Enumerated(value = EnumType.STRING)
     @Column(name = COLUMN_SERVICE_STATUS)
-    private ServiceStatusEnum serviceStatusEnum;
+    private ServiceStatusEnum healthStatus;
 
     public ClusterServiceEntity getClusterServiceEntity() {
         return clusterServiceEntity;
@@ -36,11 +33,11 @@ public class ClusterServiceShapshotEntity extends AbstractManagedEntity {
         this.clusterServiceEntity = clusterServiceEntity;
     }
 
-    public ServiceStatusEnum getServiceStatusEnum() {
-        return serviceStatusEnum;
+    public ServiceStatusEnum getHealthStatus() {
+        return healthStatus;
     }
 
-    public void setServiceStatusEnum(ServiceStatusEnum serviceStatusEnum) {
-        this.serviceStatusEnum = serviceStatusEnum;
+    public void setHealthStatus(ServiceStatusEnum healthStatus) {
+        this.healthStatus = healthStatus;
     }
 }

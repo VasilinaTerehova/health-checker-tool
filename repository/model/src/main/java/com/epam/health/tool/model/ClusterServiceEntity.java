@@ -25,7 +25,7 @@ public class ClusterServiceEntity extends AbstractManagedEntity {
     @NotNull
     @Enumerated(value = EnumType.STRING)
     @Column(name = COLUMN_SERVICE_TYPE)
-    private ServiceTypeEnum serviceTypeEnum;
+    private ServiceTypeEnum serviceType;
 
     @Column(name = COLUMN_LOG_FILE_PATH)
     private String logPath;
@@ -33,12 +33,12 @@ public class ClusterServiceEntity extends AbstractManagedEntity {
     @Column(name = COLUMN_CLUSTER_NODE)
     private String clusterNode;
 
-    public ServiceTypeEnum getServiceTypeEnum() {
-        return serviceTypeEnum;
+    public ServiceTypeEnum getServiceType() {
+        return serviceType;
     }
 
-    public void setServiceTypeEnum(ServiceTypeEnum serviceTypeEnum) {
-        this.serviceTypeEnum = serviceTypeEnum;
+    public void setServiceType(ServiceTypeEnum serviceType) {
+        this.serviceType = serviceType;
     }
 
     public String getLogPath() {

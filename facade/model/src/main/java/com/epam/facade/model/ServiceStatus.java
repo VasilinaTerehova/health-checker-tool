@@ -1,5 +1,6 @@
 package com.epam.facade.model;
 
+import com.epam.health.tool.model.ServiceStatusEnum;
 import com.epam.health.tool.model.ServiceTypeEnum;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -9,7 +10,7 @@ public class ServiceStatus {
     @JsonProperty( "type" )
     private ServiceTypeEnum serviceType;
     @JsonProperty( "healthSummary" )
-    private HealthStatus healthSummary;
+    private ServiceStatusEnum healthSummary;
     @JsonProperty( "displayName" )
     private String name;
 
@@ -21,11 +22,11 @@ public class ServiceStatus {
         this.serviceType = serviceType;
     }
 
-    public HealthStatus getHealthStatus() {
+    public ServiceStatusEnum getHealthStatus() {
         return healthSummary;
     }
 
-    public void setHealthStatus(HealthStatus healthSummary) {
+    public void setHealthStatus(ServiceStatusEnum healthSummary) {
         this.healthSummary = healthSummary;
     }
 
