@@ -58,8 +58,8 @@ public abstract class AbstractDataLoad {
         .replace("${jdbc.connection.password}", password);
   }
 
-  protected void recreateDatabase() {
-    Connection connection;
+  protected void recreateDatabase() throws SQLException {
+    Connection connection = null;
 
     try {
       // Load the JDBC driver.
@@ -73,6 +73,10 @@ public abstract class AbstractDataLoad {
     } catch (SQLException e) {
       e.printStackTrace();
       throw new RuntimeException();
+    } finally {
+      if (connection != null) {
+        connection.close();
+      }
     }
 
 //    try {

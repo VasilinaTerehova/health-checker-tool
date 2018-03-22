@@ -20,7 +20,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
+import java.sql.Driver;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 
 /**
@@ -35,7 +39,7 @@ public class Dataload extends AbstractDataLoad {
         super(propertiesFileName, propertiesFolder);
     }
 
-    public static void main(String[] args) throws IOException, URISyntaxException {
+    public static void main(String[] args) throws IOException, URISyntaxException, SQLException {
         if (args.length > 0) {
             propertiesFileName = args[0];
         }
@@ -47,6 +51,12 @@ public class Dataload extends AbstractDataLoad {
         //recreateTablesCurrent();
 
         ddl.recreateTables();
+        Enumeration<Driver> drivers = DriverManager.getDrivers();
+        while (drivers.hasMoreElements()) {
+            Driver driver = drivers.nextElement();
+            DriverManager.deregisterDriver(driver);
+        }
+        System.out.println(drivers);
         //readClusterCredentials();
 
     }
