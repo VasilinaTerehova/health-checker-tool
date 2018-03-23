@@ -262,6 +262,11 @@
         </profile>
         <profile>
             <id>all</id>
+            <activation>
+                <property>
+                    <name>prod</name>
+                </property>
+            </activation>
             <modules>
                 <module>frontend</module>
                 <module>controller</module>

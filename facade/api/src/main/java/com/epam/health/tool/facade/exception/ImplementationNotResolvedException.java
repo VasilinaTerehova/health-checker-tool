@@ -1,6 +1,6 @@
-package com.epam.health.tool.facade.common.resolver;
+package com.epam.health.tool.facade.exception;
 
-public class ImplementationNotResolvedException extends RuntimeException {
+public class ImplementationNotResolvedException extends Exception {
     public ImplementationNotResolvedException() {
         super();
     }

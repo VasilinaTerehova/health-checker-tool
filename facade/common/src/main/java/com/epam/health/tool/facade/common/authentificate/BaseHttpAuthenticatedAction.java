@@ -49,15 +49,10 @@ public class BaseHttpAuthenticatedAction {
         return this;
     }
 
-    public String makeAuthenticatedRequest( String url ) {
-        try {
-            return HttpRequestExecutor.get().setAuthSchemes( createAuthShemesList() )
-                    .setCredentialsProvider( createHttpCredentialsProvider() )
-                    .setHeaderCreator( buildHeaderCreator() ).executeUrlRequest( url );
-        } catch (CommonUtilException e) {
-            logger.error(e.getMessage());
-            return StringUtils.EMPTY;
-        }
+    public String makeAuthenticatedRequest( String url ) throws CommonUtilException {
+        return HttpRequestExecutor.get().setAuthSchemes( createAuthShemesList() )
+                .setCredentialsProvider( createHttpCredentialsProvider() )
+                .setHeaderCreator( buildHeaderCreator() ).executeUrlRequest( url );
     }
 
     private CredentialsProvider createHttpCredentialsProvider(  ) {

@@ -12,11 +12,13 @@ import com.epam.health.tool.dao.cluster.ClusterSnapshotDao;
 import com.epam.health.tool.facade.cluster.IClusterFacade;
 import com.epam.health.tool.facade.cluster.IClusterSnapshotFacade;
 import com.epam.health.tool.facade.common.util.ClusterEntityModifier;
+import com.epam.health.tool.facade.exception.InvalidResponseException;
 import com.epam.health.tool.model.ClusterEntity;
 import com.epam.health.tool.model.ClusterServiceEntity;
 import com.epam.health.tool.model.ClusterServiceShapshotEntity;
 import com.epam.health.tool.model.ClusterShapshotEntity;
 import com.epam.health.tool.transfer.impl.SVTransfererManager;
+import org.apache.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.modelmapper.convention.NameTransformers;
@@ -31,6 +33,7 @@ public class ClusterFacadeImpl implements IClusterFacade {
 
     public static final int ONE_HOUR_MILLISECONDS = 3600 * 1000;
 
+    private Logger logger = Logger.getLogger( ClusterFacadeImpl.class );
     @Autowired
     private ClusterDao clusterDao;
 
@@ -48,7 +51,7 @@ public class ClusterFacadeImpl implements IClusterFacade {
     ClusterServiceSnapshotDao clusterServiceSnapshotDao;
 
     @Autowired
-    SVTransfererManager svTransfererManager;
+    private SVTransfererManager svTransfererManager;
 
     @Override
     public List<ClusterEntityProjection> getClusterList() {
@@ -80,12 +83,8 @@ public class ClusterFacadeImpl implements IClusterFacade {
     }
 
     private ClusterEntity mapProjectionToEntity( ClusterEntityProjection clusterEntityProjection ) {
-        ModelMapper modelMapper = new ModelMapper();
-        modelMapper.getConfiguration().setAmbiguityIgnored(true);
-        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.LOOSE);
-        modelMapper.getConfiguration().setDestinationNameTransformer( NameTransformers.JAVABEANS_ACCESSOR );
-
-        return modelMapper.map( clusterEntityProjection, ClusterEntity.class );
+        return svTransfererManager.<ClusterEntityProjection, ClusterEntity>getTransferer( ClusterEntityProjection.class, ClusterEntity.class )
+                .transfer( clusterEntityProjection, ClusterEntity.class );
     }
 
     private ClusterIdsProjection findClusterIds( ClusterEntity clusterEntity ) {
@@ -99,12 +98,8 @@ public class ClusterFacadeImpl implements IClusterFacade {
     }
 
     private ClusterEntityProjection mapEntityToProjection( ClusterEntity clusterEntity ) {
-        ModelMapper modelMapper = new ModelMapper();
-        modelMapper.getConfiguration().setAmbiguityIgnored(true);
-        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.LOOSE);
-        modelMapper.getConfiguration().setDestinationNameTransformer( NameTransformers.JAVABEANS_ACCESSOR );
-
-        return modelMapper.map( clusterEntity, ClusterEntityProjectionImpl.class );
+        return svTransfererManager.<ClusterEntity, ClusterEntityProjectionImpl>getTransferer( ClusterEntity.class, ClusterEntityProjectionImpl.class )
+                .transfer( clusterEntity, ClusterEntityProjectionImpl.class );
     }
 
     public void checkClustersHealth() {
@@ -112,27 +107,32 @@ public class ClusterFacadeImpl implements IClusterFacade {
 
         List<ClusterEntity> clusterEntities = clusterServiceSnapshotDao.findClustersForSnapshot(hourAgo);
         clusterEntities.forEach(clusterEntity -> {
-            ClusterHealthSummary clusterHealthSummary = clusterSnapshotFacade.askForCurrentClusterSnapshot(clusterEntity.getClusterName());
+           try {
+               ClusterHealthSummary clusterHealthSummary = clusterSnapshotFacade.askForCurrentClusterSnapshot(clusterEntity.getClusterName());
 
-            ClusterShapshotEntity clusterShapshotEntity = svTransfererManager.<ClusterHealthSummary, ClusterShapshotEntity> getTransferer(ClusterHealthSummary.class, ClusterShapshotEntity.class).transfer(clusterHealthSummary, ClusterShapshotEntity.class);
-            clusterShapshotEntity.setDateOfSnapshot(new Date());
-            Long clusterId = clusterEntity.getId();
-            clusterShapshotEntity.setId(null);
-            clusterShapshotEntity.setClusterEntity(clusterEntity);
-            clusterSnapshotDao.save(clusterShapshotEntity);
-            clusterHealthSummary.getServiceStatusList().forEach(serviceStatus -> {
-                ClusterServiceEntity clusterServiceEntity = clusterServiceDao.findByClusterIdAndServiceType(clusterId, serviceStatus.getServiceType());
-                ClusterServiceShapshotEntity clusterServiceShapshotEntity = svTransfererManager.<ServiceStatus, ClusterServiceShapshotEntity> getTransferer(ServiceStatus.class, ClusterServiceShapshotEntity.class).transfer(serviceStatus, ClusterServiceShapshotEntity.class);
-                clusterServiceShapshotEntity.setClusterShapshotEntity(clusterShapshotEntity);
-                if (clusterServiceEntity == null) {
-                    ClusterServiceEntity clusterServiceEntity1 = clusterServiceShapshotEntity.getClusterServiceEntity();
-                    clusterServiceEntity1.setClusterEntity(clusterEntity);
-                    clusterServiceDao.save(clusterServiceEntity1);
-                } else {
-                    clusterServiceShapshotEntity.setClusterServiceEntity(clusterServiceEntity);
-                }
-                clusterServiceSnapshotDao.save(clusterServiceShapshotEntity);
-            });
+               ClusterShapshotEntity clusterShapshotEntity = svTransfererManager.<ClusterHealthSummary, ClusterShapshotEntity> getTransferer(ClusterHealthSummary.class, ClusterShapshotEntity.class).transfer(clusterHealthSummary, ClusterShapshotEntity.class);
+               clusterShapshotEntity.setDateOfSnapshot(new Date());
+               Long clusterId = clusterEntity.getId();
+               clusterShapshotEntity.setId(null);
+               clusterShapshotEntity.setClusterEntity(clusterEntity);
+               clusterSnapshotDao.save(clusterShapshotEntity);
+               clusterHealthSummary.getServiceStatusList().forEach(serviceStatus -> {
+                   ClusterServiceEntity clusterServiceEntity = clusterServiceDao.findByClusterIdAndServiceType(clusterId, serviceStatus.getServiceType());
+                   ClusterServiceShapshotEntity clusterServiceShapshotEntity = svTransfererManager.<ServiceStatus, ClusterServiceShapshotEntity> getTransferer(ServiceStatus.class, ClusterServiceShapshotEntity.class).transfer(serviceStatus, ClusterServiceShapshotEntity.class);
+                   clusterServiceShapshotEntity.setClusterShapshotEntity(clusterShapshotEntity);
+                   if (clusterServiceEntity == null) {
+                       ClusterServiceEntity clusterServiceEntity1 = clusterServiceShapshotEntity.getClusterServiceEntity();
+                       clusterServiceEntity1.setClusterEntity(clusterEntity);
+                       clusterServiceDao.save(clusterServiceEntity1);
+                   } else {
+                       clusterServiceShapshotEntity.setClusterServiceEntity(clusterServiceEntity);
+                   }
+                   clusterServiceSnapshotDao.save(clusterServiceShapshotEntity);
+               });
+           }
+           catch ( InvalidResponseException e) {
+               logger.error( e.getMessage() );
+           }
         });
     }
 }

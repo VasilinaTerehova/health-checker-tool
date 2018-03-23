@@ -1,11 +1,16 @@
 package com.epam.health.tool.controller.cluster;
 
 import com.epam.facade.model.ClusterHealthSummary;
+import com.epam.health.tool.exception.RetrievingObjectException;
 import com.epam.health.tool.facade.cluster.IClusterFacade;
 import com.epam.health.tool.facade.cluster.IClusterSnapshotFacade;
+import com.epam.health.tool.facade.exception.ImplementationNotResolvedException;
+import com.epam.health.tool.facade.exception.InvalidResponseException;
 import com.epam.health.tool.facade.resolver.IFacadeImplResolver;
 import com.epam.health.tool.model.ClusterShapshotEntity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,8 +25,12 @@ public class ClusterHealthCheckController {
 
     @CrossOrigin( origins = "http://localhost:4200" )
     @RequestMapping( "/getClusterStatus" )
-    public ClusterHealthSummary getClusterStatus(@RequestParam( "clusterName" ) String clusterName ) {
-        return clusterSnapshotFacadeIFacadeImplResolver.resolveFacadeImpl( clusterFacade.getCluster( clusterName ).getClusterType().name() ) //Should be changed
-                .askForCurrentClusterSnapshot( clusterName );
+    public ResponseEntity<ClusterHealthSummary> getClusterStatus(@RequestParam( "clusterName" ) String clusterName ) {
+        try {
+            return ResponseEntity.ok( clusterSnapshotFacadeIFacadeImplResolver.resolveFacadeImpl( clusterFacade.getCluster( clusterName ).getClusterType().name() ) //Should be changed
+                    .askForCurrentClusterSnapshot( clusterName ) );
+        } catch (InvalidResponseException | ImplementationNotResolvedException e) {
+            throw new RetrievingObjectException( e );
+        }
     }
 }

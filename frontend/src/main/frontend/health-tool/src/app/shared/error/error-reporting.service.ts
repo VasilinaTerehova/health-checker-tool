@@ -20,7 +20,7 @@ export class ErrorReportingService {
   }
 
   reportHttpError( error: HttpErrorResponse ) {
-    if ( error.error instanceof ErrorEvent ) {
+    if ( error.error && error.error.message ) {
       this.errorMessage.next( new ErrorAlert( error.error.message, AlertType.DANGER ) );
     }
     else {

@@ -1,7 +1,7 @@
 package com.epam.health.tool.controller.cluster;
 
 import com.epam.facade.model.projection.ClusterEntityProjection;
-import com.epam.facade.model.projection.impl.ClusterEntityProjectionImpl;
+import com.epam.health.tool.controller.wrapper.ResponseBodyEntityWrapper;
 import com.epam.health.tool.facade.cluster.IClusterFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -23,15 +23,14 @@ public class ClusterController {
 
     @CrossOrigin( origins = "http://localhost:4200" )
     @PostMapping( "/cluster" )
-    public ClusterEntityProjection updateCluster(@RequestBody Wrapper wrapper) {
-        return clusterFacade.updateCluster( wrapper.getCluster() );
+    public ClusterEntityProjection updateCluster(@RequestBody ResponseBodyEntityWrapper responseBodyEntityWrapper) {
+        return clusterFacade.updateCluster( responseBodyEntityWrapper.getCluster() );
     }
 
     @CrossOrigin( origins = "http://localhost:4200" )
     @PutMapping( value = "/cluster", consumes = MediaType.APPLICATION_JSON_VALUE )
-    public ClusterEntityProjection saveCluster(@RequestBody Wrapper wrapper) {
-        return clusterFacade.saveCluster( wrapper.getCluster() );
-//        return null;
+    public ClusterEntityProjection saveCluster(@RequestBody ResponseBodyEntityWrapper responseBodyEntityWrapper) {
+        return clusterFacade.saveCluster( responseBodyEntityWrapper.getCluster() );
     }
 
     @CrossOrigin( origins = "http://localhost:4200" )

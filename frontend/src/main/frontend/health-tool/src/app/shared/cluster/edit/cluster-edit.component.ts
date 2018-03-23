@@ -42,12 +42,14 @@ export class ClusterEditComponent implements OnInit {
     this.bsModalRef.hide();
   }
 
-  saveChanges() {
-    if ( this.isChangesDetected() && this.changedCluster ) {
-      this.changedCluster.next( this.tempCluster );
-    }
+  saveChanges( isValid: boolean ) {
+    if ( isValid ) {
+      if ( this.isChangesDetected() && this.changedCluster ) {
+        this.changedCluster.next( this.tempCluster );
+      }
 
-    this.bsModalRef.hide();
+      this.bsModalRef.hide();  
+    }
   }
 
   private isChangesDetected(): boolean {

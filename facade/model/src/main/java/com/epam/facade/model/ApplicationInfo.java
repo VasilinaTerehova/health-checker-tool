@@ -1,4 +1,4 @@
-package com.epam.health.tool.facade.application;
+package com.epam.facade.model;
 
 import java.util.Date;
 

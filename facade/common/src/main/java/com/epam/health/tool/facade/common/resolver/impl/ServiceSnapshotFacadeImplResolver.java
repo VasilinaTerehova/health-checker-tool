@@ -1,9 +1,8 @@
 package com.epam.health.tool.facade.common.resolver.impl;
 
+import com.epam.health.tool.facade.exception.ImplementationNotResolvedException;
 import com.epam.health.tool.facade.resolver.IFacadeImplResolver;
-import com.epam.health.tool.facade.common.resolver.ImplementationNotResolvedException;
 import com.epam.health.tool.facade.service.IServiceSnapshotFacade;
-import com.epam.health.tool.model.ClusterServiceShapshotEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,17 +14,9 @@ public class ServiceSnapshotFacadeImplResolver implements IFacadeImplResolver<IS
     private Map<String, IServiceSnapshotFacade> serviceSnapshotFacadeMap;
 
     @Override
-    public IServiceSnapshotFacade resolveFacadeImpl(String clusterType) {
-        return serviceSnapshotFacadeMap.getOrDefault(clusterType, new IServiceSnapshotFacade() {
-            @Override
-            public ClusterServiceShapshotEntity getLastServiceSnapshot(String clusterName, String serviceName) {
-                throw new ImplementationNotResolvedException();
-            }
-
-            @Override
-            public ClusterServiceShapshotEntity askForCurrentServiceSnapshot(String clusterName, String serviceName) {
-                throw new ImplementationNotResolvedException();
-            }
-        });
+    public IServiceSnapshotFacade resolveFacadeImpl(String clusterType) throws ImplementationNotResolvedException {
+        return serviceSnapshotFacadeMap.entrySet().stream().filter( entry -> entry.getKey().contains( clusterType ) )
+                .map(Map.Entry::getValue ).findFirst()
+                .orElseThrow(() -> new ImplementationNotResolvedException( "Can't find implementation for + " + clusterType ));
     }
 }

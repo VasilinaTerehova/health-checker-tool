@@ -1,7 +1,6 @@
 package com.epam.util.common.json;
 
 import com.epam.util.common.CommonUtilException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -30,12 +29,11 @@ public class CommonJsonHandler {
         }
     }
 
-    public <T> T getTypedValueFromField( String jsonString, String fieldName ) throws CommonUtilException {
+    public <T> T getTypedValueFromField( String jsonString, String fieldName, Class<T> valueType ) throws CommonUtilException {
         try {
-            JsonNode orderNode = objectMapper.readTree( jsonString );
-            JsonNode source = orderNode.get( fieldName );
+            JsonNode source = extractJsonNode( jsonString, fieldName );
 
-            return objectMapper.readValue(source.toString(), new TypeReference<T>() {});
+            return source != null ? objectMapper.readValue(source.toString(), valueType) : null;
         }
         catch ( IOException ex ){
             throw new CommonUtilException( ex );
@@ -45,10 +43,9 @@ public class CommonJsonHandler {
     public <T> List<T> getListTypedValueFromField( String jsonString, String fieldName, Class<T> valueType ) throws CommonUtilException {
         try {
             List<T> result = new ArrayList<>();
-            JsonNode orderNode = objectMapper.readTree( jsonString );
-            JsonNode source = orderNode.get( fieldName );
+            JsonNode source = extractJsonNode( jsonString, fieldName );
 
-            if ( source.isArray() ) {
+            if ( source != null && source.isArray() ) {
                 Iterator iterator = source.elements();
                 while ( iterator.hasNext() ) {
                     T typedValue = getTypedValue( iterator.next().toString(), valueType );
@@ -63,5 +60,11 @@ public class CommonJsonHandler {
         catch ( IOException ex ){
             throw new CommonUtilException( ex );
         }
+    }
+
+    private JsonNode extractJsonNode( String jsonString, String fieldName ) throws IOException {
+        JsonNode orderNode = objectMapper.readTree( jsonString );
+
+        return orderNode != null ? orderNode.get( fieldName ) : null;
     }
 }

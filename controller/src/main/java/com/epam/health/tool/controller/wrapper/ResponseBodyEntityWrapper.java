@@ -1,8 +1,8 @@
-package com.epam.health.tool.controller.cluster;
+package com.epam.health.tool.controller.wrapper;
 
 import com.epam.facade.model.projection.impl.ClusterEntityProjectionImpl;
 
-public class Wrapper {
+public class ResponseBodyEntityWrapper {
     private ClusterEntityProjectionImpl cluster;
 
     public ClusterEntityProjectionImpl getCluster() {
