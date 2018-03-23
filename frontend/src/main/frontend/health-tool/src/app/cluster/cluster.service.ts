@@ -9,7 +9,7 @@ export class ClusterService {
   constructor(private http: HttpClient) {  }
 
   getClusters() {
-    return this.http.get<Array<Cluster>>("http://localhost:8888/clusters");
+    return this.http.get<Array<Cluster>>("http://localhost:8889/clusters");
   }
 
   getClusterState( clusterName: string ) {

@@ -16,7 +16,7 @@ import java.util.List;
  */
 @Repository
 public interface ClusterServiceSnapshotDao extends CrudRepository<ClusterServiceShapshotEntity, Long> {
-    @Query("select cse.clusterEntity from #{#entityName} c left join c.clusterServiceEntity cse left join c.clusterShapshotEntity csne on csne.clusterEntity.id=cse.clusterEntity.id " +
-            " group by cse.clusterEntity.id having max(csne.dateOfSnapshot)<?1 or max(csne.dateOfSnapshot) is null")
+    @Query("select ce from ClusterEntity ce left join ClusterShapshotEntity cse on cse.clusterEntity.id=ce.id " +
+            " group by ce.id having max(cse.dateOfSnapshot)<?1 or count(cse)=0")
     List<ClusterEntity> findClustersForSnapshot(Date lastHourCheck);
 }

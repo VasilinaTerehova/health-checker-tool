@@ -20,12 +20,6 @@
     </modules>
 
     <dependencies>
-        <!--Spring-->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <version>${org.springframework.version}</version>
-        </dependency>
         <!--Util-->
         <dependency>
             <groupId>com.epam</groupId>
@@ -37,6 +31,11 @@
             <groupId>com.epam</groupId>
             <artifactId>health-checker-tool-repository-model</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <!--Spring-->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
         </dependency>
     </dependencies>
 </project>

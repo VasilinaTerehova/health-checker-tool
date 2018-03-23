@@ -23,5 +23,10 @@
             <artifactId>health-checker-tool-repository-dao</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.epam</groupId>
+            <artifactId>health-checker-tool-transfer-impl</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 </project>

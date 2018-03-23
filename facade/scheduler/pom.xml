@@ -19,12 +19,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.quartz-scheduler</groupId>
-            <artifactId>quartz</artifactId>
-            <version>2.1.7</version>
-        </dependency>
-
-        <dependency>
             <groupId>com.epam</groupId>
             <artifactId>health-checker-tool-repository-dao</artifactId>
             <version>0.0.1-SNAPSHOT</version>
@@ -32,6 +26,11 @@
         <dependency>
             <groupId>com.epam</groupId>
             <artifactId>health-checker-tool-facade-api</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.epam</groupId>
+            <artifactId>health-checker-tool-transfer-impl</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
