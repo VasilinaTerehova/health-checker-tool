@@ -20,7 +20,6 @@
         <dependency>
             <groupId>com.jcraft</groupId>
             <artifactId>jsch</artifactId>
-            <version>${com.jcraft.version}</version>
         </dependency>
     </dependencies>
 </project>
