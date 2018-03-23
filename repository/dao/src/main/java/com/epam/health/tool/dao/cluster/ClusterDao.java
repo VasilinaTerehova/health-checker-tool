@@ -1,6 +1,7 @@
 package com.epam.health.tool.dao.cluster;
 
 import com.epam.facade.model.projection.ClusterEntityProjection;
+import com.epam.facade.model.projection.ClusterIdsProjection;
 import com.epam.health.tool.model.ClusterEntity;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -16,4 +17,9 @@ public interface ClusterDao extends CrudRepository<ClusterEntity, Long> {
     @Query("select c from #{#entityName} c")
     List<ClusterEntityProjection> findAllProjections();
     ClusterEntityProjection findByClusterName( String clusterName );
+    @Query("select c from #{#entityName} c where c.clusterName = ?1")
+    ClusterIdsProjection findIdsByClusterName(String clusterName );
+    @Query("select c from #{#entityName} c where c.id = ?1")
+    ClusterIdsProjection findIdsByClusterId( Long id );
+    void deleteByClusterName( String clusterName );
 }

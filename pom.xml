@@ -78,6 +78,20 @@
             </modules>
         </profile>
         <profile>
+            <id>no-controller-and-frontend</id>
+            <activation>
+                <property>
+                    <name>develop</name>
+                </property>
+            </activation>
+            <modules>
+                <module>facade</module>
+                <module>repository</module>
+                <module>transfer</module>
+                <module>util</module>
+            </modules>
+        </profile>
+        <profile>
             <id>all</id>
             <modules>
                 <module>frontend</module>

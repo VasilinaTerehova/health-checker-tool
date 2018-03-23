@@ -1,7 +1,7 @@
 <div class="container" *ngIf="isErrorPresent()">
   <div *ngFor="let alert of errorAlerts">
     <alert [type]="alert.type" [dismissible]="true" (onClosed)="onAlertClosed(alert)">
-      <strong>{{ 'home.label.common.danger' | translate }}</strong> {{ alert.message }}
+      <strong>{{ alert.type.toUpperCase() }}!</strong> {{ alert.message }}
     </alert>
   </div>
 </div>

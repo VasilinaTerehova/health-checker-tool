@@ -1,5 +1,5 @@
-export class ErrorAlert {
-  type: string = "danger";
+import { AlertType } from './alert-type.model';
 
-  constructor( public message: string ) {}
+export class ErrorAlert {
+  constructor( public message: string, public type: AlertType ) {}
 }

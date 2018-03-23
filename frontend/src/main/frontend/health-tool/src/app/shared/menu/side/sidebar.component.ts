@@ -10,6 +10,8 @@ import { ClusterService } from '../../../cluster/cluster.service';
 import { RouteService } from './route.service';
 import { ErrorReportingService } from '../../error/error-reporting.service';
 import { ClusterEditComponent } from '../../cluster/edit/cluster-edit.component';
+import { ErrorAlert } from '../../error/error-alert.model';
+import { AlertType } from '../..//error/alert-type.model';
 
 @Component({
   selector: 'sidebar',
@@ -46,27 +48,36 @@ export class SideBarComponent implements OnInit{
 
   deleteCluster( clusterName: string ) {
     this.clusterService.deleteCluster( clusterName ).subscribe(
-      data => console.log( data ),
+      data => {
+        this.clusters = this.clusters.filter( item => item.name != clusterName );
+        this.errorReportingService.reportError( new ErrorAlert( "Cluster " + clusterName + " successfully deleted!", AlertType.SUCCESS ) );
+      },
       error => this.errorReportingService.reportHttpError( error )
     )
   }
 
   private saveClusterAction( cluster: Cluster ) {
     this.clusterService.saveCluster( cluster ).subscribe(
-      result => this.addClusterToList( result ),
+      result => {
+        this.addClusterToList( result );
+        this.errorReportingService.reportError( new ErrorAlert( "Cluster " + result.name + " successfully added!", AlertType.SUCCESS ) );
+      },
       error => this.errorReportingService.reportHttpError( error )
     );
   }
 
   private updateClusterAction( cluster: Cluster ) {
     this.clusterService.updateCluster( cluster ).subscribe(
-      result => this.addClusterToList( result ),
+      result => {
+        this.addClusterToList( result );
+        this.errorReportingService.reportError( new ErrorAlert( "Cluster " + result.name + " successfully updated!", AlertType.SUCCESS ) );
+      },
       error => this.errorReportingService.reportHttpError( error )
     );
   }
 
   private addClusterToList( cluster: Cluster ) {
-    this.clusters = this.clusters.filter( item => item.name != cluster.name );
+    this.clusters = this.clusters.filter( item => item.id != cluster.id );
     this.clusters.push( cluster );
   }
 

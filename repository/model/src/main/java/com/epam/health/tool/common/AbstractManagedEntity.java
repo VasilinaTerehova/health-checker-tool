@@ -6,10 +6,7 @@
  */
 package com.epam.health.tool.common;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.*;
 
 /**
  * Abstract baseclass for all managed entities which using database generated identifier
@@ -20,7 +17,7 @@ import javax.persistence.MappedSuperclass;
 public abstract class AbstractManagedEntity extends AbstractEntity<Long> {
 
   @Id
-  @GeneratedValue
+  @GeneratedValue( strategy = GenerationType.IDENTITY)
   @Column(name = COLUMN_ID)
   private Long id;
 
@@ -38,6 +35,10 @@ public abstract class AbstractManagedEntity extends AbstractEntity<Long> {
    */
   public Long getId() {
     return this.id;
+  }
+
+  public void setId( Long id ) {
+    this.id = id;
   }
 
   @Override

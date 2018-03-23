@@ -15,7 +15,7 @@ export class ErrorReportingComponent implements OnDestroy, OnInit {
 
   constructor( private errorReportingService: ErrorReportingService ) {
     this.errorMessageSub = errorReportingService.errorMessage$.subscribe(
-      errorMessage => this.errorAlerts.push( new ErrorAlert( errorMessage ) )
+      errorMessage => this.errorAlerts.push( errorMessage )
     );
     this.clearErrorSub = errorReportingService.isClearError$.subscribe(
       isClearError => this.clearAlertArray()

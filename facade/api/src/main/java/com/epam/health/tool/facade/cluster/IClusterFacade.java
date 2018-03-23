@@ -7,7 +7,7 @@ import java.util.List;
 public interface IClusterFacade {
     List<ClusterEntityProjection> getClusterList();
     ClusterEntityProjection getCluster( String name );
-    void saveCluster( String name );
-    void updateCluster( String name );
+    ClusterEntityProjection saveCluster( ClusterEntityProjection clusterEntityProjection );
+    ClusterEntityProjection updateCluster( ClusterEntityProjection clusterEntityProjection );
     void deleteCluster( String name );
 }

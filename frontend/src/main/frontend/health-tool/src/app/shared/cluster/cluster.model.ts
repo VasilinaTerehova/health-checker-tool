@@ -5,7 +5,7 @@ export class Cluster {
   name: string = "";
   clusterType: string = "";
   host: string = "";
-  secured: boolean;
+  secured: boolean = false;
   http: Credentials = new Credentials();
   ssh: Credentials = new Credentials();
   kerberos: Credentials = new Credentials();

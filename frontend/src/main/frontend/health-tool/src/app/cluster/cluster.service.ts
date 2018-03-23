@@ -17,7 +17,7 @@ export class ClusterService {
   }
 
   updateCluster( cluster: Cluster ) {
-    return this.http.post<Cluster>("http://localhost:8888/cluster", { params: { "cluster": cluster } })
+    return this.http.post<Cluster>("http://localhost:8888/cluster", { "cluster": cluster } )
   }
 
   deleteCluster( clusterName: string ) {
@@ -25,6 +25,6 @@ export class ClusterService {
   }
 
   saveCluster( cluster: Cluster ) {
-    return this.http.put<Cluster>("http://localhost:8888/cluster", { params: { "cluster": cluster } })
+    return this.http.put<Cluster>("http://localhost:8888/cluster", { "cluster": cluster } )
   }
 }

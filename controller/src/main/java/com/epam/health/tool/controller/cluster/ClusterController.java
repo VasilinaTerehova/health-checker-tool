@@ -1,11 +1,12 @@
 package com.epam.health.tool.controller.cluster;
 
 import com.epam.facade.model.projection.ClusterEntityProjection;
+import com.epam.facade.model.projection.impl.ClusterEntityProjectionImpl;
 import com.epam.health.tool.facade.cluster.IClusterFacade;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -18,5 +19,26 @@ public class ClusterController {
     @GetMapping("/clusters")
     public List<ClusterEntityProjection> getClusterList() {
         return clusterFacade.getClusterList();
+    }
+
+    @CrossOrigin( origins = "http://localhost:4200" )
+    @PostMapping( "/cluster" )
+    public ClusterEntityProjection updateCluster(@RequestBody Wrapper wrapper) {
+        return clusterFacade.updateCluster( wrapper.getCluster() );
+    }
+
+    @CrossOrigin( origins = "http://localhost:4200" )
+    @PutMapping( value = "/cluster", consumes = MediaType.APPLICATION_JSON_VALUE )
+    public ClusterEntityProjection saveCluster(@RequestBody Wrapper wrapper) {
+        return clusterFacade.saveCluster( wrapper.getCluster() );
+//        return null;
+    }
+
+    @CrossOrigin( origins = "http://localhost:4200" )
+    @DeleteMapping( "/cluster" )
+    public ResponseEntity<Void> deleteCluster(@RequestParam( "clusterName" ) String clusterName) {
+        clusterFacade.deleteCluster( clusterName );
+
+        return ResponseEntity.noContent().build();
     }
 }
