@@ -17,6 +17,9 @@
             <tab heading="{{ 'home.label.service.yarn.app.list' | translate }}">
               <yarn-application-list (onYarnAppsChange)="onYarnAppsCountChange($event)"></yarn-application-list>
             </tab>
+            <tab heading="{{ 'home.label.cluster.snapshots' | translate }}">
+              <service-status-history></service-status-history>
+            </tab>
           </tabset>
         </div>
     </div>

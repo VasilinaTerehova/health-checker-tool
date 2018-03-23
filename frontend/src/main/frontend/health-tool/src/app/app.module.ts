@@ -30,6 +30,8 @@ import { ClusterTypeExService } from './shared/cluster/cluster-type-ex.service';
 import { ClusterComparatorService } from './shared/cluster/cluster-comparator.service';
 //Routing
 import { routing } from './app-routing.module';
+import {ServiceListHistoryComponent} from "./service/service-status-history/service-status-history.component";
+import {ServiceListStaticComponent} from "./service/list/service-list-static.component";
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -38,7 +40,7 @@ export function createTranslateLoader(http: HttpClient) {
 @NgModule({
   declarations: [
     AppComponent, TopMenuComponent, SideBarComponent, HomeComponent, ClusterListSearchByNamePipe, ClusterComponent, ErrorReportingComponent, YarnApplicationListComponent,
-    ServiceListComponent, ClusterEditComponent
+    ServiceListComponent, ServiceListStaticComponent, ServiceListHistoryComponent, ClusterEditComponent
   ],
   entryComponents: [ ClusterEditComponent ],
   imports: [

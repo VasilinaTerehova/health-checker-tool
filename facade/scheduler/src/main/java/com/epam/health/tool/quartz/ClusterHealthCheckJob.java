@@ -1,6 +1,7 @@
 package com.epam.health.tool.quartz;
 
 import com.epam.health.tool.facade.cluster.IClusterFacade;
+import com.epam.health.tool.facade.cluster.IClusterSnapshotFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +22,11 @@ public class ClusterHealthCheckJob {
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 
     @Autowired
-    IClusterFacade clusterFacade;
+    IClusterSnapshotFacade clusterSnapshotFacade;
 
     @Scheduled(fixedDelay = 30 * 60 * 1000)
     public void reportCurrentTime() {
         log.info("The time is now {}", dateFormat.format(new Date()));
-        clusterFacade.checkClustersHealth();
+        clusterSnapshotFacade.checkClustersHealth();
     }
 }

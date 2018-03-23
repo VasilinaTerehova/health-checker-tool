@@ -8,6 +8,6 @@ export class YarnApplicationService {
   constructor( private http: HttpClient ) {  }
 
   getYarnApps( clusterName: string ) {
-    return this.http.get<Array<YarnApplication>>( "/getApplicationList", { params: { "clusterName": clusterName } } )
+    return this.http.get<Array<YarnApplication>>( "http://localhost:8888/getApplicationList", { params: { "clusterName": clusterName } } )
   }
 }

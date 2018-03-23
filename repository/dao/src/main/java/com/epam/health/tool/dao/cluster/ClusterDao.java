@@ -16,7 +16,8 @@ import java.util.List;
 public interface ClusterDao extends CrudRepository<ClusterEntity, Long> {
     @Query("select c from #{#entityName} c")
     List<ClusterEntityProjection> findAllProjections();
-    ClusterEntityProjection findByClusterName( String clusterName );
+    ClusterEntityProjection findProjectionByClusterName(String clusterName );
+    ClusterEntity findByClusterName( String clusterName );
     @Query("select c from #{#entityName} c where c.clusterName = ?1")
     ClusterIdsProjection findIdsByClusterName(String clusterName );
     @Query("select c from #{#entityName} c where c.id = ?1")
