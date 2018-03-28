@@ -10,5 +10,4 @@ public interface IClusterFacade {
     ClusterEntityProjection saveCluster( ClusterEntityProjection clusterEntityProjection );
     ClusterEntityProjection updateCluster( ClusterEntityProjection clusterEntityProjection );
     void deleteCluster( String name );
-    void checkClustersHealth();
 }

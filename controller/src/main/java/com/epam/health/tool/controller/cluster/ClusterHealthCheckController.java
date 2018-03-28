@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 public class ClusterHealthCheckController {
     @Autowired
@@ -28,7 +30,18 @@ public class ClusterHealthCheckController {
     public ResponseEntity<ClusterHealthSummary> getClusterStatus(@RequestParam( "clusterName" ) String clusterName ) {
         try {
             return ResponseEntity.ok( clusterSnapshotFacadeIFacadeImplResolver.resolveFacadeImpl( clusterFacade.getCluster( clusterName ).getClusterType().name() ) //Should be changed
-                    .askForCurrentClusterSnapshot( clusterName ) );
+                    .getLastClusterSnapshot( clusterName ) );
+        } catch (ImplementationNotResolvedException e) {
+            throw new RetrievingObjectException( e );
+        }
+    }
+
+    @CrossOrigin( origins = "http://localhost:4200" )
+    @RequestMapping( "/getClusterStatusHistory" )
+    public ResponseEntity<List<ClusterHealthSummary>> getClusterStatusHistory(@RequestParam( "clusterName" ) String clusterName ) {
+        try {
+            return ResponseEntity.ok( clusterSnapshotFacadeIFacadeImplResolver.resolveFacadeImpl( clusterFacade.getCluster( clusterName ).getClusterType().name() ) //Should be changed
+                    .getClusterSnapshotHistory( clusterName ) );
         } catch (InvalidResponseException | ImplementationNotResolvedException e) {
             throw new RetrievingObjectException( e );
         }

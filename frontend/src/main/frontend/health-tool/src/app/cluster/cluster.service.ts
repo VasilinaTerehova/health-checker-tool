@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 
 import { Cluster } from '../shared/cluster/cluster.model';
 import { ClusterState } from './cluster-state.model';
+import {ClusterStateHistory} from "./cluster-history-state.model";
 
 @Injectable()
 export class ClusterService {
@@ -14,6 +15,10 @@ export class ClusterService {
 
   getClusterState( clusterName: string ) {
     return this.http.get<ClusterState>("http://localhost:8888/getClusterStatus", { params: { "clusterName": clusterName } });
+  }
+
+  getClusterStateHistory( clusterName: string ) {
+    return this.http.get<Array<ClusterState>>("http://localhost:8888/getClusterStatusHistory", { params: { "clusterName": clusterName } });
   }
 
   updateCluster( cluster: Cluster ) {

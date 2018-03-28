@@ -1,6 +1,7 @@
 package com.epam.health.tool.dao.cluster;
 
 import com.epam.facade.model.projection.ClusterEntityProjection;
+import com.epam.facade.model.projection.ServiceStatusProjection;
 import com.epam.health.tool.model.ClusterEntity;
 import com.epam.health.tool.model.ClusterServiceShapshotEntity;
 import com.epam.health.tool.model.ClusterShapshotEntity;
@@ -19,4 +20,7 @@ public interface ClusterServiceSnapshotDao extends CrudRepository<ClusterService
     @Query("select ce from ClusterEntity ce left join ClusterShapshotEntity cse on cse.clusterEntity.id=ce.id " +
             " group by ce.id having max(cse.dateOfSnapshot)<?1 or count(cse)=0")
     List<ClusterEntity> findClustersForSnapshot(Date lastHourCheck);
+
+    @Query("select csse from ClusterServiceShapshotEntity csse left join csse.clusterShapshotEntity cse left join csse.clusterServiceEntity csere where cse.id=?1")
+    List<ServiceStatusProjection> findServiceProjectionsBy(Long clusterSnapshotId);
 }

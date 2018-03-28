@@ -1,0 +1,22 @@
+<div class="table-responsive" style="margin-top: 1%">
+    <table class="table table-hover">
+        <thead class="thead-inverse">
+        <tr>
+            <th>{{ 'home.label.cluster.service' | translate }}</th>
+            <th>{{ 'home.label.cluster.state' | translate }}</th>
+            <th>{{ 'home.label.cluster.logs' | translate }}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let x of clusterState.serviceStatusList">
+            <td>{{x.displayName}}</td>
+            <td colspan="2" class="bg-success" *ngIf="x.healthSummary=='GOOD'">{{x.healthSummary}}</td>
+            <td colspan="2" class="bg-primary" *ngIf="x.healthSummary=='CONCERNING'">{{x.healthSummary}}</td>
+            <td class="bg-danger" *ngIf="x.healthSummary=='BAD'">{{x.healthSummary}}</td>
+            <td class="bg-danger" *ngIf="x.healthSummary=='BAD'">{{ 'home.label.cluster.host' | translate }}: {{clusterState.cluster.host}}, {{ 'home.label.cluster.path' | translate }}: /yarn/containers-logs</td>
+            <td class="bg-warning" *ngIf="x.healthSummary=='DISABLED'">{{x.healthSummary}}</td>
+            <td class="bg-warning" *ngIf="x.healthSummary=='DISABLED'">{{ 'home.label.cluster.host' | translate }}: {{clusterState.cluster.host}}, {{ 'home.label.cluster.path' | translate }}: /yarn/containers-logs</td>
+        </tr>
+        </tbody>
+    </table>
+</div>

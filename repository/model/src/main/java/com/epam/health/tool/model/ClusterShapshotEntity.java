@@ -5,6 +5,8 @@ import com.epam.health.tool.common.AbstractManagedEntity;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 import static com.epam.health.tool.common.AbstractEntity.DELIMITER_INDEX;
 
@@ -33,6 +35,9 @@ public class ClusterShapshotEntity extends AbstractManagedEntity {
 
     @Column(name = COLUMN_COUNT_OF_RUNNING_APPS)
     private long countOfRunningApps;
+
+    @OneToMany(mappedBy = "clusterShapshotEntity", fetch = FetchType.EAGER)
+    private Set<ClusterServiceShapshotEntity> clusterServiceShapshotEntityList;
 
     public Date getDateOfSnapshot() {
         return dateOfSnapshot;
@@ -64,5 +69,13 @@ public class ClusterShapshotEntity extends AbstractManagedEntity {
 
     public void setCountOfRunningApps(long countOfRunningApps) {
         this.countOfRunningApps = countOfRunningApps;
+    }
+
+    public Set<ClusterServiceShapshotEntity> getClusterServiceShapshotEntityList() {
+        return clusterServiceShapshotEntityList;
+    }
+
+    public void setClusterServiceShapshotEntityList(Set<ClusterServiceShapshotEntity> clusterServiceShapshotEntityList) {
+        this.clusterServiceShapshotEntityList = clusterServiceShapshotEntityList;
     }
 }

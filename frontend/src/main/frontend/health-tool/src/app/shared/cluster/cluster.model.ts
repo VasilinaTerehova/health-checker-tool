@@ -5,6 +5,7 @@ export class Cluster {
   name: string = "";
   clusterType: string = "";
   host: string = "";
+  dateOfSnapshot:Date = null;
   secured: boolean = false;
   http: Credentials = new Credentials();
   ssh: Credentials = new Credentials();

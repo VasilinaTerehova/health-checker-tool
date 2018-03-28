@@ -14,6 +14,7 @@
         "check": "Check health",
         "list": "Cluster list",
         "clusters": "Clusters",
+        "snapshots": "Health history",
         "name": "Cluster name",
         "host": "Cluster host",
         "password": "Rest password",
