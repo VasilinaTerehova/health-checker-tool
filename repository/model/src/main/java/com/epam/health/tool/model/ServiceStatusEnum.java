@@ -6,7 +6,9 @@ package com.epam.health.tool.model;
 public enum ServiceStatusEnum {
     GOOD("ok", "ok"),
     BAD("bad", "bad"),
-    CONCERNING("avg", "concerning");
+    CONCERNING("avg", "concerning"),
+    STARTED("STARTED", "STARTED"),
+    INSTALLED("INSTALLED", "INSTALLED");
 
     String code;
     String title;

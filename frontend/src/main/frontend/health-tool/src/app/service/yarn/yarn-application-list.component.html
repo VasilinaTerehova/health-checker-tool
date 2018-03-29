@@ -14,7 +14,7 @@
             <tr *ngFor="let x of yarnApps">
                 <td>{{x.applicationId}}</td>
                 <td>{{x.name}}</td>
-                <td>{{x.startTime}}</td>
+                <td>{{x.startTime | date: "MM/dd/yyyy hh:mm:ss"}}</td>
                 <td class="bg-success" *ngIf="x.state=='SUCCEEDED'">{{x.state}}</td>
                 <td class="bg-danger" *ngIf="x.state=='FAILED'">{{x.state}}</td>
                 <td class="bg-info" *ngIf="x.state!='SUCCEEDED' && x.state!='FAILED'">{{x.state}}</td>

@@ -27,7 +27,7 @@ public class ApplicationFacadeImpl implements IApplicationFacade {
                     .withUsername( clusterEntity.getHttp().getUsername() )
                     .withPassword( clusterEntity.getHttp().getPassword() )
                     .makeAuthenticatedRequest( url );
-            List<ApplicationInfo> appList = CommonJsonHandler.get().getListTypedValueFromField( answer, "applications", ApplicationInfo.class );
+            List<ApplicationInfo> appList = CommonJsonHandler.get().getListTypedValueFromInnerField( answer, ApplicationInfo.class, "applications" );
 
             if ( appList != null ) {
                 return appList;

@@ -45,7 +45,7 @@ public abstract class CommonClusterSnapshotFacadeImpl implements IClusterSnapsho
     private Logger logger = Logger.getLogger(CommonClusterSnapshotFacadeImpl.class);
 
     @Autowired
-    private SVTransfererManager svTransfererManager;
+    protected SVTransfererManager svTransfererManager;
 
     @Autowired
     ClusterDao clusterDao;

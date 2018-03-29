@@ -35,7 +35,7 @@ public class ClusterSnapshotFacadeImpl extends CommonClusterSnapshotFacadeImpl {
 
     private List<ServiceStatus> extractFromJsonString(String jsonString) throws InvalidResponseException {
         try {
-            return CommonJsonHandler.get().getListTypedValueFromField(jsonString, "items", ServiceStatus.class);
+            return CommonJsonHandler.get().getListTypedValueFromInnerField(jsonString, ServiceStatus.class, "items");
         } catch (CommonUtilException e) {
             throw new InvalidResponseException("Can't extract application list from answer - " + jsonString, e);
         }

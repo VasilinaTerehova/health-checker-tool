@@ -1,5 +1,5 @@
 <div class="modal-body text-center">
-  <p *ngIf="!message">{{ 'home.label.shared.confirm.message.delete' | translate }} <span class="label label-warning" style="font-size: 15px">{{clusterName}}</span> {{ 'home.label.shared.confirm.message.question' | translate }}</p>
+  <p>{{ 'home.label.shared.confirm.message.delete' | translate }} <span class="label label-warning" style="font-size: 15px">{{clusterName}}</span> {{ 'home.label.shared.confirm.message.question' | translate }}</p>
   <button type="button" class="btn btn-danger" (click)="confirm()" >{{ 'home.label.shared.confirm.delete' | translate }}</button>
   <button type="button" class="btn btn-primary" (click)="decline()" >{{ 'home.label.shared.confirm.no' | translate }}</button>
 </div>

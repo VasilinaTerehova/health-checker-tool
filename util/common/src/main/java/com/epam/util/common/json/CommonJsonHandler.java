@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -29,9 +30,12 @@ public class CommonJsonHandler {
         }
     }
 
-    public <T> T getTypedValueFromField( String jsonString, String fieldName, Class<T> valueType ) throws CommonUtilException {
+    public <T> T getTypedValueFromInnerField( String jsonString, Class<T> valueType, String... fieldNameChain ) throws CommonUtilException {
         try {
-            JsonNode source = extractJsonNode( jsonString, fieldName );
+            JsonNode source = extractJsonNode( jsonString );
+            for ( String fieldName : fieldNameChain ) {
+                source = extractChildJsonNode( source, fieldName );
+            }
 
             return source != null ? objectMapper.readValue(source.toString(), valueType) : null;
         }
@@ -40,10 +44,13 @@ public class CommonJsonHandler {
         }
     }
 
-    public <T> List<T> getListTypedValueFromField( String jsonString, String fieldName, Class<T> valueType ) throws CommonUtilException {
+    public <T> List<T> getListTypedValueFromInnerField( String jsonString, Class<T> valueType, String... fieldNameChain ) throws CommonUtilException {
         try {
             List<T> result = new ArrayList<>();
-            JsonNode source = extractJsonNode( jsonString, fieldName );
+            JsonNode source = extractJsonNode( jsonString );
+            for ( String fieldName : fieldNameChain ) {
+                source = extractChildJsonNode( source, fieldName );
+            }
 
             if ( source != null && source.isArray() ) {
                 Iterator iterator = source.elements();
@@ -62,9 +69,21 @@ public class CommonJsonHandler {
         }
     }
 
-    private JsonNode extractJsonNode( String jsonString, String fieldName ) throws IOException {
-        JsonNode orderNode = objectMapper.readTree( jsonString );
+    private JsonNode extractJsonNode( String jsonString ) throws IOException {
+        return objectMapper.readTree( jsonString );
+    }
 
-        return orderNode != null ? orderNode.get( fieldName ) : null;
+    private JsonNode extractChildJsonNode( JsonNode jsonNode, String fieldName ) throws IOException {
+        if ( jsonNode != null && jsonNode.isArray() ) {
+            Iterator<JsonNode> iterator = jsonNode.elements();
+            while ( iterator.hasNext() ) {
+                JsonNode childJsonNode = iterator.next();
+                if ( childJsonNode.hasNonNull( fieldName ) ) {
+                    return childJsonNode.get( fieldName );
+                }
+            }
+        }
+
+        return jsonNode != null ? jsonNode.get( fieldName ) : null;
     }
 }
