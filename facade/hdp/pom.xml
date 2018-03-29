@@ -3,40 +3,24 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>health-checker-tool</artifactId>
+        <artifactId>health-checker-tool-facade</artifactId>
         <groupId>com.epam</groupId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>health-checker-tool-facade</artifactId>
-    <packaging>pom</packaging>
-    <modules>
-        <module>api</module>
-        <module>common</module>
-        <module>scheduler</module>
-        <module>cdh</module>
-        <module>model</module>
-        <module>hdp</module>
-    </modules>
+    <artifactId>health-checker-tool-facade-hdp</artifactId>
 
     <dependencies>
-        <!--Util-->
         <dependency>
             <groupId>com.epam</groupId>
-            <artifactId>health-checker-tool-util-http</artifactId>
+            <artifactId>health-checker-tool-facade-common</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!--Model-->
         <dependency>
             <groupId>com.epam</groupId>
-            <artifactId>health-checker-tool-repository-model</artifactId>
+            <artifactId>health-checker-tool-util-ssh</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <!--Spring-->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
         </dependency>
     </dependencies>
 </project>

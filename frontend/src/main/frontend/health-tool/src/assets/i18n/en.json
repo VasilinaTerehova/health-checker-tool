@@ -9,6 +9,18 @@
   },
   "home" : {
     "label": {
+      "shared": {
+        "confirm": {
+          "message": {
+            "confirm":  "Do you want to confirm?",
+            "delete": "Are you sure you want to delete",
+            "question": "?"
+          },
+          "yes": "Confirm",
+          "no": "Decline",
+          "delete": "Delete"
+        }
+      },
       "cluster": {
         "clusters": "Cluster list",
         "check": "Check health",
@@ -17,8 +29,8 @@
         "snapshots": "Health history",
         "name": "Cluster name",
         "host": "Cluster host",
-        "password": "Rest password",
-        "username": "Rest username",
+        "password": "Password",
+        "username": "Username",
         "result": "Health cluster result",
         "number": "Number",
         "action": "Action",

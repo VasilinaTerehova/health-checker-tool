@@ -16,20 +16,13 @@ export class ServiceListComponent implements OnInit, OnDestroy {
   private sub: Subscription;
   @Output() onClusterChange  = new EventEmitter<Cluster>();
   clusterState: ClusterState;
+  isAscSort: boolean = true;
 
   constructor( private clusterService: ClusterService, private route: ActivatedRoute,
     private errorReportingService: ErrorReportingService, private routeService: RouteService ) {
     this.sub = routeService.healthCheckMessage$.subscribe(
       clusterName => this.ascForClusterState( clusterName )
     );
-  }
-
-  isShowServiceActionAllow(name: string) {
-    return name && (name.toUpperCase() == "HBASE" || name.toUpperCase() == "HIVE");
-  }
-
-  restartService( serviceName: string ) {
-
   }
 
   ngOnInit() {
@@ -43,12 +36,30 @@ export class ServiceListComponent implements OnInit, OnDestroy {
     this.sub.unsubscribe();
   }
 
+  isShowServiceActionAllow(name: string) {
+    return name && (name.toUpperCase() == "HBASE" || name.toUpperCase() == "HIVE");
+  }
+
+  isShowLogsLocationAllow(state: string) {
+    return state && (state.toUpperCase() == "BAD" || state.toUpperCase() == "DISABLED");
+  }
+
+  restartService( serviceName: string ) {
+
+  }
+
+  changeSort() {
+    this.isAscSort = !this.isAscSort;
+  }
+
   private ascForClusterState( clusterName: string ) {
     this.errorReportingService.clearError();
     this.clusterService.getClusterState( clusterName ).subscribe(
       data => {
-        this.clusterState = data;
-        this.onClusterChange.emit( this.clusterState.cluster );
+        if ( data ) {
+          this.clusterState = data;
+          this.onClusterChange.emit( this.clusterState.cluster );
+        }
       },
       error => this.errorReportingService.reportHttpError( error )
     );

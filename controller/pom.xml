@@ -50,6 +50,11 @@
             <artifactId>health-checker-tool-facade-cdh</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.epam</groupId>
+            <artifactId>health-checker-tool-facade-hdp</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <!--Spring-->
         <dependency>
             <groupId>org.springframework.boot</groupId>

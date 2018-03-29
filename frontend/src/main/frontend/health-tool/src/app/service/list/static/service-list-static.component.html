@@ -2,25 +2,17 @@
     <table class="table table-hover">
         <thead class="thead-inverse">
         <tr>
-            <th (click)="changeSort()">
-              {{ 'home.label.cluster.service' | translate }}
-              <i class="glyphicon glyphicon-chevron-up pull-right" *ngIf="isAscSort"></i>
-              <i class="glyphicon glyphicon-chevron-down pull-right" *ngIf="!isAscSort"></i>
-            </th>
+            <th>{{ 'home.label.cluster.service' | translate }}</th>
             <th>{{ 'home.label.cluster.state' | translate }}</th>
             <th>{{ 'home.label.cluster.logs' | translate }}</th>
-            <th>{{ 'home.label.cluster.action' | translate }}</th>
         </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let x of clusterState?.serviceStatusList | serviceSortList : isAscSort">
+        <tr *ngFor="let x of clusterState?.serviceStatusList | serviceSortList">
             <td>{{x.displayName}}</td>
             <td service-table-row serviceState="{{x.healthSummary}}">{{x.healthSummary}}</td>
             <td service-table-row serviceState="{{x.healthSummary}}" *ngIf="isShowLogsLocationAllow(x.healthSummary)">
               {{ 'home.label.cluster.host' | translate }}: {{clusterState.cluster.host}}, {{ 'home.label.cluster.path' | translate }}: /yarn/containers-logs
-            </td>
-            <td *ngIf="isShowServiceActionAllow(x.displayName)" align="center">
-                <button type="button" style="text-decoration: underline" class="btn btn-primary" (click)="restartService(x.displayName)">{{ 'home.button.cluster.restart' | translate }}</button>
             </td>
         </tr>
         </tbody>

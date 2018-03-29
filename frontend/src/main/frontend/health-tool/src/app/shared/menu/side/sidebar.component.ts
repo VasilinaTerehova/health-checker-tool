@@ -12,6 +12,7 @@ import { ErrorReportingService } from '../../error/error-reporting.service';
 import { ClusterEditComponent } from '../../cluster/edit/cluster-edit.component';
 import { ErrorAlert } from '../../error/error-alert.model';
 import { AlertType } from '../..//error/alert-type.model';
+import { ConfirmModalComponent } from '../../modal/confirm/confirm-modal.component';
 
 @Component({
   selector: 'sidebar',
@@ -47,6 +48,10 @@ export class SideBarComponent implements OnInit{
   }
 
   deleteCluster( clusterName: string ) {
+    this.showConfirmDeleteCluster( clusterName );
+  }
+
+  private deleteClusterAction( clusterName: string ) {
     this.clusterService.deleteCluster( clusterName ).subscribe(
       data => {
         this.clusters = this.clusters.filter( item => item.name != clusterName );
@@ -93,5 +98,23 @@ export class SideBarComponent implements OnInit{
       }
     );
     this.bsModalRef = this.modalService.show( ClusterEditComponent, {initialState});
+  }
+
+  private showConfirmDeleteCluster( clusterName: string ) {
+    var initialState = {
+      clusterName: clusterName,
+      isConfirmed: new Subject<Boolean>()
+    };
+
+    var changedSubscription: Subscription = initialState.isConfirmed.asObservable().subscribe(
+      result => {
+        if ( result ) {
+          this.deleteClusterAction( clusterName );
+        }
+
+        changedSubscription.unsubscribe();
+      }
+    );
+    this.bsModalRef = this.modalService.show( ConfirmModalComponent, {initialState});
   }
 }

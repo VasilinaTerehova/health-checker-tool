@@ -43,7 +43,7 @@
                   </div>
                   <div class="col-xs-6" [ngClass]="{ 'has-error': f.submitted && !kerberosUsername.valid }">
                       <label for="kerberosUsername">{{ 'home.label.cluster.username' | translate}}</label>
-                      <input type="text" class="form-control" id="kerberosUsername" name="kerberosUsername" required pattern="[a-zA-Z0-9]{3,20}" [(ngModel)]="tempCluster.kerberos.username" #kerberosUsername="ngModel" placeholder="{{ 'home.placeholder.cluster.username' | translate }}">
+                      <input type="text" class="form-control" id="kerberosUsername" name="kerberosUsername" required [(ngModel)]="tempCluster.kerberos.username" #kerberosUsername="ngModel" placeholder="{{ 'home.placeholder.cluster.username' | translate }}">
                       <span class="help-block" *ngIf="f.submitted && !kerberosUsername.valid">{{ 'home.error.cluster.username' | translate }}</span>
                   </div>
                   <div class="col-xs-6" [ngClass]="{ 'has-error': f.submitted && !kerberosPassword.valid }">
@@ -61,7 +61,7 @@
                   </div>
                   <div class="col-xs-6" [ngClass]="{ 'has-error': f.submitted && !httpUsername.valid }">
                       <label for="httpUsername">{{ 'home.label.cluster.username' | translate}}</label>
-                      <input type="text" class="form-control" id="httpUsername" name="httpUsername" required pattern="[a-zA-Z0-9]{3,20}" [(ngModel)]="tempCluster.http.username" #httpUsername="ngModel" placeholder="{{ 'home.placeholder.cluster.username' | translate }}">
+                      <input type="text" class="form-control" id="httpUsername" name="httpUsername" required [(ngModel)]="tempCluster.http.username" #httpUsername="ngModel" placeholder="{{ 'home.placeholder.cluster.username' | translate }}">
                       <span class="help-block" *ngIf="f.submitted && !httpUsername.valid">{{ 'home.error.cluster.username' | translate }}</span>
                   </div>
                   <div class="col-xs-6" [ngClass]="{ 'has-error': f.submitted && !httpPassword.valid }">
@@ -79,7 +79,7 @@
                   </div>
                   <div class="col-xs-6" [ngClass]="{ 'has-error': f.submitted && !sshUsername.valid }">
                       <label for="sshUsername">{{ 'home.label.cluster.username' | translate}}</label>
-                      <input type="text" class="form-control" id="sshUsername" name="sshUsername" required pattern="[a-zA-Z0-9]{3,20}" [(ngModel)]="tempCluster.ssh.username" #sshUsername="ngModel" placeholder="{{ 'home.placeholder.cluster.username' | translate }}">
+                      <input type="text" class="form-control" id="sshUsername" name="sshUsername" required [(ngModel)]="tempCluster.ssh.username" #sshUsername="ngModel" placeholder="{{ 'home.placeholder.cluster.username' | translate }}">
                       <span class="help-block" *ngIf="f.submitted && !sshUsername.valid">{{ 'home.error.cluster.username' | translate }}</span>
                   </div>
                   <div class="col-xs-6" [ngClass]="{ 'has-error': f.submitted && !sshPassword.valid }">
