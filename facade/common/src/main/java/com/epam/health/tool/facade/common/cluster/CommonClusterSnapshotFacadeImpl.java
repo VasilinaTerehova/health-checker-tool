@@ -65,7 +65,7 @@ public abstract class CommonClusterSnapshotFacadeImpl implements IClusterSnapsho
         Pageable top30 = new PageRequest(0, 30);
         List<ClusterSnapshotEntityProjection> top30ClusterName = clusterSnapshotDao.findTop10ClusterName(clusterName, top30);
         ArrayList<ClusterHealthSummary> clusterHealthSummaries = new ArrayList<>();
-        top30ClusterName.forEach(clusterSnapshotEntityProjection -> clusterHealthSummaries.add(new ClusterHealthSummary(clusterSnapshotEntityProjection)));
+        top30ClusterName.forEach(clusterSnapshotEntityProjection -> clusterHealthSummaries.add(new ClusterHealthSummary(clusterSnapshotEntityProjection, clusterServiceSnapshotDao.findServiceProjectionsBy(clusterSnapshotEntityProjection.getId()))));
         return clusterHealthSummaries;
     }
 
@@ -102,7 +102,7 @@ public abstract class CommonClusterSnapshotFacadeImpl implements IClusterSnapsho
             clusterShapshotEntity.setClusterEntity(clusterEntity);
             clusterSnapshotDao.save(clusterShapshotEntity);
             serviceStatusList.forEach(serviceStatus -> {
-                ClusterServiceEntity clusterServiceEntity = clusterServiceDao.findByClusterIdAndServiceType(clusterEntity.getId(), serviceStatus.getServiceType());
+                ClusterServiceEntity clusterServiceEntity = clusterServiceDao.findByClusterIdAndServiceType(clusterEntity.getId(), serviceStatus.getType());
                 ClusterServiceShapshotEntity clusterServiceShapshotEntity = svTransfererManager.<ServiceStatus, ClusterServiceShapshotEntity>getTransferer(ServiceStatus.class, ClusterServiceShapshotEntity.class).transfer(serviceStatus, ClusterServiceShapshotEntity.class);
                 clusterServiceShapshotEntity.setClusterShapshotEntity(clusterShapshotEntity);
                 if (clusterServiceEntity == null) {
