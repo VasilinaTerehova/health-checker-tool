@@ -1,5 +1,7 @@
 package com.epam.health.tool.facade.hdp.cluster;
 
+import com.epam.facade.model.ClusterHealthSummary;
+import com.epam.facade.model.ClusterSnapshotEntityProjectionImpl;
 import com.epam.facade.model.ServiceStatus;
 import com.epam.facade.model.projection.ClusterEntityProjection;
 import com.epam.health.tool.facade.cluster.IClusterFacade;
@@ -16,18 +18,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
-public class ClusterSnapshotFacadeImpl extends CommonClusterSnapshotFacadeImpl {
-    @Autowired
-    private IClusterFacade clusterFacade;
+@Component("HDP-cluster")
+public class HdpClusterSnapshotFacadeImpl extends CommonClusterSnapshotFacadeImpl {
 
-    public List<ServiceStatus> askForCurrentClusterSnapshot(String clusterName) throws InvalidResponseException {
+    public List<ServiceStatus> askForCurrentServicesSnapshot(String clusterName) throws InvalidResponseException {
         ClusterEntityProjection clusterEntity = clusterFacade.getCluster(clusterName);
 
         try {
             //Can be Flux.just( ServiceTypeEnum.values() ).#operations...
-            return Arrays.stream( ServiceTypeEnum.values() )
-                    .map( serviceTypeEnum -> "http://" + clusterEntity.getHost() + ":8080/api/v1/clusters/" + clusterName + "/services/" + serviceTypeEnum.toString() )
+            return Arrays.stream(ServiceTypeEnum.values())
+                    .map(serviceTypeEnum -> "http://" + clusterEntity.getHost() + ":8080/api/v1/clusters/" + clusterName + "/services/" + serviceTypeEnum.toString())
                     .map(url -> {
                         try {
                             return BaseHttpAuthenticatedAction.get()
@@ -37,8 +37,8 @@ public class ClusterSnapshotFacadeImpl extends CommonClusterSnapshotFacadeImpl {
                         } catch (CommonUtilException e) {
                             throw new RuntimeException(e);
                         }
-                    }).map( this::extractFromJsonString )
-                    .map( this::mapDTOStatusToServiceStatus ).collect( Collectors.toList() );
+                    }).map(this::extractFromJsonString)
+                    .map(this::mapDTOStatusToServiceStatus).collect(Collectors.toList());
         } catch (RuntimeException ex) {
             throw new InvalidResponseException(ex);
         }
@@ -52,8 +52,8 @@ public class ClusterSnapshotFacadeImpl extends CommonClusterSnapshotFacadeImpl {
         }
     }
 
-    private ServiceStatus mapDTOStatusToServiceStatus(ServiceStatusDTO serviceStatusDTO ) {
-        return svTransfererManager.<ServiceStatusDTO, ServiceStatus>getTransferer( ServiceStatusDTO.class, ServiceStatus.class )
-                .transfer( serviceStatusDTO, ServiceStatus.class );
+    private ServiceStatus mapDTOStatusToServiceStatus(ServiceStatusDTO serviceStatusDTO) {
+        return svTransfererManager.<ServiceStatusDTO, ServiceStatus>getTransferer(ServiceStatusDTO.class, ServiceStatus.class)
+                .transfer(serviceStatusDTO, ServiceStatus.class);
     }
 }

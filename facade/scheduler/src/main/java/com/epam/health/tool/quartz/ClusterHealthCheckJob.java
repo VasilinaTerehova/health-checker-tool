@@ -1,7 +1,13 @@
 package com.epam.health.tool.quartz;
 
+import com.epam.health.tool.dao.cluster.ClusterServiceSnapshotDao;
 import com.epam.health.tool.facade.cluster.IClusterFacade;
 import com.epam.health.tool.facade.cluster.IClusterSnapshotFacade;
+import com.epam.health.tool.facade.common.cluster.CommonClusterSnapshotFacadeImpl;
+import com.epam.health.tool.facade.common.date.util.DateUtil;
+import com.epam.health.tool.facade.exception.ImplementationNotResolvedException;
+import com.epam.health.tool.facade.resolver.IFacadeImplResolver;
+import com.epam.health.tool.model.ClusterEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Vasilina_Terehova on 3/22/2018.
@@ -22,11 +29,26 @@ public class ClusterHealthCheckJob {
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 
     @Autowired
-    IClusterSnapshotFacade clusterSnapshotFacade;
+    ClusterServiceSnapshotDao clusterServiceSnapshotDao;
+
+    @Autowired
+    private IFacadeImplResolver<IClusterSnapshotFacade> clusterSnapshotFacadeIFacadeImplResolver;
 
     @Scheduled(fixedDelay = 30 * 60 * 1000)
     public void reportCurrentTime() {
         log.info("The time is now {}", dateFormat.format(new Date()));
-        clusterSnapshotFacade.checkClustersHealth();
+        Date hourAgo = DateUtil.dateHourAgo();
+
+        List<ClusterEntity> clusterEntities = clusterServiceSnapshotDao.findClustersForSnapshot(hourAgo);
+        clusterEntities.forEach(clusterEntity -> {
+
+            try {
+                clusterSnapshotFacadeIFacadeImplResolver.resolveFacadeImpl(clusterEntity.getClusterTypeEnum().name()).receiveAndSaveClusterSnapshot(clusterEntity);
+            } catch (ImplementationNotResolvedException e) {
+                log.error("Can't find facade implementation for this vendor ", e);
+            }
+
+        });
     }
+
 }

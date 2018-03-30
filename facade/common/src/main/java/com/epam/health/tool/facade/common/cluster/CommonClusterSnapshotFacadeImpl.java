@@ -1,6 +1,7 @@
 package com.epam.health.tool.facade.common.cluster;
 
 import com.epam.facade.model.ClusterHealthSummary;
+import com.epam.facade.model.ClusterSnapshotEntityProjectionImpl;
 import com.epam.facade.model.ServiceStatus;
 import com.epam.facade.model.projection.ClusterEntityProjection;
 import com.epam.facade.model.projection.ClusterSnapshotEntityProjection;
@@ -8,7 +9,9 @@ import com.epam.health.tool.dao.cluster.ClusterDao;
 import com.epam.health.tool.dao.cluster.ClusterServiceDao;
 import com.epam.health.tool.dao.cluster.ClusterServiceSnapshotDao;
 import com.epam.health.tool.dao.cluster.ClusterSnapshotDao;
+import com.epam.health.tool.facade.cluster.IClusterFacade;
 import com.epam.health.tool.facade.cluster.IClusterSnapshotFacade;
+import com.epam.health.tool.facade.common.date.util.DateUtil;
 import com.epam.health.tool.facade.exception.InvalidResponseException;
 import com.epam.health.tool.model.ClusterEntity;
 import com.epam.health.tool.model.ClusterServiceEntity;
@@ -20,35 +23,32 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public abstract class CommonClusterSnapshotFacadeImpl implements IClusterSnapshotFacade {
 
-    public static final int ONE_HOUR_MILLISECONDS = 3600 * 1000;
-
-    @Autowired
-    ClusterSnapshotDao clusterSnapshotDao;
-
-    @Autowired
-    ClusterServiceSnapshotDao clusterServiceSnapshotDao;
-
-    @Autowired
-    IClusterSnapshotFacade clusterSnapshotFacade;
-
-    @Autowired
-    ClusterServiceDao clusterServiceDao;
-
-    private Logger logger = Logger.getLogger(CommonClusterSnapshotFacadeImpl.class);
-
     @Autowired
     protected SVTransfererManager svTransfererManager;
-
+    @Autowired
+    protected IClusterFacade clusterFacade;
+    @Autowired
+    ClusterSnapshotDao clusterSnapshotDao;
+    @Autowired
+    ClusterServiceSnapshotDao clusterServiceSnapshotDao;
+    @Autowired
+    IClusterSnapshotFacade clusterSnapshotFacade;
+    @Autowired
+    ClusterServiceDao clusterServiceDao;
     @Autowired
     ClusterDao clusterDao;
+    private Logger logger = Logger.getLogger(CommonClusterSnapshotFacadeImpl.class);
+
+    public ClusterHealthSummary askForCurrentClusterSnapshot(String clusterName) throws InvalidResponseException {
+        ClusterEntityProjection clusterEntity = clusterFacade.getCluster(clusterName);
+        return new ClusterHealthSummary(new ClusterSnapshotEntityProjectionImpl(clusterEntity, askForCurrentServicesSnapshot(clusterName)));
+    }
 
     public ClusterHealthSummary getLastClusterSnapshot(String clusterName) {
         receiveAndSaveClusterSnapshot(clusterDao.findByClusterName(clusterName));
@@ -69,31 +69,12 @@ public abstract class CommonClusterSnapshotFacadeImpl implements IClusterSnapsho
         return clusterHealthSummaries;
     }
 
-    public void checkClustersHealth() {
-        Date hourAgo = dateHourAgo();
-
-        List<ClusterEntity> clusterEntities = clusterServiceSnapshotDao.findClustersForSnapshot(hourAgo);
-        clusterEntities.forEach(clusterEntity -> {
-
-            clusterSnapshotFacade.receiveAndSaveClusterSnapshot(clusterEntity);
-
-        });
-    }
-
-    private Date dateHourAgo() {
-        return new Date(System.currentTimeMillis() - ONE_HOUR_MILLISECONDS);
-    }
-
-    private Date dateHourPlus(Date date) {
-        return new Date(date.getTime() + ONE_HOUR_MILLISECONDS);
-    }
-
     public ClusterShapshotEntity receiveAndSaveClusterSnapshot(ClusterEntity clusterEntity) {
         try {
-            List<ServiceStatus> serviceStatusList = askForCurrentClusterSnapshot(clusterEntity.getClusterName());
+            List<ServiceStatus> serviceStatusList = askForCurrentServicesSnapshot(clusterEntity.getClusterName());
             List<ClusterSnapshotEntityProjection> top10ClusterName = clusterSnapshotDao.findTop10ClusterName(clusterEntity.getClusterName(), new PageRequest(0, 1));
             //for now getting and saving happen once an hour, to be revisited
-            if (!top10ClusterName.isEmpty() && new Date().before(dateHourPlus(top10ClusterName.get(0).getDateOfSnapshot()))) {
+            if (!top10ClusterName.isEmpty() && new Date().before(DateUtil.dateHourPlus(top10ClusterName.get(0).getDateOfSnapshot()))) {
                 return clusterSnapshotDao.findById(top10ClusterName.get(0).getId()).get();
             }
 

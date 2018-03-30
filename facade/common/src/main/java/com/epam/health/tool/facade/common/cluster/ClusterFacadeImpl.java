@@ -22,10 +22,6 @@ public class ClusterFacadeImpl implements IClusterFacade {
     private ClusterDao clusterDao;
 
     @Autowired
-    IClusterSnapshotFacade clusterSnapshotFacade;
-
-
-    @Autowired
     ClusterSnapshotDao clusterSnapshotDao;
 
     @Autowired

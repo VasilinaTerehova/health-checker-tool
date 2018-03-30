@@ -30,8 +30,8 @@ public class ClusterHealthCheckController {
     public ResponseEntity<ClusterHealthSummary> getClusterStatus(@RequestParam( "clusterName" ) String clusterName ) {
         try {
             return ResponseEntity.ok( clusterSnapshotFacadeIFacadeImplResolver.resolveFacadeImpl( clusterFacade.getCluster( clusterName ).getClusterType().name() ) //Should be changed
-                    .getLastClusterSnapshot( clusterName ) );
-        } catch (ImplementationNotResolvedException e) {
+                    .askForCurrentClusterSnapshot( clusterName ) );
+        } catch (ImplementationNotResolvedException | InvalidResponseException e) {
             throw new RetrievingObjectException( e );
         }
     }

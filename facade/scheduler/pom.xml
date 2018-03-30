@@ -33,5 +33,10 @@
             <artifactId>health-checker-tool-transfer-impl</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>com.epam</groupId>
+            <artifactId>health-checker-tool-facade-common</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 </project>

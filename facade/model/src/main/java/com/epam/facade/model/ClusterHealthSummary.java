@@ -8,7 +8,7 @@ import java.util.List;
 
 public class ClusterHealthSummary {
     private ClusterSnapshotEntityProjection cluster;
-    private List<ServiceStatusProjection> serviceStatusList;
+    private List<? extends ServiceStatusProjection> serviceStatusList;
 
     public ClusterHealthSummary(ClusterSnapshotEntityProjection cluster, List<ServiceStatusProjection> serviceProjectionsBy) {
         this.cluster = cluster;
@@ -29,7 +29,7 @@ public class ClusterHealthSummary {
         this.cluster = cluster;
     }
 
-    public List<ServiceStatusProjection> getServiceStatusList() {
+    public List<? extends ServiceStatusProjection> getServiceStatusList() {
         return serviceStatusList;
     }
 
