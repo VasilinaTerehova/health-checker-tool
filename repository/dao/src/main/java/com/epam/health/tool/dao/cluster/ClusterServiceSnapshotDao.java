@@ -1,10 +1,8 @@
 package com.epam.health.tool.dao.cluster;
 
-import com.epam.facade.model.projection.ClusterEntityProjection;
 import com.epam.facade.model.projection.ServiceStatusProjection;
 import com.epam.health.tool.model.ClusterEntity;
 import com.epam.health.tool.model.ClusterServiceShapshotEntity;
-import com.epam.health.tool.model.ClusterShapshotEntity;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;

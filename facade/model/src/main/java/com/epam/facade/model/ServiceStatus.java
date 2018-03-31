@@ -1,26 +1,18 @@
 package com.epam.facade.model;
 
+import com.epam.facade.model.projection.ServiceStatusProjection;
 import com.epam.health.tool.model.ServiceStatusEnum;
 import com.epam.health.tool.model.ServiceTypeEnum;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * this class is common for showing on ui, implements project from database layer,
+ * do not update this class for vendor specific transferring, names are used for ui
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ServiceStatus {
-    @JsonProperty( "type" )
-    private ServiceTypeEnum serviceType;
-    @JsonProperty( "healthSummary" )
+public class ServiceStatus implements ServiceStatusProjection {
+    private ServiceTypeEnum type;
     private ServiceStatusEnum healthSummary;
-    @JsonProperty( "displayName" )
-    private String name;
-
-    public ServiceTypeEnum getServiceType() {
-        return serviceType;
-    }
-
-    public void setServiceType(ServiceTypeEnum serviceType) {
-        this.serviceType = serviceType;
-    }
 
     public ServiceStatusEnum getHealthStatus() {
         return healthSummary;
@@ -30,11 +22,31 @@ public class ServiceStatus {
         this.healthSummary = healthSummary;
     }
 
-    public String getName() {
-        return name;
+    @Override
+    public ServiceTypeEnum getType() {
+        return type;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setType(ServiceTypeEnum type) {
+        this.type = type;
+    }
+
+    @Override
+    public ServiceStatusEnum getHealthSummary() {
+        return healthSummary;
+    }
+
+    public void setHealthSummary(ServiceStatusEnum healthSummary) {
+        this.healthSummary = healthSummary;
+    }
+
+    @Override
+    public ServiceTypeEnum getDisplayName() {
+        return type;
+    }
+
+    @Override
+    public String toString() {
+        return "name: \"" + getDisplayName() + "\" " + getHealthStatus() + " " + getType();
     }
 }

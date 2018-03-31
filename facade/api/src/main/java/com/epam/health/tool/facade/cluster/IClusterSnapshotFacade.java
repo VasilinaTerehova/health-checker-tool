@@ -11,7 +11,7 @@ import java.util.List;
 public interface IClusterSnapshotFacade {
     ClusterHealthSummary getLastClusterSnapshot(String clusterName );
     List<ClusterHealthSummary> getClusterSnapshotHistory(String clusterName ) throws InvalidResponseException;
-    List<ServiceStatus> askForCurrentClusterSnapshot(String clusterName ) throws InvalidResponseException;
-    void checkClustersHealth();
+    ClusterHealthSummary askForCurrentClusterSnapshot(String clusterName ) throws InvalidResponseException;
+    List<ServiceStatus> askForCurrentServicesSnapshot(String clusterName ) throws InvalidResponseException;
     ClusterShapshotEntity receiveAndSaveClusterSnapshot(ClusterEntity clusterEntity);
 }

@@ -2,23 +2,20 @@ package com.epam.health.tool.facade.cdh.cluster;
 
 import com.epam.facade.model.ServiceStatus;
 import com.epam.facade.model.projection.ClusterEntityProjection;
-import com.epam.health.tool.facade.cluster.IClusterFacade;
 import com.epam.health.tool.facade.common.authentificate.BaseHttpAuthenticatedAction;
 import com.epam.health.tool.facade.common.cluster.CommonClusterSnapshotFacadeImpl;
 import com.epam.health.tool.facade.exception.InvalidResponseException;
 import com.epam.util.common.CommonUtilException;
 import com.epam.util.common.json.CommonJsonHandler;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component("CDH-cluster")
-public class ClusterSnapshotFacadeImpl extends CommonClusterSnapshotFacadeImpl {
-    @Autowired
-    private IClusterFacade clusterFacade;
+public class CdhClusterSnapshotFacadeImpl extends CommonClusterSnapshotFacadeImpl {
 
-    public List<ServiceStatus> askForCurrentClusterSnapshot(String clusterName) throws InvalidResponseException {
+    @Override
+    public List<ServiceStatus> askForCurrentServicesSnapshot(String clusterName) throws InvalidResponseException {
         ClusterEntityProjection clusterEntity = clusterFacade.getCluster(clusterName);
         String url = "http://" + clusterEntity.getHost() + ":7180/api/v10/clusters/" + clusterName + "/services";
         try {
