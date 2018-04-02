@@ -9,6 +9,8 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
 import { ButtonsModule } from 'ngx-bootstrap/buttons';
 import { AlertModule } from 'ngx-bootstrap/alert';
 import { ModalModule } from 'ngx-bootstrap/modal';
+import { AccordionModule } from 'ngx-bootstrap/accordion';
+import { CollapseModule } from 'ngx-bootstrap/collapse';
 //Components
 import { AppComponent } from './app.component';
 import { TopMenuComponent } from './shared/menu/top/top-menu.component';
@@ -20,10 +22,13 @@ import { YarnApplicationListComponent } from './service/yarn/yarn-application-li
 import { ServiceListComponent } from './service/list/service-list.component';
 import { ClusterEditComponent } from './shared/cluster/edit/cluster-edit.component';
 import { ConfirmModalComponent } from './shared/modal/confirm/confirm-modal.component';
+import { CommonClusterHealthSummaryComponent } from './cluster/health/common/common-cluster-health-summary.component';
+import { HdfsClusterHealthSummaryComponent } from './cluster/health/hdfs/hdfs-cluster-health-summary.component';
 //Directives and pipes
 import { ClusterListSearchByNamePipe } from './shared/menu/side/cluster-list.pipe';
 import { ServiceTableRowDirective } from './service/list/table/service-table-row.directive';
 import { ServiceListSortPipe } from './service/list/service-sort-list.pipe';
+import { ServiceHealthLabelDirective } from './cluster/health/hdfs/service-health-label.directive';
 //Services
 import { ClusterService } from './cluster/cluster.service';
 import { YarnApplicationService } from './service/yarn/yarn-application.service';
@@ -44,7 +49,8 @@ export function createTranslateLoader(http: HttpClient) {
 @NgModule({
   declarations: [
     AppComponent, TopMenuComponent, SideBarComponent, HomeComponent, ClusterListSearchByNamePipe, ClusterComponent, ErrorReportingComponent, YarnApplicationListComponent,
-    ServiceListComponent, ServiceListStaticComponent, ServiceListHistoryComponent, ClusterEditComponent, ConfirmModalComponent, ServiceTableRowDirective, ServiceListSortPipe
+    ServiceListComponent, ServiceListStaticComponent, ServiceListHistoryComponent, ClusterEditComponent, ConfirmModalComponent, ServiceTableRowDirective, ServiceListSortPipe,
+    CommonClusterHealthSummaryComponent, HdfsClusterHealthSummaryComponent, ServiceHealthLabelDirective
   ],
   entryComponents: [ ClusterEditComponent, ConfirmModalComponent ],
   imports: [
@@ -54,7 +60,7 @@ export function createTranslateLoader(http: HttpClient) {
             useFactory: (createTranslateLoader),
             deps: [HttpClient]
         }
-    }), TabsModule.forRoot(), ButtonsModule.forRoot(), AlertModule.forRoot(), ModalModule.forRoot()
+    }), TabsModule.forRoot(), ButtonsModule.forRoot(), AlertModule.forRoot(), ModalModule.forRoot(), AccordionModule.forRoot(), CollapseModule.forRoot()
   ],
   providers: [ClusterService, YarnApplicationService, RouteService, ErrorReportingService, ClusterTypeExService, ClusterComparatorService],
   bootstrap: [AppComponent]

@@ -2,16 +2,16 @@
     <div class="panel panel-default">
         <div class="panel-heading">
             <h2>{{ 'home.label.cluster.result' | translate }} - {{cluster?.name}}</h2>
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item">{{ 'home.label.cluster.disk' | translate }} - 90% used <span data-toggle="tooltip" data-placement="top" title="Not enough space" class="badge badge-pill badge-danger pull-right">!</span></li>
-                <li class="list-group-item">{{ 'home.label.cluster.memory' | translate }} - 11000 MB of 12000 MB <span data-toggle="tooltip" data-placement="top" title="Not enough memory" class="badge badge-pill badge-danger pull-right">!</span></li>
-                <li class="list-group-item">{{ 'home.label.service.yarn.apps' | translate }} - {{yarnAppsCount}}</li>
-                <li class="list-group-item" *ngIf="cluster?.secured">{{ 'home.label.cluster.security' | translate }} - {{ 'home.label.common.no_problems' | translate }} <span class="label label-success pull-right">OK</span></li>
-            </ul>
+            <common-cluster-health-summary [cluster]="cluster" [yarnAppsCount]="yarnAppsCount"></common-cluster-health-summary>
         </div>
         <div class="panel-body">
           <tabset>
             <tab heading="{{ 'home.label.cluster.result' | translate }}">
+              <hr/>
+              <hdfs-cluster-health-summary [serviceName]="'HDFS'" [hdfsHealthReport]="hdfsHealthReport"></hdfs-cluster-health-summary>
+              <hr/>
+              <hdfs-cluster-health-summary [serviceName]="'YARN'"  [hdfsHealthReport]="yarnHealthReport"></hdfs-cluster-health-summary>
+              <hr/>
               <service-list (onClusterChange)="onClusterChange($event)"></service-list>
             </tab>
             <tab heading="{{ 'home.label.service.yarn.app.list' | translate }}">

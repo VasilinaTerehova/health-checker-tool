@@ -1,0 +1,12 @@
+<div>
+  <h4 style="text-decoration: bold">{{serviceName}} service</h4>
+  <ul class="list-group list-group-flush">
+      <li class="list-group-item">Examples Jobs run - {{getSuccessfullyRunJobsCount()}} of {{hdfsHealthReport.jobResults.length}} successfully passed <span class="label label-success pull-right" *ngIf="isJobRunSuccessfully()">SUCCESS</span><span class="label label-danger pull-right" *ngIf="!isJobRunSuccessfully()" (click)="isCollapsed = !isCollapsed">{{getAlertsCount()}}</span>
+        <ul class="list-group list-group-flush" style="margin-top: 2%" [collapse]="!isCollapsed">
+            <li class="list-group-item" *ngFor="let alert of getAlerts()">Alert - {{alert}}</li>
+        </ul>
+      </li>
+      <li class="list-group-item">Health summary - <span service-health-label [healthSummary]="hdfsHealthReport.healthSummary">{{hdfsHealthReport.healthSummary}}</span></li>
+      <li class="list-group-item">Logs locations - {{hdfsHealthReport.logsLocation}}</li>
+  </ul>
+</div>
