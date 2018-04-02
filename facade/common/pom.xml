@@ -26,7 +26,12 @@
         <dependency>
             <groupId>com.epam</groupId>
             <artifactId>health-checker-tool-transfer-impl</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.epam</groupId>
+            <artifactId>health-checker-tool-util-ssh</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 </project>
