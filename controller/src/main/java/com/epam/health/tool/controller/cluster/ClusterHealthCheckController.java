@@ -29,7 +29,7 @@ public class ClusterHealthCheckController {
 
     @CrossOrigin( origins = "http://localhost:4200" )
     @RequestMapping( "/getClusterStatus" )
-    public ResponseEntity<ClusterHealthSummary> getRestClusterStatus(@RequestParam( "clusterName" ) String clusterName ) {
+    public ResponseEntity<HealthCheckResultsAccumulator> getRestClusterStatus(@RequestParam( "clusterName" ) String clusterName ) {
         try {
             return ResponseEntity.ok( resolveClusterSnapshotFacade( clusterName ).askForCurrentClusterSnapshot( clusterName ) );
         } catch (ImplementationNotResolvedException | InvalidResponseException e) {

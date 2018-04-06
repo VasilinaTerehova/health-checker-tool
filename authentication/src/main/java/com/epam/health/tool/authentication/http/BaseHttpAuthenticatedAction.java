@@ -51,14 +51,14 @@ public class BaseHttpAuthenticatedAction {
     public String makeAuthenticatedRequest( String url ) throws CommonUtilException {
         return HttpRequestExecutor.get().setAuthSchemes( createAuthShemesList() )
                 .setCredentialsProvider( createHttpCredentialsProvider() )
-                .setHeaderCreator( buildHeaderCreator() ).executeUrlRequest( url );
+                /*.setHeaderCreator( buildHeaderCreator() )*/.executeUrlRequest( url );
     }
 
     private CredentialsProvider createHttpCredentialsProvider(  ) {
         CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-        UsernamePasswordCredentials credentials =
-                new UsernamePasswordCredentials( username, password );
-        credentialsProvider.setCredentials(AuthScope.ANY, credentials);
+//        UsernamePasswordCredentials credentials =
+//                new UsernamePasswordCredentials( username, password );
+//        credentialsProvider.setCredentials(AuthScope.ANY, credentials);
         credentialsProvider
                 .setCredentials(new AuthScope(null, -1, AuthScope.ANY_REALM, AuthPolicy.SPNEGO), new Credentials() {
                     @Override

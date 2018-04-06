@@ -54,7 +54,7 @@ export class ServiceListComponent implements OnInit, OnDestroy {
 
   private ascForClusterState( clusterName: string ) {
     this.errorReportingService.clearError();
-    this.clusterService.getAllClusterState( clusterName ).subscribe(
+    this.clusterService.getClusterState( clusterName ).subscribe(
       data => {
         if ( data ) {
           this.clusterState = data.clusterHealthSummary;

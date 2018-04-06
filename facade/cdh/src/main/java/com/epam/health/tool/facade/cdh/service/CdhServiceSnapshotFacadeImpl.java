@@ -5,8 +5,9 @@ import com.epam.health.tool.model.ClusterServiceShapshotEntity;
 import org.springframework.stereotype.Component;
 
 @Component("CDH")
-public class ServiceSnapshotFacadeImpl extends CommonServiceSnapshotFacadeImpl {
+public class CdhServiceSnapshotFacadeImpl extends CommonServiceSnapshotFacadeImpl {
     public ClusterServiceShapshotEntity askForCurrentServiceSnapshot(String clusterName, String serviceName) {
         return null;
     }
+
 }

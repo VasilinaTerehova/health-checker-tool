@@ -7,7 +7,7 @@
           <li class="list-group-item" *ngFor="let node of nodes">Node: <span class="label label-primary">{{node.host}}</span>  -  use {{node.memory.used}} MB of {{node.memory.total}} MB <span data-toggle="tooltip" data-placement="top" title="Not enough memory" class="badge badge-pill badge-danger pull-right">!</span></li>
       </ul>
     </li>
-    <li class="list-group-item">{{ 'home.label.cluster.memory' | translate }} - 11000 MB of 12000 MB <span data-toggle="tooltip" data-placement="top" title="Not enough memory" class="badge badge-pill badge-danger pull-right">!</span></li>
+    <li class="list-group-item">{{ 'home.label.cluster.memory' | translate }} - {{cluster.memoryUsage.used}} MB of {{cluster.memoryUsage.total}} MB <span data-toggle="tooltip" data-placement="top" title="Not enough memory" class="badge badge-pill badge-danger pull-right">!</span></li>
     <li class="list-group-item">{{ 'home.label.service.yarn.apps' | translate }} - {{yarnAppsCount}}</li>
     <li class="list-group-item" *ngIf="cluster?.secured">{{ 'home.label.cluster.security' | translate }} - {{ 'home.label.common.no_problems' | translate }} <span class="label label-success pull-right">OK</span></li>
 </ul>

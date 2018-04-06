@@ -7,7 +7,11 @@ import com.epam.facade.model.accumulator.HealthCheckResultsAccumulator;
 import com.epam.facade.model.projection.ClusterEntityProjection;
 import com.epam.facade.model.projection.impl.ClusterEntityProjectionImpl;
 import com.epam.health.tool.authentication.http.HttpAuthenticationClient;
+import com.epam.health.tool.facade.cluster.IClusterSnapshotFacade;
+import com.epam.health.tool.facade.common.resolver.impl.HealthCheckActionImplResolver;
+import com.epam.health.tool.facade.exception.ImplementationNotResolvedException;
 import com.epam.health.tool.facade.exception.InvalidResponseException;
+import com.epam.health.tool.facade.resolver.IFacadeImplResolver;
 import com.epam.health.tool.facade.service.action.IServiceHealthCheckAction;
 import com.epam.health.tool.model.ClusterEntity;
 import com.epam.health.tool.transfer.impl.SVTransfererManager;
@@ -21,14 +25,25 @@ public abstract class CommonRestHealthCheckAction implements IServiceHealthCheck
     @Autowired
     protected SVTransfererManager svTransfererManager;
 
+    @Autowired
+    private HealthCheckActionImplResolver healthCheckActionImplResolver;
+
+    @Autowired
+    private IFacadeImplResolver<IClusterSnapshotFacade> clusterSnapshotFacadeIFacadeImplResolver;
+
     @Override
     public void performHealthCheck(ClusterEntity clusterEntity, HealthCheckResultsAccumulator healthCheckResultsAccumulator) throws InvalidResponseException {
         try {
+            String clusterName = clusterEntity.getClusterName();
+            IClusterSnapshotFacade iClusterSnapshotFacade = clusterSnapshotFacadeIFacadeImplResolver.resolveFacadeImpl(clusterEntity.getClusterTypeEnum().name());
+            ;
             //Can be Flux.just( ServiceTypeEnum.values() ).#operations...
             healthCheckResultsAccumulator.setClusterHealthSummary(
                     new ClusterHealthSummary(
-                            new ClusterSnapshotEntityProjectionImpl( mapEntityToProjection( clusterEntity ), performHealthCheck( clusterEntity ) )));
-        } catch (RuntimeException ex) {
+                            new ClusterSnapshotEntityProjectionImpl( mapEntityToProjection( clusterEntity ), performHealthCheck( clusterEntity ),
+                                    iClusterSnapshotFacade.getMemoryTotal(clusterName),
+                                    iClusterSnapshotFacade.getAvailableDiskHdfs(clusterName), iClusterSnapshotFacade.getAvailableDiskDfs(clusterName))));
+        } catch (ImplementationNotResolvedException | RuntimeException ex) {
             throw new InvalidResponseException(ex);
         }
     }

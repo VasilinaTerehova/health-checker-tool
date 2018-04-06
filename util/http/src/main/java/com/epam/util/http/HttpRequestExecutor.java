@@ -3,15 +3,26 @@ package com.epam.util.http;
 import com.epam.util.common.CommonUtilException;
 import com.epam.util.http.header.IHeaderCreator;
 import org.apache.http.Header;
+import org.apache.http.auth.AuthSchemeProvider;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.Credentials;
 import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.AuthSchemes;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.methods.RequestBuilder;
-import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.config.Lookup;
+import org.apache.http.config.RegistryBuilder;
+import org.apache.http.impl.auth.BasicSchemeFactory;
+import org.apache.http.impl.auth.SPNegoSchemeFactory;
+import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,10 +64,30 @@ public class HttpRequestExecutor {
 
     public String executeUrlRequest(String url ) throws CommonUtilException {
         try {
-            return EntityUtils.toString(  createHttpClient().execute( createHttpUriRequest( url ) ).getEntity() );
+            HttpClientContext credentialContext = getCredentialContext();
+            return EntityUtils.toString(  createHttpClient().execute( createHttpUriRequest( url ), credentialContext ).getEntity() );
         } catch (IOException e) {
             throw new CommonUtilException( e );
         }
+    }
+
+    private HttpClientContext getCredentialContext() {
+        Credentials useJaasCreds = new Credentials() {
+
+            public String getPassword() {
+                return null;
+            }
+
+            public Principal getUserPrincipal() {
+                return null;
+            }
+
+        };
+        BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+        credentialsProvider.setCredentials( new AuthScope( null, -1, AuthScope.ANY_REALM ), useJaasCreds );
+        HttpClientContext context = HttpClientContext.create();
+        context.setCredentialsProvider( credentialsProvider );
+        return context;
     }
 
     private HttpClientBuilder createHttpClientBuilder() {
@@ -68,11 +99,32 @@ public class HttpRequestExecutor {
                 .setTargetPreferredAuthSchemes( authSchemes ).build());
     }
 
-    private CloseableHttpClient createHttpClient() throws CommonUtilException {
+    private HttpClient createHttpClient() throws CommonUtilException {
         HttpClientBuilder builder = createHttpClientBuilder();
         builder.setSSLContext( createSslContext() );
 
-        return builder.build();
+        //CloseableHttpClient httpclient = builder.build();
+        Lookup<AuthSchemeProvider> authSchemeRegistry = RegistryBuilder.<AuthSchemeProvider>create()
+                .register( AuthSchemes.SPNEGO, new SPNegoSchemeFactory(  ) )
+                .register( AuthSchemes.BASIC, new BasicSchemeFactory(  ) )
+                .build();
+        HttpClient httpClient = HttpClientBuilder.create().setDefaultAuthSchemeRegistry( authSchemeRegistry ).build();
+        BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+        Credentials useJaasCreds = new Credentials() {
+
+            public String getPassword() {
+                return null;
+            }
+
+            public Principal getUserPrincipal() {
+                return null;
+            }
+
+        };
+        credentialsProvider.setCredentials( new AuthScope( null, -1, AuthScope.ANY_REALM ), useJaasCreds );
+        HttpClientContext context = HttpClientContext.create();
+        context.setCredentialsProvider( credentialsProvider );
+        return httpClient;
     }
 
     private HttpUriRequest createHttpUriRequest(String uri ) throws CommonUtilException {
