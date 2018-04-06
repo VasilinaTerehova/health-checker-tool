@@ -4,6 +4,7 @@ import com.epam.facade.model.ClusterHealthSummary;
 import com.epam.facade.model.ClusterSnapshotEntityProjectionImpl;
 import com.epam.facade.model.ServiceStatus;
 import com.epam.facade.model.accumulator.HealthCheckResultsAccumulator;
+import com.epam.facade.model.accumulator.YarnHealthCheckResult;
 import com.epam.facade.model.projection.ClusterEntityProjection;
 import com.epam.facade.model.projection.ClusterSnapshotEntityProjection;
 import com.epam.health.tool.dao.cluster.ClusterDao;
@@ -25,10 +26,18 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import reactor.core.publisher.Flux;
+import reactor.core.scheduler.Scheduler;
+import reactor.core.scheduler.Schedulers;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public abstract class CommonClusterSnapshotFacadeImpl implements IClusterSnapshotFacade {
 
@@ -52,28 +61,22 @@ public abstract class CommonClusterSnapshotFacadeImpl implements IClusterSnapsho
 
     private Logger logger = Logger.getLogger(CommonClusterSnapshotFacadeImpl.class);
 
+    @Override
     public ClusterHealthSummary askForCurrentClusterSnapshot(String clusterName) throws InvalidResponseException {
-        ClusterEntityProjection clusterEntity = clusterFacade.getCluster(clusterName);
-        return new ClusterHealthSummary(new ClusterSnapshotEntityProjectionImpl(clusterEntity, askForCurrentServicesSnapshot(clusterName)));
+        return performHealthChecks( clusterName, this::getRestHealthCheckActions ).getClusterHealthSummary();
     }
 
     @Override
-    public HealthCheckResultsAccumulator askForCurrentClusterSnapshotTemp(String clusterName) throws InvalidResponseException {
-        ClusterEntity clusterEntity = clusterDao.findByClusterName( clusterName );
-        HealthCheckResultsAccumulator healthCheckResultsAccumulator = new HealthCheckResultsAccumulator();
-
-        getHealthCheckActions( clusterEntity.getClusterTypeEnum().name() )
-                .forEach(serviceHealthCheckAction -> {
-                    try {
-                        serviceHealthCheckAction.performHealthCheck(clusterEntity, healthCheckResultsAccumulator);
-                    } catch (InvalidResponseException e) {
-                        throw new RuntimeException( e );
-                    }
-                });
-
-        return healthCheckResultsAccumulator;
+    public HealthCheckResultsAccumulator askForCurrentFullHealthCheck(String clusterName) throws InvalidResponseException {
+        return performHealthChecks( clusterName, this::getHealthCheckActions );
     }
 
+    @Override
+    public YarnHealthCheckResult askForCurrentYarnHealthCheck(String clusterName) throws InvalidResponseException {
+        return performHealthChecks( clusterName, this::getYarnHealthCheckActions ).getYarnHealthCheckResult();
+    }
+
+    @Override
     public ClusterHealthSummary getLastClusterSnapshot(String clusterName) {
         receiveAndSaveClusterSnapshot(clusterDao.findByClusterName(clusterName));
         Pageable top1 = new PageRequest(0, 1);
@@ -85,6 +88,7 @@ public abstract class CommonClusterSnapshotFacadeImpl implements IClusterSnapsho
         return new ClusterHealthSummary(cluster, clusterServiceSnapshotDao.findServiceProjectionsBy(cluster.getId()));
     }
 
+    @Override
     public List<ClusterHealthSummary> getClusterSnapshotHistory(String clusterName) throws InvalidResponseException {
         Pageable top30 = new PageRequest(0, 30);
         List<ClusterSnapshotEntityProjection> top30ClusterName = clusterSnapshotDao.findTop10ClusterName(clusterName, top30);
@@ -93,6 +97,7 @@ public abstract class CommonClusterSnapshotFacadeImpl implements IClusterSnapsho
         return clusterHealthSummaries;
     }
 
+    @Override
     public ClusterShapshotEntity receiveAndSaveClusterSnapshot(ClusterEntity clusterEntity) {
         try {
             List<ServiceStatus> serviceStatusList = askForCurrentServicesSnapshot(clusterEntity.getClusterName());
@@ -129,7 +134,41 @@ public abstract class CommonClusterSnapshotFacadeImpl implements IClusterSnapsho
         return null;
     }
 
+    private HealthCheckResultsAccumulator performHealthChecks(String clusterName, Function<String, List<IServiceHealthCheckAction>> getServiceHealthCheckActionsFunction) {
+        ClusterEntity clusterEntity = clusterDao.findByClusterName( clusterName );
+        HealthCheckResultsAccumulator healthCheckResultsAccumulator = new HealthCheckResultsAccumulator();
+//        ExecutorService executorService = Executors.newFixedThreadPool( 4 );
+
+        Flux.fromStream( getServiceHealthCheckActionsFunction.apply( clusterEntity.getClusterTypeEnum().name() ).stream() )
+                .parallel().doOnNext( serviceHealthCheckAction -> {
+            try {
+                serviceHealthCheckAction.performHealthCheck(clusterEntity, healthCheckResultsAccumulator);
+            } catch (InvalidResponseException e) {
+                throw new RuntimeException( e );
+            }
+        } ).subscribe();
+//        getServiceHealthCheckActionsFunction.apply( clusterEntity.getClusterTypeEnum().name() ).stream()
+//                .map( serviceHealthCheckAction -> CompletableFuture.runAsync(() -> {
+//                    try {
+//                        serviceHealthCheckAction.performHealthCheck(clusterEntity, healthCheckResultsAccumulator);
+//                    } catch (InvalidResponseException e) {
+//                        throw new RuntimeException( e );
+//                    }
+//                }))
+//                .forEach(CompletableFuture::join);
+
+        return healthCheckResultsAccumulator;
+    }
+
     private List<IServiceHealthCheckAction> getHealthCheckActions( String clusterType ) {
         return healthCheckActionImplResolver.resolveActionImplementations( clusterType );
+    }
+
+    private List<IServiceHealthCheckAction> getRestHealthCheckActions( String clusterType ) {
+        return healthCheckActionImplResolver.resolveRestActionImplementations( clusterType );
+    }
+
+    private List<IServiceHealthCheckAction> getYarnHealthCheckActions( String clusterType ) {
+        return healthCheckActionImplResolver.resolveYarnActionImplementations( clusterType );
     }
 }

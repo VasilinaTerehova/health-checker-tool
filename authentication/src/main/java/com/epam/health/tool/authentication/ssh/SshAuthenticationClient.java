@@ -4,11 +4,12 @@ import com.epam.health.tool.model.ClusterEntity;
 import com.epam.util.common.CommonUtilException;
 import com.epam.util.common.file.DownloadedFileWrapper;
 import com.epam.util.ssh.SshCommonUtil;
+import com.epam.util.ssh.delegating.SshExecResult;
 import org.springframework.stereotype.Component;
 
 @Component
 public class SshAuthenticationClient {
-    public String executeCommand(ClusterEntity clusterEntity, String command) {
+    public SshExecResult executeCommand(ClusterEntity clusterEntity, String command) {
         try {
             return SshCommonUtil.buildSshCommandExecutor( clusterEntity.getSsh().getUsername(), clusterEntity.getSsh().getPassword(), clusterEntity.getSsh().getPemFilePath() )
                     .executeCommand( clusterEntity.getHost(), command );

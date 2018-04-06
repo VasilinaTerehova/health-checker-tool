@@ -2,6 +2,7 @@ package com.epam.health.tool.controller.cluster;
 
 import com.epam.facade.model.ClusterHealthSummary;
 import com.epam.facade.model.accumulator.HealthCheckResultsAccumulator;
+import com.epam.facade.model.accumulator.YarnHealthCheckResult;
 import com.epam.health.tool.exception.RetrievingObjectException;
 import com.epam.health.tool.facade.cluster.IClusterFacade;
 import com.epam.health.tool.facade.cluster.IClusterSnapshotFacade;
@@ -26,23 +27,31 @@ public class ClusterHealthCheckController {
     @Autowired
     private IClusterFacade clusterFacade;
 
-//    @CrossOrigin( origins = "http://localhost:4200" )
-//    @RequestMapping( "/getClusterStatus" )
-//    public ResponseEntity<ClusterHealthSummary> getClusterStatus(@RequestParam( "clusterName" ) String clusterName ) {
-//        try {
-//            return ResponseEntity.ok( clusterSnapshotFacadeIFacadeImplResolver.resolveFacadeImpl( clusterFacade.getCluster( clusterName ).getClusterType().name() ) //Should be changed
-//                    .askForCurrentClusterSnapshot( clusterName ) );
-//        } catch (ImplementationNotResolvedException | InvalidResponseException e) {
-//            throw new RetrievingObjectException( e );
-//        }
-//    }
-
     @CrossOrigin( origins = "http://localhost:4200" )
     @RequestMapping( "/getClusterStatus" )
-    public ResponseEntity<HealthCheckResultsAccumulator> getClusterStatus(@RequestParam( "clusterName" ) String clusterName ) {
+    public ResponseEntity<ClusterHealthSummary> getRestClusterStatus(@RequestParam( "clusterName" ) String clusterName ) {
         try {
-            return ResponseEntity.ok( clusterSnapshotFacadeIFacadeImplResolver.resolveFacadeImpl( clusterFacade.getCluster( clusterName ).getClusterType().name() ) //Should be changed
-                    .askForCurrentClusterSnapshotTemp( clusterName ) );
+            return ResponseEntity.ok( resolveClusterSnapshotFacade( clusterName ).askForCurrentClusterSnapshot( clusterName ) );
+        } catch (ImplementationNotResolvedException | InvalidResponseException e) {
+            throw new RetrievingObjectException( e );
+        }
+    }
+
+    @CrossOrigin( origins = "http://localhost:4200" )
+    @RequestMapping( "/cluster/status/all" )
+    public ResponseEntity<HealthCheckResultsAccumulator> getAllClusterStatus(@RequestParam( "clusterName" ) String clusterName ) {
+        try {
+            return ResponseEntity.ok( resolveClusterSnapshotFacade( clusterName ).askForCurrentFullHealthCheck( clusterName ) );
+        } catch (ImplementationNotResolvedException | InvalidResponseException e) {
+            throw new RetrievingObjectException( e );
+        }
+    }
+
+    @CrossOrigin( origins = "http://localhost:4200" )
+    @RequestMapping( "/cluster/status/yarn" )
+    public ResponseEntity<YarnHealthCheckResult> getYarnClusterStatus(@RequestParam( "clusterName" ) String clusterName ) {
+        try {
+            return ResponseEntity.ok( resolveClusterSnapshotFacade( clusterName ).askForCurrentYarnHealthCheck( clusterName ) );
         } catch (ImplementationNotResolvedException | InvalidResponseException e) {
             throw new RetrievingObjectException( e );
         }
@@ -52,10 +61,13 @@ public class ClusterHealthCheckController {
     @RequestMapping( "/getClusterStatusHistory" )
     public ResponseEntity<List<ClusterHealthSummary>> getClusterStatusHistory(@RequestParam( "clusterName" ) String clusterName ) {
         try {
-            return ResponseEntity.ok( clusterSnapshotFacadeIFacadeImplResolver.resolveFacadeImpl( clusterFacade.getCluster( clusterName ).getClusterType().name() ) //Should be changed
-                    .getClusterSnapshotHistory( clusterName ) );
+            return ResponseEntity.ok( resolveClusterSnapshotFacade( clusterName ).getClusterSnapshotHistory( clusterName ) );
         } catch (InvalidResponseException | ImplementationNotResolvedException e) {
             throw new RetrievingObjectException( e );
         }
+    }
+
+    private IClusterSnapshotFacade resolveClusterSnapshotFacade( String clusterName ) throws ImplementationNotResolvedException {
+        return clusterSnapshotFacadeIFacadeImplResolver.resolveFacadeImpl( clusterFacade.getCluster( clusterName ).getClusterType().name() );
     }
 }

@@ -73,8 +73,8 @@ public class DelegatingSshSession implements Closeable {
     return commandResult;
   }
 
-  public String executeCommand( String command ) {
-    StringBuilder commandResult = new StringBuilder( StringUtils.EMPTY );
+  public SshExecResult executeCommand( String command ) {
+    SshExecResult sshExecResult = new SshExecResult();
     Channel channel = null;
 
     try {
@@ -93,14 +93,14 @@ public class DelegatingSshSession implements Closeable {
           if ( i < 0 ) {
             break;
           }
-          commandResult.append( new String( tmp, 0, i ) );
+          sshExecResult.appendToOut( new String( tmp, 0, i ) );
         }
         while ( err.available() > 0 ) {
           int i = err.read( tmp, 0, 5024 );
           if ( i < 0 ) {
             break;
           }
-          commandResult.append( new String( tmp, 0, i ) );
+          sshExecResult.appendToErr( new String( tmp, 0, i ) );
         }
         if ( channel.isClosed() ) {
           if ( in.available() > 0 || err.available() > 0 ) {
@@ -122,7 +122,7 @@ public class DelegatingSshSession implements Closeable {
       }
     }
 
-    return commandResult.toString();
+    return sshExecResult;
   }
 
   @Override

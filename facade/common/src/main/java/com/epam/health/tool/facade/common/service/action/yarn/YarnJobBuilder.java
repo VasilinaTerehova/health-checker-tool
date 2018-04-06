@@ -1,4 +1,4 @@
-package com.epam.health.tool.facade.common.service.action;
+package com.epam.health.tool.facade.common.service.action.yarn;
 
 import com.epam.facade.model.accumulator.YarnHealthCheckResult;
 import com.epam.util.common.CheckingParamsUtil;

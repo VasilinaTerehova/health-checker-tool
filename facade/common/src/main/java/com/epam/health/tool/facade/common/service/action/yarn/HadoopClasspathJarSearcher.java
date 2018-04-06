@@ -1,12 +1,18 @@
-package com.epam.health.tool.facade.common.service.action;
+package com.epam.health.tool.facade.common.service.action.yarn;
 
 import com.epam.health.tool.model.credentials.SshCredentialsEntity;
 import com.epam.util.common.CheckingParamsUtil;
 import com.epam.util.common.CommonUtilException;
 import com.epam.util.common.StringUtils;
 import com.epam.util.ssh.SshCommonUtil;
+import reactor.core.publisher.Flux;
+import reactor.core.scheduler.Schedulers;
 
 import java.util.Arrays;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.function.Supplier;
 
 public class HadoopClasspathJarSearcher {
     private final static String HADOOP_CLASSPATH_COMMAND = "hadoop classpath";
@@ -49,10 +55,17 @@ public class HadoopClasspathJarSearcher {
     public String findJobJarOnCluster( String jarMask ) {
         try {
             String hadoopClasspath = SshCommonUtil.buildSshCommandExecutor( sshCredentialsEntity.getUsername(), sshCredentialsEntity.getPassword(), sshCredentialsEntity.getPemFilePath() )
-                    .executeCommand( host, HADOOP_CLASSPATH_COMMAND ).trim();
+                    .executeCommand( host, HADOOP_CLASSPATH_COMMAND ).getOutMessage().trim();
 
-            return Arrays.stream( hadoopClasspath.split(":") )
-                    .map( possiblePathToJar -> findExamplesPath( possiblePathToJar, jarMask ) ).filter( result -> !result.isEmpty() ).findFirst().orElse( StringUtils.EMPTY );
+//            ExecutorService executorService = Executors.newFixedThreadPool( 4 );
+
+            return Flux.just( hadoopClasspath.split(":") ).parallel()
+                    .map( possiblePathToJar -> findExamplesPath( possiblePathToJar, jarMask ) )
+                    .filter( result -> !result.isEmpty() ).sequential().blockFirst();
+//            return Arrays.stream( hadoopClasspath.split(":") )
+//                    .map( possiblePathToJar -> CompletableFuture.supplyAsync(() -> findExamplesPath( possiblePathToJar, jarMask ), executorService))
+//                    .map( CompletableFuture::join )
+//                    .filter(result -> !result.isEmpty() ).findFirst().orElse( StringUtils.EMPTY );
         } catch (CommonUtilException | RuntimeException e) {
             e.printStackTrace();
         }
@@ -62,12 +75,8 @@ public class HadoopClasspathJarSearcher {
 
     private String findExamplesPath( String possiblePathToJar, String jarMask ) {
         try {
-            System.out.println( possiblePathToJar );
-            if ( possiblePathToJar.equals( "/opt/cloudera/parcels/CDH/lib/hadoop-mapreduce/.//*" ) ) {
-                System.out.println("haha");
-            }
             String result = SshCommonUtil.buildSshCommandExecutor( sshCredentialsEntity.getUsername(), sshCredentialsEntity.getPassword(), sshCredentialsEntity.getPemFilePath() )
-                    .executeCommand( host, "ls " + possiblePathToJar + " | grep " + jarMask );
+                    .executeCommand( host, "ls " + possiblePathToJar + " | grep " + jarMask ).getOutMessage();
             if ( !CheckingParamsUtil.isParamsNullOrEmpty( result ) ) {
                 return result.split( "\\s+" )[0].trim();
             }
