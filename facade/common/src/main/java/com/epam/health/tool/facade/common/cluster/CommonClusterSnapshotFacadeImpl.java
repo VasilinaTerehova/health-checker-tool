@@ -3,6 +3,7 @@ package com.epam.health.tool.facade.common.cluster;
 import com.epam.facade.model.ClusterHealthSummary;
 import com.epam.facade.model.ClusterSnapshotEntityProjectionImpl;
 import com.epam.facade.model.ServiceStatus;
+import com.epam.facade.model.accumulator.HealthCheckResultsAccumulator;
 import com.epam.facade.model.projection.ClusterEntityProjection;
 import com.epam.facade.model.projection.ClusterSnapshotEntityProjection;
 import com.epam.health.tool.dao.cluster.ClusterDao;
@@ -12,7 +13,9 @@ import com.epam.health.tool.dao.cluster.ClusterSnapshotDao;
 import com.epam.health.tool.facade.cluster.IClusterFacade;
 import com.epam.health.tool.facade.cluster.IClusterSnapshotFacade;
 import com.epam.health.tool.facade.common.date.util.DateUtil;
+import com.epam.health.tool.facade.common.resolver.impl.HealthCheckActionImplResolver;
 import com.epam.health.tool.facade.exception.InvalidResponseException;
+import com.epam.health.tool.facade.service.action.IServiceHealthCheckAction;
 import com.epam.health.tool.model.ClusterEntity;
 import com.epam.health.tool.model.ClusterServiceEntity;
 import com.epam.health.tool.model.ClusterServiceShapshotEntity;
@@ -43,11 +46,32 @@ public abstract class CommonClusterSnapshotFacadeImpl implements IClusterSnapsho
     ClusterServiceDao clusterServiceDao;
     @Autowired
     ClusterDao clusterDao;
+
+    @Autowired
+    private HealthCheckActionImplResolver healthCheckActionImplResolver;
+
     private Logger logger = Logger.getLogger(CommonClusterSnapshotFacadeImpl.class);
 
     public ClusterHealthSummary askForCurrentClusterSnapshot(String clusterName) throws InvalidResponseException {
         ClusterEntityProjection clusterEntity = clusterFacade.getCluster(clusterName);
         return new ClusterHealthSummary(new ClusterSnapshotEntityProjectionImpl(clusterEntity, askForCurrentServicesSnapshot(clusterName)));
+    }
+
+    @Override
+    public HealthCheckResultsAccumulator askForCurrentClusterSnapshotTemp(String clusterName) throws InvalidResponseException {
+        ClusterEntity clusterEntity = clusterDao.findByClusterName( clusterName );
+        HealthCheckResultsAccumulator healthCheckResultsAccumulator = new HealthCheckResultsAccumulator();
+
+        getHealthCheckActions( clusterEntity.getClusterTypeEnum().name() )
+                .forEach(serviceHealthCheckAction -> {
+                    try {
+                        serviceHealthCheckAction.performHealthCheck(clusterEntity, healthCheckResultsAccumulator);
+                    } catch (InvalidResponseException e) {
+                        throw new RuntimeException( e );
+                    }
+                });
+
+        return healthCheckResultsAccumulator;
     }
 
     public ClusterHealthSummary getLastClusterSnapshot(String clusterName) {
@@ -103,5 +127,9 @@ public abstract class CommonClusterSnapshotFacadeImpl implements IClusterSnapsho
         }
 
         return null;
+    }
+
+    private List<IServiceHealthCheckAction> getHealthCheckActions( String clusterType ) {
+        return healthCheckActionImplResolver.resolveActionImplementations( clusterType );
     }
 }

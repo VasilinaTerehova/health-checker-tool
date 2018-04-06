@@ -1,4 +1,4 @@
-package com.epam.health.tool.facade.common.service.job;
+package com.epam.health.tool.facade.common.service.action;
 
 import com.epam.health.tool.model.credentials.SshCredentialsEntity;
 import com.epam.util.common.CheckingParamsUtil;
@@ -49,10 +49,10 @@ public class HadoopClasspathJarSearcher {
     public String findJobJarOnCluster( String jarMask ) {
         try {
             String hadoopClasspath = SshCommonUtil.buildSshCommandExecutor( sshCredentialsEntity.getUsername(), sshCredentialsEntity.getPassword(), sshCredentialsEntity.getPemFilePath() )
-                    .executeCommand( host, HADOOP_CLASSPATH_COMMAND );
+                    .executeCommand( host, HADOOP_CLASSPATH_COMMAND ).trim();
 
             return Arrays.stream( hadoopClasspath.split(":") )
-                    .map( possiblePathToJar -> findExamplesPath( possiblePathToJar, jarMask ) ).findFirst().orElse( StringUtils.EMPTY );
+                    .map( possiblePathToJar -> findExamplesPath( possiblePathToJar, jarMask ) ).filter( result -> !result.isEmpty() ).findFirst().orElse( StringUtils.EMPTY );
         } catch (CommonUtilException | RuntimeException e) {
             e.printStackTrace();
         }
@@ -62,10 +62,14 @@ public class HadoopClasspathJarSearcher {
 
     private String findExamplesPath( String possiblePathToJar, String jarMask ) {
         try {
+            System.out.println( possiblePathToJar );
+            if ( possiblePathToJar.equals( "/opt/cloudera/parcels/CDH/lib/hadoop-mapreduce/.//*" ) ) {
+                System.out.println("haha");
+            }
             String result = SshCommonUtil.buildSshCommandExecutor( sshCredentialsEntity.getUsername(), sshCredentialsEntity.getPassword(), sshCredentialsEntity.getPemFilePath() )
                     .executeCommand( host, "ls " + possiblePathToJar + " | grep " + jarMask );
             if ( !CheckingParamsUtil.isParamsNullOrEmpty( result ) ) {
-                return result.split( "\\S+" )[0].trim();
+                return result.split( "\\s+" )[0].trim();
             }
 
             return StringUtils.EMPTY;

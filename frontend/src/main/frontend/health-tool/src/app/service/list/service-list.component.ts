@@ -57,7 +57,7 @@ export class ServiceListComponent implements OnInit, OnDestroy {
     this.clusterService.getClusterState( clusterName ).subscribe(
       data => {
         if ( data ) {
-          this.clusterState = data;
+          this.clusterState = data.clusterHealthSummary;
           this.onClusterChange.emit( this.clusterState.cluster );
         }
       },

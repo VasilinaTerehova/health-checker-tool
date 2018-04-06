@@ -1,6 +1,7 @@
 package com.epam.health.tool.controller.cluster;
 
 import com.epam.facade.model.ClusterHealthSummary;
+import com.epam.facade.model.accumulator.HealthCheckResultsAccumulator;
 import com.epam.health.tool.exception.RetrievingObjectException;
 import com.epam.health.tool.facade.cluster.IClusterFacade;
 import com.epam.health.tool.facade.cluster.IClusterSnapshotFacade;
@@ -25,12 +26,23 @@ public class ClusterHealthCheckController {
     @Autowired
     private IClusterFacade clusterFacade;
 
+//    @CrossOrigin( origins = "http://localhost:4200" )
+//    @RequestMapping( "/getClusterStatus" )
+//    public ResponseEntity<ClusterHealthSummary> getClusterStatus(@RequestParam( "clusterName" ) String clusterName ) {
+//        try {
+//            return ResponseEntity.ok( clusterSnapshotFacadeIFacadeImplResolver.resolveFacadeImpl( clusterFacade.getCluster( clusterName ).getClusterType().name() ) //Should be changed
+//                    .askForCurrentClusterSnapshot( clusterName ) );
+//        } catch (ImplementationNotResolvedException | InvalidResponseException e) {
+//            throw new RetrievingObjectException( e );
+//        }
+//    }
+
     @CrossOrigin( origins = "http://localhost:4200" )
     @RequestMapping( "/getClusterStatus" )
-    public ResponseEntity<ClusterHealthSummary> getClusterStatus(@RequestParam( "clusterName" ) String clusterName ) {
+    public ResponseEntity<HealthCheckResultsAccumulator> getClusterStatus(@RequestParam( "clusterName" ) String clusterName ) {
         try {
             return ResponseEntity.ok( clusterSnapshotFacadeIFacadeImplResolver.resolveFacadeImpl( clusterFacade.getCluster( clusterName ).getClusterType().name() ) //Should be changed
-                    .askForCurrentClusterSnapshot( clusterName ) );
+                    .askForCurrentClusterSnapshotTemp( clusterName ) );
         } catch (ImplementationNotResolvedException | InvalidResponseException e) {
             throw new RetrievingObjectException( e );
         }

@@ -4,9 +4,7 @@ import com.epam.util.common.StringUtils;
 import com.epam.util.common.copier.ByteCopierUtil;
 import com.jcraft.jsch.*;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
 public class DelegatingSshSession implements Closeable {
   private Session session;
@@ -86,6 +84,7 @@ public class DelegatingSshSession implements Closeable {
       channel.setInputStream( null );
       ( (ChannelExec) channel ).setErrStream( System.err );
       InputStream in = channel.getInputStream();
+      InputStream err = ((ChannelExec) channel).getErrStream();
       channel.connect();
       byte[] tmp = new byte[ 10024 ];
       while ( true ) {
@@ -96,8 +95,15 @@ public class DelegatingSshSession implements Closeable {
           }
           commandResult.append( new String( tmp, 0, i ) );
         }
+        while ( err.available() > 0 ) {
+          int i = err.read( tmp, 0, 5024 );
+          if ( i < 0 ) {
+            break;
+          }
+          commandResult.append( new String( tmp, 0, i ) );
+        }
         if ( channel.isClosed() ) {
-          if ( in.available() > 0 ) {
+          if ( in.available() > 0 || err.available() > 0 ) {
             continue;
           }
           break;

@@ -17,6 +17,12 @@
             <artifactId>health-checker-tool-facade-api</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!--Authentication-->
+        <dependency>
+            <groupId>com.epam</groupId>
+            <artifactId>health-checker-tool-authentication</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <!--Repository-->
         <dependency>
             <groupId>com.epam</groupId>
