@@ -101,6 +101,7 @@ public abstract class CommonClusterSnapshotFacadeImpl implements IClusterSnapsho
         } catch (InvalidResponseException e) {
             logger.error(e.getMessage());
         }
+
         return null;
     }
 }

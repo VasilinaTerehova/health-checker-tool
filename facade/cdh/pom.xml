@@ -12,6 +12,12 @@
     <artifactId>health-checker-tool-facade-cdh</artifactId>
 
     <dependencies>
+        <!--Authentication-->
+        <dependency>
+            <groupId>com.epam</groupId>
+            <artifactId>health-checker-tool-authentication</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.epam</groupId>
             <artifactId>health-checker-tool-facade-common</artifactId>

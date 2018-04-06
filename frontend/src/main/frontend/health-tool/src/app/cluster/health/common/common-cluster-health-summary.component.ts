@@ -12,6 +12,7 @@ export class CommonClusterHealthSummaryComponent {
   @Input() cluster: Cluster;
   @Input() yarnAppsCount: number;
   nodes: NodeSummary[];
+  isCollapsed: boolean;
 
   constructor() {
     this.nodes = [

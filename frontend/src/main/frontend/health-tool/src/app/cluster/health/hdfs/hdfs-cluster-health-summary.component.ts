@@ -11,6 +11,7 @@ import { HdfsHealthReport } from './hdfs-health-report.model';
 export class HdfsClusterHealthSummaryComponent {
   @Input() serviceName: string;
   @Input() hdfsHealthReport: HdfsHealthReport;
+  isCollapsed: boolean;
 
   constructor() {
     this.hdfsHealthReport = new HdfsHealthReport( "BAD", "/nm/yarn", [

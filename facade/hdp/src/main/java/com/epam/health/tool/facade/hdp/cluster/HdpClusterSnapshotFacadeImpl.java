@@ -2,12 +2,13 @@ package com.epam.health.tool.facade.hdp.cluster;
 
 import com.epam.facade.model.ServiceStatus;
 import com.epam.facade.model.projection.ClusterEntityProjection;
-import com.epam.health.tool.facade.common.authentificate.BaseHttpAuthenticatedAction;
+import com.epam.health.tool.authentication.http.HttpAuthenticationClient;
 import com.epam.health.tool.facade.common.cluster.CommonClusterSnapshotFacadeImpl;
 import com.epam.health.tool.facade.exception.InvalidResponseException;
 import com.epam.health.tool.model.ServiceTypeEnum;
 import com.epam.util.common.CommonUtilException;
 import com.epam.util.common.json.CommonJsonHandler;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -17,6 +18,8 @@ import java.util.stream.Collectors;
 
 @Component("HDP-cluster")
 public class HdpClusterSnapshotFacadeImpl extends CommonClusterSnapshotFacadeImpl {
+    @Autowired
+    private HttpAuthenticationClient httpAuthenticationClient;
 
     public List<ServiceStatus> askForCurrentServicesSnapshot(String clusterName) throws InvalidResponseException {
         ClusterEntityProjection clusterEntity = clusterFacade.getCluster(clusterName);
@@ -25,16 +28,7 @@ public class HdpClusterSnapshotFacadeImpl extends CommonClusterSnapshotFacadeImp
             //Can be Flux.just( ServiceTypeEnum.values() ).#operations...
             return Arrays.stream(ServiceTypeEnum.values())
                     .map(serviceTypeEnum -> "http://" + clusterEntity.getHost() + ":8080/api/v1/clusters/" + clusterName + "/services/" + serviceTypeEnum.toString())
-                    .map(url -> {
-                        try {
-                            return BaseHttpAuthenticatedAction.get()
-                                    .withUsername(clusterEntity.getHttp().getUsername())
-                                    .withPassword(clusterEntity.getHttp().getPassword())
-                                    .makeAuthenticatedRequest(url);
-                        } catch (CommonUtilException e) {
-                            throw new RuntimeException(e);
-                        }
-                    })
+                    .map(url -> httpAuthenticationClient.makeAuthenticatedRequest( clusterName, url ))
                     .map(this::extractFromJsonString)
                     .filter(Objects::nonNull)
                     .map(this::mapHealthStateToServiceStatusEnum)

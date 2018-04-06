@@ -1,7 +1,6 @@
-package com.epam.health.tool.facade.common.authentificate;
+package com.epam.health.tool.authentication.http;
 
 import com.epam.util.common.CommonUtilException;
-import com.epam.util.common.StringUtils;
 import com.epam.util.http.HttpRequestExecutor;
 import com.epam.util.http.header.IHeaderCreator;
 import org.apache.http.auth.AuthScope;

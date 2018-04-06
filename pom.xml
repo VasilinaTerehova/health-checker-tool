@@ -102,12 +102,7 @@
             <!--Hadoop-->
             <dependency>
                 <groupId>org.apache.hadoop</groupId>
-                <artifactId>hadoop-mapreduce-client-core</artifactId>
-                <version>${hadoop.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.hadoop</groupId>
-                <artifactId>hadoop-client</artifactId>
+                <artifactId>hadoop-common</artifactId>
                 <version>${hadoop.version}</version>
             </dependency>
 
@@ -239,6 +234,7 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
+                <module>authentication</module>
                 <module>controller</module>
                 <module>facade</module>
                 <module>repository</module>
@@ -254,6 +250,7 @@
                 </property>
             </activation>
             <modules>
+                <module>authentication</module>
                 <module>facade</module>
                 <module>repository</module>
                 <module>transfer</module>
@@ -268,6 +265,7 @@
                 </property>
             </activation>
             <modules>
+                <module>authentication</module>
                 <module>frontend</module>
                 <module>controller</module>
                 <module>facade</module>
