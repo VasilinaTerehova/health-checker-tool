@@ -1,4 +1,7 @@
 import { Credentials } from './credentials.model';
+import {HdfsUsage} from "./hdfs.model";
+import {Memory} from "./memory.model";
+import {NodeFs} from "./NodeFs";
 
 export class Cluster {
   id: number;
@@ -10,4 +13,7 @@ export class Cluster {
   http: Credentials = new Credentials();
   ssh: Credentials = new Credentials();
   kerberos: Credentials = new Credentials();
+  hdfsUsage: HdfsUsage = new HdfsUsage();
+  memoryUsage: Memory = new Memory();
+  nodes: NodeFs[];
 }

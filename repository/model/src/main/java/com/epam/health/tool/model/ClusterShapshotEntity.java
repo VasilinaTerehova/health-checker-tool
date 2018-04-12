@@ -30,14 +30,20 @@ public class ClusterShapshotEntity extends AbstractManagedEntity {
     @JoinColumn(name = TABLE_NAME + DELIMITER_INDEX + COLUMN_FK_CLUSTER)
     private ClusterEntity clusterEntity;
 
-    @Column(name = COLUMN_USED_MEMORY)
-    private long usedMemory;
+    @Embedded
+    private HdfsUsageEntity hdfsUsageEntity;
+
+    @Embedded
+    private MemoryUsageEntity memoryUsageEntity;
 
     @Column(name = COLUMN_COUNT_OF_RUNNING_APPS)
     private long countOfRunningApps;
 
     @OneToMany(mappedBy = "clusterShapshotEntity", fetch = FetchType.EAGER)
     private Set<ClusterServiceShapshotEntity> clusterServiceShapshotEntityList;
+
+    @OneToMany(mappedBy = "clusterShapshotEntity", fetch = FetchType.EAGER)
+    private Set<NodeSnapshotEntity> nodeSnapshotEntities;
 
     public Date getDateOfSnapshot() {
         return dateOfSnapshot;
@@ -55,14 +61,6 @@ public class ClusterShapshotEntity extends AbstractManagedEntity {
         this.clusterEntity = clusterEntity;
     }
 
-    public long getUsedMemory() {
-        return usedMemory;
-    }
-
-    public void setUsedMemory(long usedMemory) {
-        this.usedMemory = usedMemory;
-    }
-
     public long getCountOfRunningApps() {
         return countOfRunningApps;
     }
@@ -77,5 +75,25 @@ public class ClusterShapshotEntity extends AbstractManagedEntity {
 
     public void setClusterServiceShapshotEntityList(Set<ClusterServiceShapshotEntity> clusterServiceShapshotEntityList) {
         this.clusterServiceShapshotEntityList = clusterServiceShapshotEntityList;
+    }
+
+    public HdfsUsageEntity getHdfsUsageEntity() {
+        return hdfsUsageEntity;
+    }
+
+    public void setHdfsUsageEntity(HdfsUsageEntity hdfsUsageEntity) {
+        this.hdfsUsageEntity = hdfsUsageEntity;
+    }
+
+    public MemoryUsageEntity getMemoryUsageEntity() {
+        return memoryUsageEntity;
+    }
+
+    public void setMemoryUsageEntity(MemoryUsageEntity memoryUsageEntity) {
+        this.memoryUsageEntity = memoryUsageEntity;
+    }
+
+    public Set<NodeSnapshotEntity> getNodeSnapshotEntities() {
+        return nodeSnapshotEntities;
     }
 }

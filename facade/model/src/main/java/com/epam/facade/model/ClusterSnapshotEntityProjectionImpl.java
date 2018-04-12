@@ -1,8 +1,6 @@
 package com.epam.facade.model;
 
-import com.epam.facade.model.projection.ClusterEntityProjection;
-import com.epam.facade.model.projection.ClusterSnapshotEntityProjection;
-import com.epam.facade.model.projection.ServiceStatusProjection;
+import com.epam.facade.model.projection.*;
 import com.epam.health.tool.model.ClusterTypeEnum;
 
 import java.util.Date;
@@ -14,10 +12,18 @@ import java.util.List;
 public class ClusterSnapshotEntityProjectionImpl implements ClusterSnapshotEntityProjection {
     private final List<? extends ServiceStatusProjection> serviceStatusProjectionList;
     private final ClusterEntityProjection clusterEntityProjection;
+    private final MemoryUsageEntityProjection memoryUsageEntityProjection;
+    private final HdfsUsageEntityProjection hdfsUsageEntityProjection;
+    private final List<? extends NodeSnapshotEntityProjection> nodeSnapshotEntityProjectionList;
 
-    public ClusterSnapshotEntityProjectionImpl(ClusterEntityProjection clusterEntityProjection, List<? extends ServiceStatusProjection> serviceStatusProjectionList) {
+    public ClusterSnapshotEntityProjectionImpl(ClusterEntityProjection clusterEntityProjection, List<? extends ServiceStatusProjection> serviceStatusProjectionList,
+                                               MemoryUsageEntityProjection memoryUsageEntityProjection, HdfsUsageEntityProjection hdfsUsageEntityProjection,
+                                               List<? extends NodeSnapshotEntityProjection> nodeSnapshotEntityProjectionList) {
         this.clusterEntityProjection = clusterEntityProjection;
         this.serviceStatusProjectionList = serviceStatusProjectionList;
+        this.memoryUsageEntityProjection = memoryUsageEntityProjection;
+        this.hdfsUsageEntityProjection = hdfsUsageEntityProjection;
+        this.nodeSnapshotEntityProjectionList = nodeSnapshotEntityProjectionList;
     }
 
     @Override
@@ -53,5 +59,20 @@ public class ClusterSnapshotEntityProjectionImpl implements ClusterSnapshotEntit
     @Override
     public List<? extends ServiceStatusProjection> getClusterServiceShapshotEntityList() {
         return serviceStatusProjectionList;
+    }
+
+    @Override
+    public MemoryUsageEntityProjection getMemoryUsage() {
+        return memoryUsageEntityProjection;
+    }
+
+    @Override
+    public HdfsUsageEntityProjection getHdfsUsage() {
+        return hdfsUsageEntityProjection;
+    }
+
+    @Override
+    public List<? extends NodeSnapshotEntityProjection> getNodes() {
+        return nodeSnapshotEntityProjectionList;
     }
 }

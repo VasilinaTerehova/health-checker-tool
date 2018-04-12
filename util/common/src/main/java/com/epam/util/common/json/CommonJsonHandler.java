@@ -44,6 +44,20 @@ public class CommonJsonHandler {
         }
     }
 
+    public <T> T getTypedValueFromInnerFieldArrElement( String jsonString, Class<T> valueType, String... fieldNameChain ) throws CommonUtilException {
+        try {
+            JsonNode source = extractJsonNode( jsonString );
+            for ( String fieldName : fieldNameChain ) {
+                source = extractChildJsonNode( source, fieldName ).get(0);
+            }
+
+            return source != null ? objectMapper.readValue(source.toString(), valueType) : null;
+        }
+        catch ( IOException ex ){
+            throw new CommonUtilException( ex );
+        }
+    }
+
     public <T> List<T> getListTypedValueFromInnerField( String jsonString, Class<T> valueType, String... fieldNameChain ) throws CommonUtilException {
         try {
             List<T> result = new ArrayList<>();

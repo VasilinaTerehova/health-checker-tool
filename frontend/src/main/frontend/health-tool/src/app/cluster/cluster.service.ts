@@ -15,7 +15,7 @@ export class ClusterService {
   }
 
   getClusterState( clusterName: string ) {
-    return this.http.get<ClusterState>("http://localhost:8888/getClusterStatus", { params: { "clusterName": clusterName } });
+    return this.http.get<HealthCheckResult>("http://localhost:8888/getClusterStatus", { params: { "clusterName": clusterName } });
   }
 
   getAllClusterState( clusterName: string ) {

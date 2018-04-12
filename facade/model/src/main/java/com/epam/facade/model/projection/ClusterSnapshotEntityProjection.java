@@ -1,6 +1,7 @@
 package com.epam.facade.model.projection;
 
 import com.epam.health.tool.model.ClusterTypeEnum;
+import com.epam.health.tool.model.NodeSnapshotEntity;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Date;
@@ -26,9 +27,17 @@ public interface ClusterSnapshotEntityProjection {
     @Value("#{target.dateOfSnapshot}")
     Date getDateOfSnapshot();
 
-//    @Value("#{target.clusterEntity.secured}")
-//    Date getUsedMemory();
-
     @Value("#{target.clusterServiceShapshotEntityList}")
     List<? extends ServiceStatusProjection> getClusterServiceShapshotEntityList();
+
+    @Value("#{target.memoryUsageEntity}")
+    MemoryUsageEntityProjection getMemoryUsage();
+
+    @Value("#{target.hdfsUsageEntity}")
+    HdfsUsageEntityProjection getHdfsUsage();
+
+    @Value("#{target.nodeSnapshotEntities}")
+    List<? extends NodeSnapshotEntityProjection> getNodes();
+
+
 }

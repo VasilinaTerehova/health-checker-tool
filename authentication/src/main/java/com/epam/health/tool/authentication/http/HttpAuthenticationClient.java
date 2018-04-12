@@ -7,11 +7,13 @@ import com.epam.util.common.CommonUtilException;
 import com.epam.util.common.file.DownloadedFileWrapper;
 import com.epam.util.common.file.FileCommonUtil;
 import com.epam.util.kerberos.HadoopKerberosUtil;
+import org.apache.hadoop.security.UserGroupInformation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.security.auth.Subject;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Paths;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
@@ -40,12 +42,15 @@ public class HttpAuthenticationClient {
     private String makeDoAsRequest( ClusterEntity clusterEntity, String url ) {
         lock.lock();
         try {
-            return Subject.doAs( createKerberosSubject( clusterEntity ),
-                    (PrivilegedExceptionAction<String>) () -> makeSimpleRequest( clusterEntity, url ));
-        } catch ( PrivilegedActionException e ) {
+            createKerberosSubject( clusterEntity );
+            return UserGroupInformation.getCurrentUser().doAs((PrivilegedExceptionAction<String>) () -> makeSimpleRequest( clusterEntity, url ) );
+//            return Subject.doAs( createKerberosSubject( clusterEntity ),
+//                    (PrivilegedExceptionAction<String>) () -> makeSimpleRequest( clusterEntity, url ));
+        } /*catch ( PrivilegedActionException e ) {
             throw new RuntimeException( e );
-        }
-        finally {
+        }*/ catch (InterruptedException | IOException e) {
+            throw new RuntimeException( e );
+        } finally {
             lock.unlock();
         }
     }

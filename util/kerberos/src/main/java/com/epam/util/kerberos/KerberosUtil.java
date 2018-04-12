@@ -64,7 +64,7 @@ public class KerberosUtil {
     private static Map<String, String> createBaseLoginConfigMap() {
         Map<String, String> configBaseMap = new HashMap<>();
 
-        configBaseMap.put("debug", Boolean.FALSE.toString());
+        configBaseMap.put("debug", Boolean.TRUE.toString());
         configBaseMap.put("refreshKrb5Config", Boolean.TRUE.toString());
 
         return configBaseMap;

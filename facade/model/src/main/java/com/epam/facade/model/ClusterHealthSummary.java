@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ClusterHealthSummary {
+    //todo: rename cluster - also on ui - to cluster snapshot, cluster name is not valid
     private ClusterSnapshotEntityProjection cluster;
     private List<? extends ServiceStatusProjection> serviceStatusList;
 
