@@ -1,6 +1,7 @@
 package com.epam.health.tool.controller.application;
 
 import com.epam.facade.model.ApplicationInfo;
+import com.epam.health.tool.controller.BaseFacadeResolvingController;
 import com.epam.health.tool.exception.RetrievingObjectException;
 import com.epam.health.tool.facade.application.IApplicationFacade;
 import com.epam.health.tool.facade.cluster.IClusterFacade;
@@ -16,18 +17,15 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-public class ApplicationController {
+public class ApplicationController extends BaseFacadeResolvingController {
     @Autowired
     private IFacadeImplResolver<IApplicationFacade> applicationFacadeIFacadeImplResolver;
-    @Autowired
-    private IClusterFacade clusterFacade;
 
     @CrossOrigin( origins = "http://localhost:4200" )
     @RequestMapping("/getApplicationList")
     public List<ApplicationInfo> getYarnAppList(@RequestParam( "clusterName") String clusterName ) {
         try {
-            return applicationFacadeIFacadeImplResolver.resolveFacadeImpl( clusterFacade.getCluster( clusterName ).getClusterType().name() ) //Should be changed
-                    .getApplicationList( clusterName );
+            return resolveClusterSnapshotFacade( clusterName, applicationFacadeIFacadeImplResolver ).getApplicationList( clusterName );
         }
         catch ( ImplementationNotResolvedException | InvalidResponseException ex ) {
             throw new RetrievingObjectException( ex );

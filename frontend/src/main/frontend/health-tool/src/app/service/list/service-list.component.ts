@@ -1,10 +1,13 @@
-import { Component, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 
-import { ClusterService } from '../../cluster/cluster.service';
+//Models
 import { ClusterState } from '../../cluster/cluster-state.model';
 import { Cluster } from '../../shared/cluster/cluster.model';
+import { ClusterSnapshot } from '../../cluster/cluster-snapshot.model';
+//Services
+import { ClusterHealthCheckService } from '../../cluster/health/cluster-health-check.service';
 import { ErrorReportingService } from '../../shared/error/error-reporting.service';
 import { RouteService } from '../../shared/menu/side/route.service';
 
@@ -12,28 +15,24 @@ import { RouteService } from '../../shared/menu/side/route.service';
   selector: 'service-list',
   templateUrl: 'service-list.component.html',
 })
-export class ServiceListComponent implements OnInit, OnDestroy {
-  private sub: Subscription;
-  @Output() onClusterChange  = new EventEmitter<Cluster>();
+export class ServiceListComponent {
+  private _clusterName: string;
+  @Output() onClusterSnapshotChange = new EventEmitter<ClusterSnapshot>();
   clusterState: ClusterState;
   isAscSort: boolean = true;
 
-  constructor( private clusterService: ClusterService, private route: ActivatedRoute,
-    private errorReportingService: ErrorReportingService, private routeService: RouteService ) {
-    this.sub = routeService.healthCheckMessage$.subscribe(
-      clusterName => this.ascForClusterState( clusterName )
-    );
+  constructor( private clusterHealthCheckService: ClusterHealthCheckService, private errorReportingService: ErrorReportingService ) {}
+
+  @Input()
+  set clusterName( clusterName: string ) {
+    if ( clusterName ) {
+      this._clusterName = clusterName;
+      this.ascForClusterState();
+    }
   }
 
-  ngOnInit() {
-    this.clusterState = new ClusterState();
-    this.route.paramMap.subscribe( (params: ParamMap) => {
-      this.ascForClusterState( params.get( 'id' ) );
-    });
-  }
-
-  ngOnDestroy() {
-    this.sub.unsubscribe();
+  get clusterName(): string {
+    return this._clusterName;
   }
 
   isShowServiceActionAllow(name: string) {
@@ -52,13 +51,13 @@ export class ServiceListComponent implements OnInit, OnDestroy {
     this.isAscSort = !this.isAscSort;
   }
 
-  private ascForClusterState( clusterName: string ) {
+  private ascForClusterState() {
     this.errorReportingService.clearError();
-    this.clusterService.getClusterState( clusterName ).subscribe(
+    this.clusterHealthCheckService.getServicesClusterState( this._clusterName ).subscribe(
       data => {
         if ( data ) {
           this.clusterState = data.clusterHealthSummary;
-          this.onClusterChange.emit( this.clusterState.cluster );
+          this.onClusterSnapshotChange.emit( this.clusterState.cluster );
         }
       },
       error => this.errorReportingService.reportHttpError( error )

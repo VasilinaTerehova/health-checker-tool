@@ -2,6 +2,7 @@ package com.epam.health.tool.controller.wrapper;
 
 import com.epam.facade.model.projection.impl.ClusterEntityProjectionImpl;
 
+//Use for POST/PUT queries
 public class ResponseBodyEntityWrapper {
     private ClusterEntityProjectionImpl cluster;
 

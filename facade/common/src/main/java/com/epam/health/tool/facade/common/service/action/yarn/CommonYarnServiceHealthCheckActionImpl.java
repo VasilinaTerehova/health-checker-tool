@@ -2,13 +2,12 @@ package com.epam.health.tool.facade.common.service.action.yarn;
 
 import com.epam.facade.model.accumulator.HealthCheckResultsAccumulator;
 import com.epam.facade.model.accumulator.YarnHealthCheckResult;
-import com.epam.health.tool.authentication.ssh.SshAuthenticationClient;
 import com.epam.health.tool.facade.common.service.action.CommonActionNames;
+import com.epam.health.tool.facade.common.service.action.CommonSshHealthCheckAction;
 import com.epam.health.tool.facade.exception.InvalidResponseException;
-import com.epam.health.tool.facade.service.action.IServiceHealthCheckAction;
 import com.epam.health.tool.model.ClusterEntity;
+import com.epam.health.tool.model.ServiceStatusEnum;
 import com.epam.util.ssh.delegating.SshExecResult;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -16,17 +15,17 @@ import java.util.Collections;
 import java.util.stream.Collectors;
 
 @Component( CommonActionNames.YARN_EXAMPLES )
-public class CommonYarnServiceHealthCheckActionImpl implements IServiceHealthCheckAction {
+public class CommonYarnServiceHealthCheckActionImpl extends CommonSshHealthCheckAction {
     private final static String EXAMPLES_HADOOP_JAR_MASK = "hadoop-mapreduce-examples";
     private final static String ERROR_REGEXP = "Exception";
     private final static String IS_SUCCESS_REGEXP = ".*Job .* completed.*";
-    @Autowired
-    private SshAuthenticationClient sshAuthenticationClient;
 
     @Override
     public void performHealthCheck(ClusterEntity clusterEntity, HealthCheckResultsAccumulator healthCheckResultsAccumulator) throws InvalidResponseException {
         YarnHealthCheckResult yarnHealthCheckResult = new YarnHealthCheckResult();
-        yarnHealthCheckResult.setYarnJobs(Collections.singletonList( runExamplesJob( clusterEntity, "pi", "16", "1000" ) ));
+
+        yarnHealthCheckResult.setJobResults(Collections.singletonList( runExamplesJob( clusterEntity, "pi", "5", "10" ) ));
+        yarnHealthCheckResult.setStatus( getYarnServiceStatus( yarnHealthCheckResult ) );
 
         healthCheckResultsAccumulator.setYarnHealthCheckResult( yarnHealthCheckResult );
     }
@@ -38,13 +37,6 @@ public class CommonYarnServiceHealthCheckActionImpl implements IServiceHealthChe
 
         return representResultStringAsYarnJobObject( jobName, sshAuthenticationClient
                 .executeCommand( clusterEntity, "yarn jar " + pathToExamplesJar + " " + jobName + " " + createJobParamsString( jobParams ) ));
-    }
-
-    private void kinitOnClusterIfNecessary( ClusterEntity clusterEntity ) {
-        if ( clusterEntity.isSecured() ) {
-            sshAuthenticationClient.executeCommand( clusterEntity, "echo " + clusterEntity.getKerberos().getPassword()
-                    + " | kinit " + clusterEntity.getKerberos().getUsername() );
-        }
     }
 
     private String createJobParamsString( String... params ) {
@@ -68,5 +60,23 @@ public class CommonYarnServiceHealthCheckActionImpl implements IServiceHealthChe
         if ( line.matches( IS_SUCCESS_REGEXP ) ) {
             yarnJobBuilder.withSuccess( line.contains( "successfully" ) );
         }
+    }
+
+    private boolean isAllYarnCheckSuccess(YarnHealthCheckResult yarnHealthCheckResult ) {
+        return yarnHealthCheckResult.getJobResults().stream().allMatch(YarnHealthCheckResult.YarnJob::isSuccess);
+    }
+
+    private boolean isAnyYarnCheckSuccess(YarnHealthCheckResult yarnHealthCheckResult ) {
+        return yarnHealthCheckResult.getJobResults().stream().anyMatch(YarnHealthCheckResult.YarnJob::isSuccess);
+    }
+
+    private boolean isNoneYarnCheckSuccess(YarnHealthCheckResult yarnHealthCheckResult ) {
+        return yarnHealthCheckResult.getJobResults().stream().noneMatch(YarnHealthCheckResult.YarnJob::isSuccess);
+    }
+
+    private ServiceStatusEnum getYarnServiceStatus( YarnHealthCheckResult yarnHealthCheckResult ) {
+        return isAllYarnCheckSuccess( yarnHealthCheckResult ) ? ServiceStatusEnum.GOOD
+                : isNoneYarnCheckSuccess( yarnHealthCheckResult ) ? ServiceStatusEnum.BAD
+                : ServiceStatusEnum.CONCERNING;
     }
 }

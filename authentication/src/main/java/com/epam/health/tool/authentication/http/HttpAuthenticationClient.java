@@ -27,12 +27,21 @@ public class HttpAuthenticationClient {
     private ClusterDao clusterDao;
     private ReentrantLock lock = new ReentrantLock();
 
-    public String makeAuthenticatedRequest(ClusterEntity clusterEntity, String url) {
-        return clusterEntity.isSecured() ? makeDoAsRequest( clusterEntity, url ) : makeSimpleRequest( clusterEntity, url );
+    public String makeAuthenticatedRequest(ClusterEntity clusterEntity, String url, boolean useSpnego) {
+        return isUsingSpnego( useSpnego, clusterEntity.isSecured() ) ? makeDoAsRequest( clusterEntity, url )
+                : makeSimpleRequest( clusterEntity, url );
     }
 
     public String makeAuthenticatedRequest( String clusterName, String url ) {
-        return makeAuthenticatedRequest( getClusterEntity( clusterName ), url );
+        return makeAuthenticatedRequest( getClusterEntity( clusterName ), url, true );
+    }
+
+    public String makeAuthenticatedRequest( String clusterName, String url, boolean useSpnego ) {
+        return makeAuthenticatedRequest( getClusterEntity( clusterName ), url, useSpnego );
+    }
+
+    private boolean isUsingSpnego( boolean useSpnego, boolean secureCluster ) {
+        return useSpnego && secureCluster;
     }
 
     private ClusterEntity getClusterEntity( String clusterName ) {
@@ -42,13 +51,9 @@ public class HttpAuthenticationClient {
     private String makeDoAsRequest( ClusterEntity clusterEntity, String url ) {
         lock.lock();
         try {
-            createKerberosSubject( clusterEntity );
-            return UserGroupInformation.getCurrentUser().doAs((PrivilegedExceptionAction<String>) () -> makeSimpleRequest( clusterEntity, url ) );
-//            return Subject.doAs( createKerberosSubject( clusterEntity ),
-//                    (PrivilegedExceptionAction<String>) () -> makeSimpleRequest( clusterEntity, url ));
-        } /*catch ( PrivilegedActionException e ) {
-            throw new RuntimeException( e );
-        }*/ catch (InterruptedException | IOException e) {
+            return Subject.doAs( createKerberosSubject( clusterEntity ),
+                    (PrivilegedExceptionAction<String>) () -> makeSimpleRequest( clusterEntity, url, true ));
+        } catch ( PrivilegedActionException e ) {
             throw new RuntimeException( e );
         } finally {
             lock.unlock();
@@ -56,10 +61,15 @@ public class HttpAuthenticationClient {
     }
 
     private String makeSimpleRequest( ClusterEntity clusterEntity, String url ) {
+        return makeSimpleRequest( clusterEntity, url, false );
+    }
+
+    private String makeSimpleRequest( ClusterEntity clusterEntity, String url, boolean useSpnego ) {
         try {
             return BaseHttpAuthenticatedAction.get()
                     .withUsername( clusterEntity.getHttp().getUsername() )
                     .withPassword( clusterEntity.getHttp().getPassword() )
+                    .withSpnego( useSpnego )
                     .makeAuthenticatedRequest( url );
         } catch (CommonUtilException e) {
             throw new RuntimeException( e );

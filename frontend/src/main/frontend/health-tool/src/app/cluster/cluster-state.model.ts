@@ -1,7 +1,7 @@
-import { Cluster } from '../shared/cluster/cluster.model';
+import { ClusterSnapshot } from './cluster-snapshot.model';
 import { ServiceStatus } from '../service/service-status.model';
 
 export class ClusterState {
-  cluster: Cluster;
+  cluster: ClusterSnapshot;
   serviceStatusList: ServiceStatus[];
 }

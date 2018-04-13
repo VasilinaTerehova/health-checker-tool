@@ -24,6 +24,8 @@ import { ClusterEditComponent } from './shared/cluster/edit/cluster-edit.compone
 import { ConfirmModalComponent } from './shared/modal/confirm/confirm-modal.component';
 import { CommonClusterHealthSummaryComponent } from './cluster/health/common/common-cluster-health-summary.component';
 import { HdfsClusterHealthSummaryComponent } from './cluster/health/hdfs/hdfs-cluster-health-summary.component';
+import {ServiceListHistoryComponent} from "./service/service-status-history/service-status-history.component";
+import {ServiceListStaticComponent} from "./service/list/static/service-list-static.component";
 //Directives and pipes
 import { ClusterListSearchByNamePipe } from './shared/menu/side/cluster-list.pipe';
 import { ServiceTableRowDirective } from './service/list/table/service-table-row.directive';
@@ -36,8 +38,7 @@ import { RouteService } from './shared/menu/side/route.service';
 import { ErrorReportingService } from './shared/error/error-reporting.service';
 import { ClusterTypeExService } from './shared/cluster/cluster-type-ex.service';
 import { ClusterComparatorService } from './shared/cluster/cluster-comparator.service';
-import {ServiceListHistoryComponent} from "./service/service-status-history/service-status-history.component";
-import {ServiceListStaticComponent} from "./service/list/static/service-list-static.component";
+import { ClusterHealthCheckService } from "./cluster/health/cluster-health-check.service";
 //Routing
 import { routing } from './app-routing.module';
 
@@ -62,7 +63,7 @@ export function createTranslateLoader(http: HttpClient) {
         }
     }), TabsModule.forRoot(), ButtonsModule.forRoot(), AlertModule.forRoot(), ModalModule.forRoot(), AccordionModule.forRoot(), CollapseModule.forRoot()
   ],
-  providers: [ClusterService, YarnApplicationService, RouteService, ErrorReportingService, ClusterTypeExService, ClusterComparatorService],
+  providers: [ClusterService, YarnApplicationService, RouteService, ErrorReportingService, ClusterTypeExService, ClusterComparatorService, ClusterHealthCheckService],
   bootstrap: [AppComponent]
 })
 export class AppModule {

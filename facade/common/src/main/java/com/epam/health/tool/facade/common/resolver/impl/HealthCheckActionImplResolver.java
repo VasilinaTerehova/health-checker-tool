@@ -2,6 +2,8 @@ package com.epam.health.tool.facade.common.resolver.impl;
 
 import com.epam.health.tool.facade.common.service.action.CommonActionNames;
 import com.epam.health.tool.facade.common.service.action.CommonRestHealthCheckAction;
+import com.epam.health.tool.facade.common.service.action.CommonSshHealthCheckAction;
+import com.epam.health.tool.facade.common.service.action.hdfs.CommonHdfsServiceHealthCheck;
 import com.epam.health.tool.facade.common.service.action.yarn.CommonYarnServiceHealthCheckActionImpl;
 import com.epam.health.tool.facade.resolver.IActionImplResolver;
 import com.epam.health.tool.facade.service.action.IServiceHealthCheckAction;
@@ -33,10 +35,26 @@ public class HealthCheckActionImplResolver implements IActionImplResolver {
     }
 
     @Override
+    public List<IServiceHealthCheckAction> resolveSshActionImplementations(String clusterType) {
+        return serviceHealthCheckActionMap.entrySet().stream()
+                .filter( entry -> entry.getKey().contains( clusterType ) || CommonActionNames.getNames().stream().anyMatch( name -> entry.getKey().contains( name ) ) )
+                .filter( entry -> entry.getValue() instanceof CommonSshHealthCheckAction)
+                .map(Map.Entry::getValue ).collect(Collectors.toList());
+    }
+
+    @Override
     public List<IServiceHealthCheckAction> resolveYarnActionImplementations(String clusterType) {
         return serviceHealthCheckActionMap.entrySet().stream()
                 .filter( entry -> entry.getKey().contains( clusterType ) || CommonActionNames.getNames().stream().anyMatch( name -> entry.getKey().contains( name ) ) )
                 .filter( entry -> entry.getValue() instanceof CommonYarnServiceHealthCheckActionImpl)
+                .map(Map.Entry::getValue ).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<IServiceHealthCheckAction> resolveHdfsActionImplementations(String clusterType) {
+        return serviceHealthCheckActionMap.entrySet().stream()
+                .filter( entry -> entry.getKey().contains( clusterType ) || CommonActionNames.getNames().stream().anyMatch( name -> entry.getKey().contains( name ) ) )
+                .filter( entry -> entry.getValue() instanceof CommonHdfsServiceHealthCheck)
                 .map(Map.Entry::getValue ).collect(Collectors.toList());
     }
 }

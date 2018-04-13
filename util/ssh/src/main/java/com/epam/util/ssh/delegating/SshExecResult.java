@@ -38,4 +38,14 @@ public class SshExecResult {
     public String getErrMessage() {
         return errMessage.toString();
     }
+
+    public void setOutMessage( String outMessage ) {
+        clearOut();
+        appendToOut( outMessage );
+    }
+
+    public void setErrMessage( String errMessage ) {
+        clearErr();
+        appendToErr( errMessage );
+    }
 }

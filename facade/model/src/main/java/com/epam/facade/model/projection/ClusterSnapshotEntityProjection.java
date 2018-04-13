@@ -38,6 +38,4 @@ public interface ClusterSnapshotEntityProjection {
 
     @Value("#{target.nodeSnapshotEntities}")
     List<? extends NodeSnapshotEntityProjection> getNodes();
-
-
 }

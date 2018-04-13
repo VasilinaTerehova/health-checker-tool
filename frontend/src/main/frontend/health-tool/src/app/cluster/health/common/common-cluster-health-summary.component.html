@@ -1,13 +1,13 @@
 <ul class="list-group list-group-flush">
     <li class="list-group-item" style="font-size: 15px">
-      {{ 'home.label.cluster.disk' | translate }}(File system usage) - more used {{calcMoreUsedDisk().used}}% on host <span class="label label-success">{{calcMoreUsedDisk().host}}</span>
+      {{ 'home.label.cluster.disk' | translate }}(File system usage) - more used {{calcMoreUsedDisk()?.used}}% on host <span class="label label-success">{{calcMoreUsedDisk()?.host}}</span>
       <i class="glyphicon glyphicon-chevron-left pull-right" *ngIf="!isCollapsed" (click)="isCollapsed = !isCollapsed"></i>
       <i class="glyphicon glyphicon-chevron-down pull-right" *ngIf="isCollapsed" (click)="isCollapsed = !isCollapsed"></i>
       <ul class="list-group list-group-flush" style="margin-top: 2%" [collapse]="!isCollapsed">
-          <li class="list-group-item" *ngFor="let node of nodes">Node: <span class="label label-primary">{{node.host}}</span>  -  use {{node.memory.used}} MB of {{node.memory.total}} MB <span data-toggle="tooltip" data-placement="top" title="Not enough memory" class="badge badge-pill badge-danger pull-right">!</span></li>
+          <li class="list-group-item" *ngFor="let node of cluster?.nodes">Node: <span class="label label-primary">{{node?.node}}</span>  -  use {{node?.usedGb}} GB of {{node?.totalGb}} GB <span data-toggle="tooltip" data-placement="top" title="Not enough memory" class="badge badge-pill badge-danger pull-right">!</span></li>
       </ul>
     </li>
-    <li class="list-group-item">{{ 'home.label.cluster.memory' | translate }} - {{cluster.memoryUsage.used}} MB of {{cluster.memoryUsage.total}} MB <span data-toggle="tooltip" data-placement="top" title="Not enough memory" class="badge badge-pill badge-danger pull-right">!</span></li>
+    <li class="list-group-item">{{ 'home.label.cluster.memory' | translate }} - {{cluster?.hdfsUsage?.usedGb}} GB of {{cluster?.hdfsUsage?.totalGb}} GB <span data-toggle="tooltip" data-placement="top" title="Not enough memory" class="badge badge-pill badge-danger pull-right">!</span></li>
     <li class="list-group-item">{{ 'home.label.service.yarn.apps' | translate }} - {{yarnAppsCount}}</li>
     <li class="list-group-item" *ngIf="cluster?.secured">{{ 'home.label.cluster.security' | translate }} - {{ 'home.label.common.no_problems' | translate }} <span class="label label-success pull-right">OK</span></li>
 </ul>

@@ -22,6 +22,12 @@ public class ClusterController {
     }
 
     @CrossOrigin( origins = "http://localhost:4200" )
+    @GetMapping("/cluster/{name}")
+    public ClusterEntityProjection getCluster( @PathVariable( "name" ) String clusterName ) {
+        return clusterFacade.getCluster( clusterName );
+    }
+
+    @CrossOrigin( origins = "http://localhost:4200" )
     @PostMapping( "/cluster" )
     public ClusterEntityProjection updateCluster(@RequestBody ResponseBodyEntityWrapper responseBodyEntityWrapper) {
         return clusterFacade.updateCluster( responseBodyEntityWrapper.getCluster() );

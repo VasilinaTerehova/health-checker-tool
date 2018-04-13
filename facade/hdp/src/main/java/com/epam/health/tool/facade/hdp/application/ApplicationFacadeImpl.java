@@ -29,7 +29,7 @@ public class ApplicationFacadeImpl implements IApplicationFacade {
 
         try {
             String configUrl = "http://" + clusterEntity.getHost() + ":8080/api/v1/clusters/" + clusterEntity.getName() + "/configurations?type=yarn-site&tag=version1";
-            String yarnRestUrl = CommonJsonHandler.get().getTypedValueFromInnerField( httpAuthenticationClient.makeAuthenticatedRequest( clusterName, configUrl ),
+            String yarnRestUrl = CommonJsonHandler.get().getTypedValueFromInnerField( httpAuthenticationClient.makeAuthenticatedRequest( clusterName, configUrl, false ),
                     String.class, "items", "properties", "yarn.resourcemanager.webapp.address" );
 
 //            String yarnRestUrl = SshCommonUtil.buildSshCommandExecutor( clusterEntity.getSsh().getUsername(), clusterEntity.getSsh().getPassword(), "" )

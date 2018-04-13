@@ -34,7 +34,7 @@ public class ClusterHealthSummary {
         return serviceStatusList;
     }
 
-    public void setServiceStatusList(List<ServiceStatusProjection> serviceStatusList) {
+    public void setServiceStatusList(List<? extends ServiceStatusProjection> serviceStatusList) {
         this.serviceStatusList = serviceStatusList;
     }
 }

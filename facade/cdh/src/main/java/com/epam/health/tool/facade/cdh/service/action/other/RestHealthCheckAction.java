@@ -1,8 +1,9 @@
-package com.epam.health.tool.facade.cdh.service.action;
+package com.epam.health.tool.facade.cdh.service.action.other;
 
 import com.epam.facade.model.ServiceStatus;
 import com.epam.health.tool.authentication.http.HttpAuthenticationClient;
 import com.epam.health.tool.facade.common.service.action.CommonRestHealthCheckAction;
+import com.epam.health.tool.facade.common.service.action.other.CommonOtherServicesHealthCheckAction;
 import com.epam.health.tool.facade.exception.InvalidResponseException;
 import com.epam.health.tool.model.ClusterEntity;
 import com.epam.util.common.CommonUtilException;
@@ -13,15 +14,13 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component("CDH-rest-action")
-public class RestHealthCheckAction extends CommonRestHealthCheckAction {
-    @Autowired
-    private HttpAuthenticationClient httpAuthenticationClient;
+public class RestHealthCheckAction extends CommonOtherServicesHealthCheckAction {
 
     @Override
     protected List<ServiceStatus> performHealthCheck(ClusterEntity clusterEntity) throws InvalidResponseException {
         String url = "http://" + clusterEntity.getHost() + ":7180/api/v10/clusters/" + clusterEntity.getClusterName() + "/services";
 
-        String answer = httpAuthenticationClient.makeAuthenticatedRequest( clusterEntity.getClusterName(), url );
+        String answer = httpAuthenticationClient.makeAuthenticatedRequest( clusterEntity.getClusterName(), url, false );
 
         return extractFromJsonString(answer);
     }

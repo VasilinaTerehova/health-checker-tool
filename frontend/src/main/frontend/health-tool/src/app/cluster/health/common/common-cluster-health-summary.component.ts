@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 
-import { Cluster } from '../../../shared/cluster/cluster.model';
+import { ClusterSnapshot } from '../../cluster-snapshot.model';
 import { NodeSummary } from '../node-summary.model';
 import { NodeMemory } from '../node-memory-summary.model';
 
@@ -9,24 +9,28 @@ import { NodeMemory } from '../node-memory-summary.model';
   templateUrl: 'common-cluster-health-summary.component.html',
 })
 export class CommonClusterHealthSummaryComponent {
-  @Input() cluster: Cluster;
+  private _cluster: ClusterSnapshot;
   @Input() yarnAppsCount: number;
-  nodes: NodeSummary[];
   isCollapsed: boolean;
 
-  constructor() {
-    this.nodes = [
-      new NodeSummary( "ontest1.com", new NodeMemory( 10000, 12000 ) ),
-      new NodeSummary( "notest.com", new NodeMemory( 9000, 12000 ) ),
-      new NodeSummary( "failtest.com", new NodeMemory( 7300, 12000 ) )
-    ];
+  constructor() {}
+
+  @Input()
+  set cluster( cluster: ClusterSnapshot ) {
+    if ( cluster ) {
+      this._cluster = cluster;
+    }
+  }
+
+  get cluster(): ClusterSnapshot {
+    return this._cluster;
   }
 
   calcMoreUsedDisk(): any {
-    return this.nodes.map( node => {
+    return this.isClusterSnapshotValid() ? this._cluster.nodes.map( node => {
       return {
-        "used": (node.memory.used * 100 / node.memory.total).toPrecision(2),
-        "host": node.host
+        "used": (node.usedGb * 100 / node.totalGb).toPrecision(2),
+        "host": node.node
       }
     } ).sort( ( one, two  ) => {
       if ( one.used > two.used ) {
@@ -34,6 +38,15 @@ export class CommonClusterHealthSummaryComponent {
       }
 
       return -1;
-    } ).pop();
+    } ).pop() : 0;
+  }
+
+  private isClusterSnapshotValid(): boolean {
+    if ( this._cluster && this._cluster.nodes ) {
+      return true;
+    }
+    else {
+      return false;
+    }
   }
 }

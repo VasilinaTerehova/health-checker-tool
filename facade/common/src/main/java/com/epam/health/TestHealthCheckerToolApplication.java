@@ -89,36 +89,36 @@ public class TestHealthCheckerToolApplication {
                 return null;
             }
 
-            @Override
-            public String getActiveResourceManagerAddress(String clusterName) throws CommonUtilException {
-                ClusterEntityProjection cluster = iClusterFacade.getCluster(clusterName);
-                if (cluster.getClusterType().equals(ClusterTypeEnum.CDH)) {
-                    return cluster.getHost().replace("n1", "n3") + ":8088";
-                } else if (cluster.getClusterType().equals(ClusterTypeEnum.HDP)) {
-
-                }
-                throw new RuntimeException("Do not know this type of the cluster");
-            }
-
-            @Override
-            public String getLogDirectory(String clusterName) throws CommonUtilException {
-                ClusterEntityProjection cluster = iClusterFacade.getCluster(clusterName);
-                if (cluster.getClusterType().equals(ClusterTypeEnum.CDH)) {
-                    return "/yarn/nm";
-                } else if (cluster.getClusterType().equals(ClusterTypeEnum.HDP)) {
-
-                }
-                throw new RuntimeException("Do not know this type of the cluster");
-            }
-
-            @Override
-            public String getPropertySiteXml(String clusterName, String siteName, String propertyName) throws CommonUtilException {
-                ClusterEntityProjection cluster = iClusterFacade.getCluster(clusterName);
-                if (propertyName.equals(DownloadableFileConstants.HdfsProperties.DFS_NAMENODE_HTTP_ADDRESS)) {
-                    return cluster.getHost() + ":50700";
-                }
-                throw new RuntimeException("Do not know this type of the cluster");
-            }
+//            @Override
+//            public String getActiveResourceManagerAddress(String clusterName) throws CommonUtilException {
+//                ClusterEntityProjection cluster = iClusterFacade.getCluster(clusterName);
+//                if (cluster.getClusterType().equals(ClusterTypeEnum.CDH)) {
+//                    return cluster.getHost().replace("n1", "n3") + ":8088";
+//                } else if (cluster.getClusterType().equals(ClusterTypeEnum.HDP)) {
+//
+//                }
+//                throw new RuntimeException("Do not know this type of the cluster");
+//            }
+//
+//            @Override
+//            public String getLogDirectory(String clusterName) throws CommonUtilException {
+//                ClusterEntityProjection cluster = iClusterFacade.getCluster(clusterName);
+//                if (cluster.getClusterType().equals(ClusterTypeEnum.CDH)) {
+//                    return "/yarn/nm";
+//                } else if (cluster.getClusterType().equals(ClusterTypeEnum.HDP)) {
+//
+//                }
+//                throw new RuntimeException("Do not know this type of the cluster");
+//            }
+//
+//            @Override
+//            public String getPropertySiteXml(String clusterName, String siteName, String propertyName) throws CommonUtilException {
+//                ClusterEntityProjection cluster = iClusterFacade.getCluster(clusterName);
+//                if (propertyName.equals(DownloadableFileConstants.HdfsProperties.DFS_NAMENODE_HTTP_ADDRESS)) {
+//                    return cluster.getHost() + ":50700";
+//                }
+//                throw new RuntimeException("Do not know this type of the cluster");
+//            }
         };
         commonClusterSnapshotFacade.setClusterFacade(iClusterFacade);
         return commonClusterSnapshotFacade;

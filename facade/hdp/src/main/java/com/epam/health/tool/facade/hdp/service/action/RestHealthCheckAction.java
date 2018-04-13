@@ -3,6 +3,7 @@ package com.epam.health.tool.facade.hdp.service.action;
 import com.epam.facade.model.ServiceStatus;
 import com.epam.health.tool.authentication.http.HttpAuthenticationClient;
 import com.epam.health.tool.facade.common.service.action.CommonRestHealthCheckAction;
+import com.epam.health.tool.facade.common.service.action.other.CommonOtherServicesHealthCheckAction;
 import com.epam.health.tool.facade.exception.InvalidResponseException;
 import com.epam.health.tool.facade.hdp.cluster.ServiceStateEnumMapper;
 import com.epam.health.tool.facade.hdp.cluster.ServiceStatusDTO;
@@ -19,16 +20,13 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component("HDP-rest-action")
-public class RestHealthCheckAction extends CommonRestHealthCheckAction {
-    @Autowired
-    private HttpAuthenticationClient httpAuthenticationClient;
-
+public class RestHealthCheckAction extends CommonOtherServicesHealthCheckAction {
     @Override
     protected List<ServiceStatus> performHealthCheck(ClusterEntity clusterEntity) throws InvalidResponseException {
         try {
             return Arrays.stream(ServiceTypeEnum.values())
                     .map(serviceTypeEnum -> "http://" + clusterEntity.getHost() + ":8080/api/v1/clusters/" + clusterEntity.getClusterName() + "/services/" + serviceTypeEnum.toString())
-                    .map(url -> httpAuthenticationClient.makeAuthenticatedRequest( clusterEntity.getClusterName(), url ))
+                    .map(url -> httpAuthenticationClient.makeAuthenticatedRequest( clusterEntity.getClusterName(), url, false ))
                     .map(this::extractFromJsonString)
                     .filter(Objects::nonNull)
                     .map(this::mapHealthStateToServiceStatusEnum)

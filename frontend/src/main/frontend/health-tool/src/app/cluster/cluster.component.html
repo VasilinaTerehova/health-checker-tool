@@ -1,8 +1,8 @@
 <div class="container col-sm-12 col-md-12 col-xs-12">
     <div class="panel panel-default">
         <div class="panel-heading">
-            <h2>{{ 'home.label.cluster.result' | translate }} - {{cluster?.name}}</h2>
-            <common-cluster-health-summary [cluster]="cluster" [yarnAppsCount]="yarnAppsCount"></common-cluster-health-summary>
+            <h2>{{ 'home.label.cluster.result' | translate }} - {{clusterName}}</h2>
+            <common-cluster-health-summary [cluster]="clusterSnapshot" [yarnAppsCount]="yarnAppsCount"></common-cluster-health-summary>
         </div>
         <div class="panel-body">
           <tabset>
@@ -12,7 +12,7 @@
               <hr/>
               <hdfs-cluster-health-summary [serviceName]="'YARN'"  [hdfsHealthReport]="yarnHealthReport"></hdfs-cluster-health-summary>
               <hr/>
-              <service-list (onClusterChange)="onClusterChange($event)"></service-list>
+              <service-list [clusterName]="clusterName" (onClusterSnapshotChange)="onClusterSnapshotChange($event)"></service-list>
             </tab>
             <tab heading="{{ 'home.label.service.yarn.app.list' | translate }}">
               <yarn-application-list (onYarnAppsChange)="onYarnAppsCountChange($event)"></yarn-application-list>

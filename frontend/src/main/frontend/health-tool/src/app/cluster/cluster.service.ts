@@ -14,16 +14,8 @@ export class ClusterService {
     return this.http.get<Array<Cluster>>("http://localhost:8888/clusters");
   }
 
-  getClusterState( clusterName: string ) {
-    return this.http.get<HealthCheckResult>("http://localhost:8888/getClusterStatus", { params: { "clusterName": clusterName } });
-  }
-
-  getAllClusterState( clusterName: string ) {
-    return this.http.get<HealthCheckResult>("http://localhost:8888/cluster/status/all", { params: { "clusterName": clusterName } });
-  }
-
-  getClusterStateHistory( clusterName: string ) {
-    return this.http.get<Array<ClusterState>>("http://localhost:8888/getClusterStatusHistory", { params: { "clusterName": clusterName } });
+  getCluster( clusterName: string ) {
+    return this.http.get<Cluster>("http://localhost:8888/cluster/" + clusterName);
   }
 
   updateCluster( cluster: Cluster ) {

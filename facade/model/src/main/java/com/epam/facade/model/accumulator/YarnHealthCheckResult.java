@@ -1,16 +1,27 @@
 package com.epam.facade.model.accumulator;
 
+import com.epam.health.tool.model.ServiceStatusEnum;
+
 import java.util.List;
 
 public class YarnHealthCheckResult {
-    private List<YarnJob> yarnJobs;
+    private ServiceStatusEnum status;
+    private List<YarnJob> jobResults;
 
-    public List<YarnJob> getYarnJobs() {
-        return yarnJobs;
+    public ServiceStatusEnum getStatus() {
+        return status;
     }
 
-    public void setYarnJobs(List<YarnJob> yarnJobs) {
-        this.yarnJobs = yarnJobs;
+    public void setStatus(ServiceStatusEnum status) {
+        this.status = status;
+    }
+
+    public List<YarnJob> getJobResults() {
+        return jobResults;
+    }
+
+    public void setJobResults(List<YarnJob> jobResults) {
+        this.jobResults = jobResults;
     }
 
     public static class YarnJob {

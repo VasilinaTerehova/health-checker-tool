@@ -3,14 +3,15 @@ package com.epam.health.tool.authentication.http;
 import com.epam.util.common.CommonUtilException;
 import com.epam.util.http.HttpRequestExecutor;
 import com.epam.util.http.header.IHeaderCreator;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.AuthenticationException;
-import org.apache.http.auth.Credentials;
-import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.auth.*;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.config.AuthSchemes;
 import org.apache.http.client.params.AuthPolicy;
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
 import org.apache.http.impl.auth.BasicScheme;
+import org.apache.http.impl.auth.BasicSchemeFactory;
+import org.apache.http.impl.auth.SPNegoSchemeFactory;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.log4j.Logger;
 
@@ -22,8 +23,11 @@ public class BaseHttpAuthenticatedAction {
     private static final Logger logger = Logger.getLogger(BaseHttpAuthenticatedAction.class);
     private String username;
     private String password;
+    private boolean useSpnego;
 
-    private BaseHttpAuthenticatedAction() {}
+    private BaseHttpAuthenticatedAction() {
+        this.useSpnego = false;
+    }
 
     public static BaseHttpAuthenticatedAction get() {
         return new BaseHttpAuthenticatedAction();
@@ -48,52 +52,58 @@ public class BaseHttpAuthenticatedAction {
         return this;
     }
 
+    public BaseHttpAuthenticatedAction withSpnego() {
+        this.useSpnego = true;
+
+        return this;
+    }
+
+    public BaseHttpAuthenticatedAction withSpnego( boolean useSpnego ) {
+        this.useSpnego = useSpnego;
+
+        return this;
+    }
+
     public String makeAuthenticatedRequest( String url ) throws CommonUtilException {
         return HttpRequestExecutor.get().setAuthSchemes( createAuthShemesList() )
                 .setCredentialsProvider( createHttpCredentialsProvider() )
-                /*.setHeaderCreator( buildHeaderCreator() )*/.executeUrlRequest( url );
+                .executeUrlRequest( url );
     }
 
     private CredentialsProvider createHttpCredentialsProvider(  ) {
-        CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-//        UsernamePasswordCredentials credentials =
-//                new UsernamePasswordCredentials( username, password );
-//        credentialsProvider.setCredentials(AuthScope.ANY, credentials);
-        credentialsProvider
-                .setCredentials(new AuthScope(null, -1, AuthScope.ANY_REALM, AuthPolicy.SPNEGO), new Credentials() {
-                    @Override
-                    public Principal getUserPrincipal() {
-                        return null;
-                    }
-
-                    @Override
-                    public String getPassword() {
-                        return null;
-                    }
-                });
-
-        return credentialsProvider;
+        return useSpnego ? createSpnegoCredentialsProvider() : createBasicCredentialsProvider();
     }
 
-    private List<String> createAuthShemesList() {
-        List<String> authShemes = new ArrayList<>();
-
-        authShemes.add(AuthSchemes.BASIC);
-        authShemes.add(AuthSchemes.SPNEGO);
-
-        return authShemes;
+    private Registry<AuthSchemeProvider> createAuthShemesList() {
+        return useSpnego ? RegistryBuilder.<AuthSchemeProvider>create().register(AuthSchemes.SPNEGO, new SPNegoSchemeFactory(true)).build()
+                : RegistryBuilder.<AuthSchemeProvider>create().register(AuthSchemes.BASIC, new BasicSchemeFactory()).build();
     }
 
-    private IHeaderCreator buildHeaderCreator() {
-        return httpUriRequest -> {
-            try {
-                return new BasicScheme()
-                        .authenticate( createHttpCredentialsProvider().getCredentials(AuthScope.ANY),
-                                httpUriRequest, null);
-            } catch (AuthenticationException e) {
-                logger.error(e);
+    private CredentialsProvider createSpnegoCredentialsProvider() {
+        CredentialsProvider credsProvider = new BasicCredentialsProvider();
+        Credentials useJaasCreds = new Credentials() {
+
+            public String getPassword() {
                 return null;
             }
+
+            public Principal getUserPrincipal() {
+                return null;
+            }
+
         };
+
+        credsProvider.setCredentials(new AuthScope(null, -1, null), useJaasCreds);
+
+        return credsProvider;
+    }
+
+    private CredentialsProvider createBasicCredentialsProvider() {
+        CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+        UsernamePasswordCredentials credentials =
+                new UsernamePasswordCredentials( username, password );
+        credentialsProvider.setCredentials(AuthScope.ANY, credentials);
+
+        return credentialsProvider;
     }
 }

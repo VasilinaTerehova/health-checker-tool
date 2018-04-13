@@ -57,15 +57,15 @@ public class HadoopClasspathJarSearcher {
             String hadoopClasspath = SshCommonUtil.buildSshCommandExecutor( sshCredentialsEntity.getUsername(), sshCredentialsEntity.getPassword(), sshCredentialsEntity.getPemFilePath() )
                     .executeCommand( host, HADOOP_CLASSPATH_COMMAND ).getOutMessage().trim();
 
-//            ExecutorService executorService = Executors.newFixedThreadPool( 4 );
+            ExecutorService executorService = Executors.newFixedThreadPool( hadoopClasspath.split(":").length );
 
-            return Flux.just( hadoopClasspath.split(":") ).parallel()
-                    .map( possiblePathToJar -> findExamplesPath( possiblePathToJar, jarMask ) )
-                    .filter( result -> !result.isEmpty() ).sequential().blockFirst();
-//            return Arrays.stream( hadoopClasspath.split(":") )
-//                    .map( possiblePathToJar -> CompletableFuture.supplyAsync(() -> findExamplesPath( possiblePathToJar, jarMask ), executorService))
-//                    .map( CompletableFuture::join )
-//                    .filter(result -> !result.isEmpty() ).findFirst().orElse( StringUtils.EMPTY );
+//            return Flux.just( hadoopClasspath.split(":") ).parallel()
+//                    .map( possiblePathToJar -> findExamplesPath( possiblePathToJar, jarMask ) )
+//                    .filter( result -> !result.isEmpty() ).sequential().blockFirst();
+            return Arrays.stream( hadoopClasspath.split(":") )
+                    .map( possiblePathToJar -> CompletableFuture.supplyAsync(() -> findExamplesPath( possiblePathToJar, jarMask ), executorService))
+                    .map( CompletableFuture::join )
+                    .filter( result -> !result.isEmpty() ).findFirst().orElse( StringUtils.EMPTY );
         } catch (CommonUtilException | RuntimeException e) {
             e.printStackTrace();
         }
