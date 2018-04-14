@@ -3,11 +3,16 @@ package com.epam.health.tool.facade.common.service.action.fs;
 import com.epam.facade.model.ClusterHealthSummary;
 import com.epam.facade.model.ClusterSnapshotEntityProjectionImpl;
 import com.epam.facade.model.accumulator.HealthCheckResultsAccumulator;
+import com.epam.facade.model.fs.NodeDiskUsage;
 import com.epam.facade.model.projection.NodeSnapshotEntityProjection;
 import com.epam.health.tool.authentication.ssh.SshAuthenticationClient;
-import com.epam.facade.model.fs.NodeDiskUsage;
+import com.epam.health.tool.dao.cluster.ClusterDao;
+import com.epam.health.tool.facade.cluster.IClusterSnapshotFacade;
+import com.epam.health.tool.facade.cluster.IRunningClusterParamReceiver;
 import com.epam.health.tool.facade.common.service.action.CommonRestHealthCheckAction;
+import com.epam.health.tool.facade.exception.ImplementationNotResolvedException;
 import com.epam.health.tool.facade.exception.InvalidResponseException;
+import com.epam.health.tool.facade.resolver.IFacadeImplResolver;
 import com.epam.health.tool.model.ClusterEntity;
 import com.epam.util.common.CheckingParamsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,40 +25,42 @@ import java.util.List;
  */
 public abstract class GetFsStatisticsAction extends CommonRestHealthCheckAction {
     @Autowired
+    protected ClusterDao clusterDao;
+    @Autowired
     private SshAuthenticationClient sshAuthenticationClient;
+    @Autowired
+    private IFacadeImplResolver<IRunningClusterParamReceiver> runningClusterParamImplResolver;
 
     @Override
-    protected ClusterHealthSummary performRestHealthCheck(ClusterEntity clusterEntity) throws InvalidResponseException {
+    protected ClusterHealthSummary performRestHealthCheck(ClusterEntity clusterEntity) throws InvalidResponseException, ImplementationNotResolvedException {
         return new ClusterHealthSummary(
-                new ClusterSnapshotEntityProjectionImpl( null, null,
-                        null, null, getAvailableDiskDfs( clusterEntity )));
+                new ClusterSnapshotEntityProjectionImpl(null, null,
+                        null, null, getAvailableDiskDfs(clusterEntity.getClusterName())));
     }
 
     @Override
     protected void saveClusterHealthSummaryToAccumulator(HealthCheckResultsAccumulator healthCheckResultsAccumulator, ClusterHealthSummary clusterHealthSummary) {
         ClusterHealthSummary tempClusterHealthSummary = healthCheckResultsAccumulator.getClusterHealthSummary();
 
-        if ( tempClusterHealthSummary == null ) {
+        if (tempClusterHealthSummary == null) {
             tempClusterHealthSummary = clusterHealthSummary;
-        }
-        else {
+        } else {
             tempClusterHealthSummary = new ClusterHealthSummary(
-                    new ClusterSnapshotEntityProjectionImpl( recreateClusterEntityProjection( tempClusterHealthSummary.getCluster() ),
+                    new ClusterSnapshotEntityProjectionImpl(recreateClusterEntityProjection(tempClusterHealthSummary.getCluster()),
                             tempClusterHealthSummary.getServiceStatusList(), tempClusterHealthSummary.getCluster().getMemoryUsage(),
-                            tempClusterHealthSummary.getCluster().getHdfsUsage(), clusterHealthSummary.getCluster().getNodes()) );
+                            tempClusterHealthSummary.getCluster().getHdfsUsage(), clusterHealthSummary.getCluster().getNodes()));
         }
 
-        healthCheckResultsAccumulator.setClusterHealthSummary( tempClusterHealthSummary );
+        healthCheckResultsAccumulator.setClusterHealthSummary(tempClusterHealthSummary);
     }
 
-    protected abstract String getLogDirectory( ClusterEntity clusterEntity ) throws InvalidResponseException;
-
-    private List<? extends NodeSnapshotEntityProjection> getAvailableDiskDfs( ClusterEntity clusterEntity ) throws InvalidResponseException {
+    private List<? extends NodeSnapshotEntityProjection> getAvailableDiskDfs(String clusterName) throws InvalidResponseException, ImplementationNotResolvedException {
+        ClusterEntity clusterEntity = clusterDao.findByClusterName(clusterName);
         List<NodeDiskUsage> nodeDiskUsages = new ArrayList<>();
-        String availableDiskDfs = getAvailableDiskDfsViaSsh( clusterEntity );
+        String availableDiskDfs = getAvailableDiskDfsViaSsh(clusterEntity);
 
         //Should be for all hosts
-        nodeDiskUsages.add( mapAvailableDiskDfsStringToNodeDiskUsage( clusterEntity.getHost(), availableDiskDfs ) );
+        nodeDiskUsages.add(mapAvailableDiskDfsStringToNodeDiskUsage(clusterEntity.getHost(), availableDiskDfs));
 
         return nodeDiskUsages;
         //http://svqxbdcn6hdp26n1.pentahoqa.com:8080/api/v1/clusters/HDP26Unsecure/configurations?type=yarn-site&tag=version1
@@ -61,8 +68,8 @@ public abstract class GetFsStatisticsAction extends CommonRestHealthCheckAction 
         //df -h . | tail -1 | awk '{print $4}'
     }
 
-    private String getAvailableDiskDfsViaSsh( ClusterEntity clusterEntity ) throws InvalidResponseException {
-        String logDirPropery = getLogDirectory( clusterEntity );
+    private String getAvailableDiskDfsViaSsh(ClusterEntity clusterEntity) throws InvalidResponseException, ImplementationNotResolvedException {
+        String logDirPropery = runningClusterParamImplResolver.resolveFacadeImpl(clusterEntity.getClusterTypeEnum().name()).getLogDirectory(clusterEntity.getClusterName());
 
         //http://svqxbdcn6cdh513n1.pentahoqa.com:7180/api/v10/clusters/CDH513Unsecure/services/yarn/roles - take nodemanager role
         //http://svqxbdcn6cdh513n1.pentahoqa.com:7180/api/v10/clusters/CDH513Unsecure/services/yarn/roles/NODEMANAGER/process/configFiles/yarn-site.xml - download file
@@ -73,24 +80,24 @@ public abstract class GetFsStatisticsAction extends CommonRestHealthCheckAction 
         //receive each node
         String command = "df -h " + logDirPropery + " | tail -1";
         System.out.println(command);
-        String result = sshAuthenticationClient.executeCommand( clusterEntity, command ).getOutMessage();
+        String result = sshAuthenticationClient.executeCommand(clusterEntity, command).getOutMessage();
         System.out.println(result);
 
         return result;
     }
 
-    private NodeDiskUsage mapAvailableDiskDfsStringToNodeDiskUsage( String host, String availableDiskDfs ) throws InvalidResponseException {
-        assertAvailableDiskDfsString( availableDiskDfs );
+    private NodeDiskUsage mapAvailableDiskDfsStringToNodeDiskUsage(String host, String availableDiskDfs) throws InvalidResponseException {
+        assertAvailableDiskDfsString(availableDiskDfs);
         String[] split = availableDiskDfs.trim().split("\\s+");
-        NodeDiskUsage nodeDiskUsage = new NodeDiskUsage( host, split[1], split[0], split[3] );
+        NodeDiskUsage nodeDiskUsage = new NodeDiskUsage(host, split[1], split[0], split[3]);
         System.out.println(nodeDiskUsage);
 
         return nodeDiskUsage;
     }
 
-    private void assertAvailableDiskDfsString( String availableDiskDfs ) throws InvalidResponseException {
-        if ( CheckingParamsUtil.isParamsNullOrEmpty( availableDiskDfs ) || availableDiskDfs.trim().split("\\s+").length < 3 ) {
-            throw new InvalidResponseException( "Not file usage can't be found on cluster" );
+    private void assertAvailableDiskDfsString(String availableDiskDfs) throws InvalidResponseException {
+        if (CheckingParamsUtil.isParamsNullOrEmpty(availableDiskDfs) || availableDiskDfs.trim().split("\\s+").length < 3) {
+            throw new InvalidResponseException("Not file usage can't be found on cluster");
         }
     }
 }

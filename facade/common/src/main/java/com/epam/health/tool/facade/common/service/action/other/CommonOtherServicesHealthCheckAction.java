@@ -45,12 +45,6 @@ public abstract class CommonOtherServicesHealthCheckAction extends CommonRestHea
         healthCheckResultsAccumulator.setClusterHealthSummary( tempClusterHealthSummary );
     }
 
-    //Mock for now
-    @Override
-    protected String getPropertySiteXml(ClusterEntity clusterEntity, String siteName, String propertyName) throws InvalidResponseException {
-        return null;
-    }
-
     private ClusterEntityProjection mapEntityToProjection(ClusterEntity clusterEntity ) {
         return svTransfererManager.<ClusterEntity, ClusterEntityProjectionImpl>getTransferer( ClusterEntity.class, ClusterEntityProjectionImpl.class )
                 .transfer( clusterEntity, ClusterEntityProjectionImpl.class );

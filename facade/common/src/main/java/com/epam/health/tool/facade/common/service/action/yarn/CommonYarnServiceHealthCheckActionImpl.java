@@ -21,10 +21,10 @@ public class CommonYarnServiceHealthCheckActionImpl extends CommonSshHealthCheck
     private final static String IS_SUCCESS_REGEXP = ".*Job .* completed.*";
 
     @Override
-    public void performHealthCheck(ClusterEntity clusterEntity, HealthCheckResultsAccumulator healthCheckResultsAccumulator) throws InvalidResponseException {
+    public void performHealthCheck(String clusterName, HealthCheckResultsAccumulator healthCheckResultsAccumulator) throws InvalidResponseException {
         YarnHealthCheckResult yarnHealthCheckResult = new YarnHealthCheckResult();
 
-        yarnHealthCheckResult.setJobResults(Collections.singletonList( runExamplesJob( clusterEntity, "pi", "5", "10" ) ));
+        yarnHealthCheckResult.setJobResults(Collections.singletonList( runExamplesJob( clusterDao.findByClusterName(clusterName), "pi", "5", "10" ) ));
         yarnHealthCheckResult.setStatus( getYarnServiceStatus( yarnHealthCheckResult ) );
 
         healthCheckResultsAccumulator.setYarnHealthCheckResult( yarnHealthCheckResult );

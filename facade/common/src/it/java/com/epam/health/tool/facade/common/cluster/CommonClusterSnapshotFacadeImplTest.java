@@ -1,13 +1,21 @@
 package com.epam.health.tool.facade.common.cluster;
 
+import com.epam.facade.model.accumulator.HealthCheckResultsAccumulator;
+import com.epam.facade.model.projection.NodeSnapshotEntityProjection;
 import com.epam.health.TestHealthCheckerToolApplication;
 import com.epam.health.tool.facade.cluster.IClusterSnapshotFacade;
+import com.epam.health.tool.facade.common.service.action.fs.GetFsStatisticsAction;
+import com.epam.health.tool.facade.common.service.action.fs.GetHdfsStatisticsAction;
+import com.epam.health.tool.facade.common.service.action.fs.GetMemoryStatisticsAction;
+import com.epam.health.tool.facade.exception.ImplementationNotResolvedException;
 import com.epam.health.tool.facade.exception.InvalidResponseException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.List;
 
 /**
  * Created by Vasilina_Terehova on 4/3/2018.
@@ -19,19 +27,34 @@ public class CommonClusterSnapshotFacadeImplTest {
     @Autowired
     private IClusterSnapshotFacade clusterSnapshotFacade;
 
+    @Autowired
+    private GetHdfsStatisticsAction getAvailableDiskHdfs;
+
+    @Autowired
+    private GetMemoryStatisticsAction getMemoryStatisticsAction;
+
+    @Autowired
+    private GetFsStatisticsAction getFsStatisticsAction;
+
     @Test
     public void testGetDiskSpace() throws InvalidResponseException {
-        clusterSnapshotFacade.getAvailableDiskHdfs("CDH512Unsecure");
+        HealthCheckResultsAccumulator healthCheckResultsAccumulator = new HealthCheckResultsAccumulator();
+        getAvailableDiskHdfs.performHealthCheck("CDH512Unsecure", healthCheckResultsAccumulator);
+        healthCheckResultsAccumulator.getClusterHealthSummary().getCluster().getHdfsUsage();
     }
 
     @Test
     public void testGetMemory() throws InvalidResponseException {
         //svqxbdcn6cdh512n3.pentahoqa.com
-        clusterSnapshotFacade.getMemoryTotal("CDH512Unsecure");
+        HealthCheckResultsAccumulator healthCheckResultsAccumulator = new HealthCheckResultsAccumulator();
+        getMemoryStatisticsAction.performHealthCheck("CDH512Unsecure", healthCheckResultsAccumulator);
+        healthCheckResultsAccumulator.getClusterHealthSummary().getCluster().getMemoryUsage();
     }
 
     @Test
-    public void testGetAvailableDiskDfs() {
-        clusterSnapshotFacade.getAvailableDiskDfs("CDH512Unsecure");
+    public void testGetAvailableDiskDfs() throws InvalidResponseException, ImplementationNotResolvedException {
+        HealthCheckResultsAccumulator healthCheckResultsAccumulator = new HealthCheckResultsAccumulator();
+        getFsStatisticsAction.performHealthCheck("CDH512Unsecure", healthCheckResultsAccumulator);
+        List<? extends NodeSnapshotEntityProjection> nodes = healthCheckResultsAccumulator.getClusterHealthSummary().getCluster().getNodes();
     }
 }

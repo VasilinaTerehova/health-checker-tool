@@ -1,6 +1,7 @@
 package com.epam.health.tool.facade.common.service.action;
 
 import com.epam.health.tool.authentication.ssh.SshAuthenticationClient;
+import com.epam.health.tool.dao.cluster.ClusterDao;
 import com.epam.health.tool.facade.service.action.IServiceHealthCheckAction;
 import com.epam.health.tool.model.ClusterEntity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 public abstract class CommonSshHealthCheckAction implements IServiceHealthCheckAction {
     @Autowired
     protected SshAuthenticationClient sshAuthenticationClient;
+    @Autowired
+    protected ClusterDao clusterDao;
 
     protected void kinitOnClusterIfNecessary( ClusterEntity clusterEntity ) {
         if ( clusterEntity.isSecured() ) {

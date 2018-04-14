@@ -42,7 +42,7 @@ public class ClusterHealthCheckPerformer {
         Flux.fromStream( getServiceHealthCheckActionsFunction.apply( clusterEntity.getClusterTypeEnum().name() ).stream() )
                 .parallel().doOnNext( serviceHealthCheckAction -> {
             try {
-                serviceHealthCheckAction.performHealthCheck(clusterEntity, healthCheckResultsAccumulator);
+                serviceHealthCheckAction.performHealthCheck(clusterEntity.getClusterName(), healthCheckResultsAccumulator);
             } catch (InvalidResponseException e) {
                 throw new RuntimeException( e );
             }
