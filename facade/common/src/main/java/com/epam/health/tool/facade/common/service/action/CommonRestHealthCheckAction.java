@@ -6,6 +6,8 @@ import com.epam.facade.model.projection.ClusterEntityProjection;
 import com.epam.facade.model.projection.ClusterSnapshotEntityProjection;
 import com.epam.facade.model.projection.impl.ClusterEntityProjectionImpl;
 import com.epam.health.tool.authentication.http.HttpAuthenticationClient;
+import com.epam.health.tool.dao.cluster.ClusterDao;
+import com.epam.health.tool.facade.exception.ImplementationNotResolvedException;
 import com.epam.health.tool.facade.exception.InvalidResponseException;
 import com.epam.health.tool.facade.service.action.IServiceHealthCheckAction;
 import com.epam.health.tool.model.ClusterEntity;
@@ -17,18 +19,20 @@ public abstract class CommonRestHealthCheckAction implements IServiceHealthCheck
     @Autowired
     protected HttpAuthenticationClient httpAuthenticationClient;
 
+    @Autowired
+    protected ClusterDao clusterDao;
+
     @Override
-    public void performHealthCheck(ClusterEntity clusterEntity, HealthCheckResultsAccumulator healthCheckResultsAccumulator) throws InvalidResponseException {
+    public void performHealthCheck(String clusterName, HealthCheckResultsAccumulator healthCheckResultsAccumulator) throws InvalidResponseException {
         try {
-            saveClusterHealthSummaryToAccumulator( healthCheckResultsAccumulator, performRestHealthCheck( clusterEntity ) );
-        } catch (RuntimeException ex) {
+            saveClusterHealthSummaryToAccumulator( healthCheckResultsAccumulator, performRestHealthCheck( clusterDao.findByClusterName(clusterName) ) );
+        } catch (ImplementationNotResolvedException | RuntimeException ex) {
             throw new InvalidResponseException(ex);
         }
     }
 
     //Use for FS actions
-    protected abstract String getPropertySiteXml( ClusterEntity clusterEntity, String siteName, String propertyName ) throws InvalidResponseException;
-    protected abstract ClusterHealthSummary performRestHealthCheck(ClusterEntity clusterEntity) throws InvalidResponseException;
+    protected abstract ClusterHealthSummary performRestHealthCheck(ClusterEntity clusterEntity) throws InvalidResponseException, ImplementationNotResolvedException;
 
     protected abstract void saveClusterHealthSummaryToAccumulator( HealthCheckResultsAccumulator healthCheckResultsAccumulator,
                                                         ClusterHealthSummary clusterHealthSummary );

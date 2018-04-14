@@ -2,6 +2,10 @@ package com.epam.health.tool.facade.cdh.cluster;
 
 import com.epam.health.TestHealthCheckerToolApplication;
 import com.epam.health.tool.facade.cluster.IClusterSnapshotFacade;
+import com.epam.health.tool.facade.cluster.IRunningClusterParamReceiver;
+import com.epam.health.tool.facade.common.service.action.fs.GetFsStatisticsAction;
+import com.epam.health.tool.facade.common.service.action.fs.GetMemoryStatisticsAction;
+import com.epam.health.tool.facade.exception.InvalidResponseException;
 import com.epam.util.common.CommonUtilException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,14 +27,24 @@ public class CdhClusterSnapshotFacadeImplTest {
     @Qualifier("CDH-cluster")
     IClusterSnapshotFacade clusterSnapshotFacade;
 
+    @Autowired
+    private GetFsStatisticsAction getFsStatisticsAction;
+
+    @Autowired
+    private GetMemoryStatisticsAction getMemoryStatisticsAction;
+
+    @Autowired
+    @Qualifier("CDH-cluster")
+    private IRunningClusterParamReceiver iRunningClusterParamReceiver;
+
     @Test
-    public void testGetYarnLogDirectory() throws CommonUtilException {
-        assertEquals("/yarn/container-logs", clusterSnapshotFacade.getLogDirectory("CDH512Unsecure"));
+    public void testGetYarnLogDirectory() throws CommonUtilException, InvalidResponseException {
+        assertEquals("/yarn/container-logs", iRunningClusterParamReceiver.getLogDirectory("CDH512Unsecure"));
     }
 
     @Test
-    public void testGetRmAddress() throws CommonUtilException {
-        assertEquals("svqxbdcn6cdh512n3.pentahoqa.com:8088", clusterSnapshotFacade.getActiveResourceManagerAddress("CDH512Unsecure"));
+    public void testGetRmAddress() throws CommonUtilException, InvalidResponseException {
+        assertEquals("svqxbdcn6cdh512n3.pentahoqa.com:8088", getMemoryStatisticsAction.getActiveResourceManagerAddress("CDH512Unsecure"));
     }
 
 }

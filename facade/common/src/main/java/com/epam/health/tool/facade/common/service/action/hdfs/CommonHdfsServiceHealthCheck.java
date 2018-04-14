@@ -2,6 +2,7 @@ package com.epam.health.tool.facade.common.service.action.hdfs;
 
 import com.epam.facade.model.accumulator.HdfsHealthCheckResult;
 import com.epam.facade.model.accumulator.HealthCheckResultsAccumulator;
+import com.epam.health.tool.dao.cluster.ClusterDao;
 import com.epam.health.tool.facade.common.service.action.CommonActionNames;
 import com.epam.health.tool.facade.common.service.action.CommonSshHealthCheckAction;
 import com.epam.health.tool.facade.exception.InvalidResponseException;
@@ -19,10 +20,10 @@ public class CommonHdfsServiceHealthCheck extends CommonSshHealthCheckAction {
     private List<IHdfsOperation> hdfsOperations;
 
     @Override
-    public void performHealthCheck(ClusterEntity clusterEntity, HealthCheckResultsAccumulator healthCheckResultsAccumulator) throws InvalidResponseException {
+    public void performHealthCheck(String clusterName, HealthCheckResultsAccumulator healthCheckResultsAccumulator) throws InvalidResponseException {
         HdfsHealthCheckResult hdfsHealthCheckResult = new HdfsHealthCheckResult();
 
-        hdfsHealthCheckResult.setJobResults( performHdfsOperations( clusterEntity ) );
+        hdfsHealthCheckResult.setJobResults( performHdfsOperations( clusterDao.findByClusterName(clusterName) ) );
         hdfsHealthCheckResult.setStatus( getHdfsServiceStatus( hdfsHealthCheckResult ) );
 
         healthCheckResultsAccumulator.setHdfsHealthCheckResult( hdfsHealthCheckResult );
