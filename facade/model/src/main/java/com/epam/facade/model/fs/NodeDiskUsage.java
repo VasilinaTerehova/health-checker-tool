@@ -1,4 +1,4 @@
-package com.epam.health.tool.facade.common.service;
+package com.epam.facade.model.fs;
 
 import com.epam.facade.model.projection.NodeSnapshotEntityProjection;
 

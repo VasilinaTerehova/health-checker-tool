@@ -2,18 +2,14 @@ package com.epam.health;
 
 import com.epam.facade.model.ApplicationInfo;
 import com.epam.facade.model.ServiceStatus;
-import com.epam.facade.model.projection.ClusterEntityProjection;
 import com.epam.health.tool.facade.application.IApplicationFacade;
 import com.epam.health.tool.facade.cluster.IClusterFacade;
 import com.epam.health.tool.facade.cluster.IClusterSnapshotFacade;
 import com.epam.health.tool.facade.common.cluster.CommonClusterSnapshotFacadeImpl;
 import com.epam.health.tool.facade.common.service.CommonServiceSnapshotFacadeImpl;
-import com.epam.health.tool.facade.common.service.DownloadableFileConstants;
 import com.epam.health.tool.facade.exception.InvalidResponseException;
 import com.epam.health.tool.facade.service.IServiceSnapshotFacade;
 import com.epam.health.tool.model.ClusterServiceShapshotEntity;
-import com.epam.health.tool.model.ClusterTypeEnum;
-import com.epam.util.common.CommonUtilException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;

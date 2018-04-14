@@ -3,21 +3,21 @@ package com.epam.health.tool.authentication.http;
 import com.epam.util.common.CommonUtilException;
 import com.epam.util.http.HttpRequestExecutor;
 import com.epam.util.http.header.IHeaderCreator;
+import org.apache.http.HttpHost;
 import org.apache.http.auth.*;
+import org.apache.http.client.AuthCache;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.config.AuthSchemes;
-import org.apache.http.client.params.AuthPolicy;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.auth.BasicSchemeFactory;
 import org.apache.http.impl.auth.SPNegoSchemeFactory;
+import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.log4j.Logger;
 
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.List;
 
 public class BaseHttpAuthenticatedAction {
     private static final Logger logger = Logger.getLogger(BaseHttpAuthenticatedAction.class);
@@ -67,6 +67,8 @@ public class BaseHttpAuthenticatedAction {
     public String makeAuthenticatedRequest( String url ) throws CommonUtilException {
         return HttpRequestExecutor.get().setAuthSchemes( createAuthShemesList() )
                 .setCredentialsProvider( createHttpCredentialsProvider() )
+                .setAuthCache( generateAuthCache( extractHostFromUrlString( url ) ) )
+                .setHeader( generateAuthHeader() )
                 .executeUrlRequest( url );
     }
 
@@ -105,5 +107,36 @@ public class BaseHttpAuthenticatedAction {
         credentialsProvider.setCredentials(AuthScope.ANY, credentials);
 
         return credentialsProvider;
+    }
+
+    private AuthCache generateAuthCache( String host ) {
+        if ( !useSpnego ) {
+            AuthCache authCache = new BasicAuthCache();
+            authCache.put( HttpHost.create( host ), new BasicScheme() );
+
+            return authCache;
+        }
+
+        return null;
+    }
+
+    private IHeaderCreator generateAuthHeader() {
+        if ( !useSpnego ) {
+            return (httpUriRequest, httpClientContext) -> {
+                try {
+                    return new BasicScheme().authenticate( new UsernamePasswordCredentials( username, password ), httpUriRequest, httpClientContext );
+                } catch (AuthenticationException e) {
+                    throw new CommonUtilException( e );
+                }
+            };
+        }
+
+        return null;
+    }
+
+    private String extractHostFromUrlString( String url ) {
+        String[] hostSplit = url.split( ":" );
+
+        return hostSplit[0].concat( "://" ).concat( hostSplit[1] ).concat( ":" ).concat( hostSplit[2].split( "/" )[0] );
     }
 }

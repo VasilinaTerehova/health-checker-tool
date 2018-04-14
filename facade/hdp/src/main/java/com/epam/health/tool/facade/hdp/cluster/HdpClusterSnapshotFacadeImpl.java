@@ -16,9 +16,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static com.epam.health.tool.facade.common.service.DownloadableFileConstants.YarnProperties.YARN_NODEMANAGER_LOG_DIRS;
-import static com.epam.health.tool.facade.common.service.DownloadableFileConstants.YarnProperties.YARN_RESOURCEMANAGER_WEBAPP_ADDRESS;
-
 @Component("HDP-cluster")
 public class HdpClusterSnapshotFacadeImpl extends CommonClusterSnapshotFacadeImpl {
     @Autowired

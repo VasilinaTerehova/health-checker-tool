@@ -2,18 +2,14 @@ package com.epam.health.tool.facade.common.service.action.fs;
 
 import com.epam.facade.model.ClusterHealthSummary;
 import com.epam.facade.model.ClusterSnapshotEntityProjectionImpl;
-import com.epam.facade.model.ServiceStatus;
 import com.epam.facade.model.accumulator.HealthCheckResultsAccumulator;
-import com.epam.facade.model.projection.ClusterEntityProjection;
 import com.epam.facade.model.projection.MemoryUsageEntityProjection;
-import com.epam.health.tool.facade.common.service.MemoryMetricsJson;
+import com.epam.facade.model.fs.MemoryMetricsJson;
 import com.epam.health.tool.facade.common.service.action.CommonRestHealthCheckAction;
 import com.epam.health.tool.facade.exception.InvalidResponseException;
 import com.epam.health.tool.model.ClusterEntity;
 import com.epam.util.common.CommonUtilException;
 import com.epam.util.common.json.CommonJsonHandler;
-
-import java.util.List;
 
 /**
  * Created by Vasilina_Terehova on 4/9/2018.

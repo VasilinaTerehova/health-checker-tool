@@ -2,16 +2,12 @@ package com.epam.health.tool.facade.cluster;
 
 import com.epam.facade.model.ClusterHealthSummary;
 import com.epam.facade.model.ServiceStatus;
-import com.epam.facade.model.projection.HdfsUsageEntityProjection;
-import com.epam.facade.model.projection.MemoryUsageEntityProjection;
-import com.epam.facade.model.projection.NodeSnapshotEntityProjection;
 import com.epam.facade.model.accumulator.HdfsHealthCheckResult;
 import com.epam.facade.model.accumulator.HealthCheckResultsAccumulator;
 import com.epam.facade.model.accumulator.YarnHealthCheckResult;
 import com.epam.health.tool.facade.exception.InvalidResponseException;
 import com.epam.health.tool.model.ClusterEntity;
 import com.epam.health.tool.model.ClusterShapshotEntity;
-import com.epam.util.common.CommonUtilException;
 
 import java.util.List;
 

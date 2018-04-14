@@ -12,7 +12,6 @@ import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.function.Supplier;
 
 public class HadoopClasspathJarSearcher {
     private final static String HADOOP_CLASSPATH_COMMAND = "hadoop classpath";

@@ -1,5 +1,7 @@
 package com.epam.health.tool.facade.common.service;
 
+import com.epam.facade.model.fs.MemoryMetricsJson;
+
 import java.lang.reflect.Field;
 import java.util.Arrays;
 

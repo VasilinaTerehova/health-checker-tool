@@ -1,4 +1,4 @@
-package com.epam.health.tool.facade.common.service;
+package com.epam.facade.model.service;
 
 /**
  * Created by Vasilina_Terehova on 4/6/2018.

@@ -11,11 +11,10 @@ import com.epam.health.tool.dao.cluster.ClusterServiceDao;
 import com.epam.health.tool.dao.cluster.ClusterServiceSnapshotDao;
 import com.epam.health.tool.dao.cluster.ClusterSnapshotDao;
 import com.epam.facade.model.projection.*;
-import com.epam.health.tool.authentication.http.HttpAuthenticationClient;
 import com.epam.health.tool.dao.cluster.*;
 import com.epam.health.tool.facade.cluster.IClusterFacade;
 import com.epam.health.tool.facade.cluster.IClusterSnapshotFacade;
-import com.epam.health.tool.facade.common.date.util.DateUtil;
+import com.epam.health.tool.facade.common.util.DateUtil;
 import com.epam.health.tool.facade.exception.InvalidResponseException;
 import com.epam.health.tool.model.*;
 import com.epam.health.tool.model.ClusterEntity;
@@ -44,8 +43,6 @@ public abstract class CommonClusterSnapshotFacadeImpl implements IClusterSnapsho
     @Autowired
     ClusterServiceSnapshotDao clusterServiceSnapshotDao;
     @Autowired
-    IClusterSnapshotFacade clusterSnapshotFacade;
-    @Autowired
     ClusterServiceDao clusterServiceDao;
     @Autowired
     ClusterDao clusterDao;
@@ -55,9 +52,6 @@ public abstract class CommonClusterSnapshotFacadeImpl implements IClusterSnapsho
 
     @Autowired
     private ClusterHealthCheckPerformer clusterHealthCheckPerformer;
-
-    @Autowired
-    private HttpAuthenticationClient httpAuthenticationClient;
 
     private Logger logger = Logger.getLogger(CommonClusterSnapshotFacadeImpl.class);
 

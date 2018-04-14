@@ -2,24 +2,18 @@ package com.epam.health.tool.facade.common.service.action.fs;
 
 import com.epam.facade.model.ClusterHealthSummary;
 import com.epam.facade.model.ClusterSnapshotEntityProjectionImpl;
-import com.epam.facade.model.ServiceStatus;
 import com.epam.facade.model.accumulator.HealthCheckResultsAccumulator;
 import com.epam.facade.model.projection.HdfsUsageEntityProjection;
-import com.epam.health.tool.facade.common.service.DownloadableFileConstants;
-import com.epam.health.tool.facade.common.service.HdfsNamenodeJson;
+import com.epam.facade.model.service.DownloadableFileConstants;
+import com.epam.facade.model.fs.HdfsNamenodeJson;
 import com.epam.health.tool.facade.common.service.action.CommonRestHealthCheckAction;
 import com.epam.health.tool.facade.exception.InvalidResponseException;
-import com.epam.health.tool.facade.service.action.IServiceHealthCheckAction;
 import com.epam.health.tool.model.ClusterEntity;
 import com.epam.util.common.CheckingParamsUtil;
 import com.epam.util.common.CommonUtilException;
-import com.epam.util.common.StringUtils;
 import com.epam.util.common.json.CommonJsonHandler;
 
-import java.util.Arrays;
-import java.util.List;
-
-import static com.epam.health.tool.facade.common.service.DownloadableFileConstants.HdfsProperties.DFS_NAMENODE_HTTP_ADDRESS;
+import static com.epam.facade.model.service.DownloadableFileConstants.HdfsProperties.DFS_NAMENODE_HTTP_ADDRESS;
 
 /**
  * Created by Vasilina_Terehova on 4/9/2018.

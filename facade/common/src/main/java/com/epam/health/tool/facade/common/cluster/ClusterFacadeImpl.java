@@ -6,7 +6,6 @@ import com.epam.facade.model.projection.impl.ClusterEntityProjectionImpl;
 import com.epam.health.tool.dao.cluster.ClusterDao;
 import com.epam.health.tool.dao.cluster.ClusterSnapshotDao;
 import com.epam.health.tool.facade.cluster.IClusterFacade;
-import com.epam.health.tool.facade.cluster.IClusterSnapshotFacade;
 import com.epam.health.tool.facade.common.util.ClusterEntityModifier;
 import com.epam.health.tool.model.ClusterEntity;
 import com.epam.health.tool.transfer.impl.SVTransfererManager;

@@ -1,10 +1,8 @@
 package com.epam.health.tool.quartz;
 
 import com.epam.health.tool.dao.cluster.ClusterServiceSnapshotDao;
-import com.epam.health.tool.facade.cluster.IClusterFacade;
 import com.epam.health.tool.facade.cluster.IClusterSnapshotFacade;
-import com.epam.health.tool.facade.common.cluster.CommonClusterSnapshotFacadeImpl;
-import com.epam.health.tool.facade.common.date.util.DateUtil;
+import com.epam.health.tool.facade.common.util.DateUtil;
 import com.epam.health.tool.facade.exception.ImplementationNotResolvedException;
 import com.epam.health.tool.facade.resolver.IFacadeImplResolver;
 import com.epam.health.tool.model.ClusterEntity;

@@ -1,8 +1,8 @@
 package com.epam.health.tool.facade.cdh.service;
 
 import com.epam.health.tool.authentication.http.HttpAuthenticationClient;
-import com.epam.health.tool.facade.common.service.RoleJson;
-import com.epam.health.tool.facade.common.service.YarnRoleEnum;
+import com.epam.facade.model.service.RoleJson;
+import com.epam.facade.model.service.YarnRoleEnum;
 import com.epam.health.tool.facade.exception.InvalidResponseException;
 import com.epam.health.tool.model.ClusterEntity;
 import com.epam.util.common.CommonUtilException;

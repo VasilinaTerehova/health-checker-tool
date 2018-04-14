@@ -4,7 +4,6 @@ import com.epam.facade.model.ApplicationInfo;
 import com.epam.health.tool.controller.BaseFacadeResolvingController;
 import com.epam.health.tool.exception.RetrievingObjectException;
 import com.epam.health.tool.facade.application.IApplicationFacade;
-import com.epam.health.tool.facade.cluster.IClusterFacade;
 import com.epam.health.tool.facade.exception.ImplementationNotResolvedException;
 import com.epam.health.tool.facade.exception.InvalidResponseException;
 import com.epam.health.tool.facade.resolver.IFacadeImplResolver;

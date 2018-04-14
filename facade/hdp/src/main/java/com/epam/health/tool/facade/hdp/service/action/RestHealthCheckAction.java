@@ -1,8 +1,6 @@
 package com.epam.health.tool.facade.hdp.service.action;
 
 import com.epam.facade.model.ServiceStatus;
-import com.epam.health.tool.authentication.http.HttpAuthenticationClient;
-import com.epam.health.tool.facade.common.service.action.CommonRestHealthCheckAction;
 import com.epam.health.tool.facade.common.service.action.other.CommonOtherServicesHealthCheckAction;
 import com.epam.health.tool.facade.exception.InvalidResponseException;
 import com.epam.health.tool.facade.hdp.cluster.ServiceStateEnumMapper;
@@ -11,7 +9,6 @@ import com.epam.health.tool.model.ClusterEntity;
 import com.epam.health.tool.model.ServiceTypeEnum;
 import com.epam.util.common.CommonUtilException;
 import com.epam.util.common.json.CommonJsonHandler;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;

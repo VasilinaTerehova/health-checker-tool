@@ -1,7 +1,7 @@
 package com.epam.health.tool.facade.cdh.service.action.fs;
 
 import com.epam.health.tool.facade.cdh.service.CdhConfigSiteHandler;
-import com.epam.health.tool.facade.common.service.DownloadableFileConstants;
+import com.epam.facade.model.service.DownloadableFileConstants;
 import com.epam.health.tool.facade.common.service.action.fs.GetHdfsStatisticsAction;
 import com.epam.health.tool.facade.exception.InvalidResponseException;
 import com.epam.health.tool.model.ClusterEntity;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 
-import static com.epam.health.tool.facade.common.service.DownloadableFileConstants.HdfsProperties.DFS_NAMENODE_HTTP_ADDRESS;
+import static com.epam.facade.model.service.DownloadableFileConstants.HdfsProperties.DFS_NAMENODE_HTTP_ADDRESS;
 
 @Component("CDH-hdfs-statistics")
 public class CdhGetHdfsStatisticsAction extends GetHdfsStatisticsAction {

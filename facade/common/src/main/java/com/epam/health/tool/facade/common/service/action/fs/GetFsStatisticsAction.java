@@ -2,19 +2,14 @@ package com.epam.health.tool.facade.common.service.action.fs;
 
 import com.epam.facade.model.ClusterHealthSummary;
 import com.epam.facade.model.ClusterSnapshotEntityProjectionImpl;
-import com.epam.facade.model.ServiceStatus;
 import com.epam.facade.model.accumulator.HealthCheckResultsAccumulator;
-import com.epam.facade.model.projection.ClusterEntityProjection;
-import com.epam.facade.model.projection.CredentialsProjection;
 import com.epam.facade.model.projection.NodeSnapshotEntityProjection;
 import com.epam.health.tool.authentication.ssh.SshAuthenticationClient;
-import com.epam.health.tool.facade.common.service.NodeDiskUsage;
+import com.epam.facade.model.fs.NodeDiskUsage;
 import com.epam.health.tool.facade.common.service.action.CommonRestHealthCheckAction;
 import com.epam.health.tool.facade.exception.InvalidResponseException;
 import com.epam.health.tool.model.ClusterEntity;
 import com.epam.util.common.CheckingParamsUtil;
-import com.epam.util.common.CommonUtilException;
-import com.epam.util.ssh.SshCommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;

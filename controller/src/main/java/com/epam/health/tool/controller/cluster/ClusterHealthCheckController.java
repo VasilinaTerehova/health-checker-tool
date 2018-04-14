@@ -6,14 +6,11 @@ import com.epam.facade.model.accumulator.HealthCheckResultsAccumulator;
 import com.epam.facade.model.accumulator.YarnHealthCheckResult;
 import com.epam.health.tool.controller.BaseFacadeResolvingController;
 import com.epam.health.tool.exception.RetrievingObjectException;
-import com.epam.health.tool.facade.cluster.IClusterFacade;
 import com.epam.health.tool.facade.cluster.IClusterSnapshotFacade;
 import com.epam.health.tool.facade.exception.ImplementationNotResolvedException;
 import com.epam.health.tool.facade.exception.InvalidResponseException;
 import com.epam.health.tool.facade.resolver.IFacadeImplResolver;
-import com.epam.health.tool.model.ClusterShapshotEntity;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

@@ -1,19 +1,14 @@
 package com.epam.health.tool.facade.common.service.action;
 
 import com.epam.facade.model.ClusterHealthSummary;
-import com.epam.facade.model.ClusterSnapshotEntityProjectionImpl;
-import com.epam.facade.model.ServiceStatus;
 import com.epam.facade.model.accumulator.HealthCheckResultsAccumulator;
 import com.epam.facade.model.projection.ClusterEntityProjection;
 import com.epam.facade.model.projection.ClusterSnapshotEntityProjection;
 import com.epam.facade.model.projection.impl.ClusterEntityProjectionImpl;
 import com.epam.health.tool.authentication.http.HttpAuthenticationClient;
-import com.epam.health.tool.facade.cluster.IClusterSnapshotFacade;
 import com.epam.health.tool.facade.exception.InvalidResponseException;
-import com.epam.health.tool.facade.resolver.IFacadeImplResolver;
 import com.epam.health.tool.facade.service.action.IServiceHealthCheckAction;
 import com.epam.health.tool.model.ClusterEntity;
-import com.epam.health.tool.transfer.impl.SVTransfererManager;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;

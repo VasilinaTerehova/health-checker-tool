@@ -74,6 +74,7 @@ export class ClusterComponent implements OnInit, OnDestroy {
     this.clusterHealthCheckService.getHdfsClusterState( this._clusterName ).subscribe(
       data => this._hdfsHealthReport = data
     );
+    //Disabled for development
     // this.clusterHealthCheckService.getYarnClusterState( this._clusterName ).subscribe(
     //   data => this._yarnHealthReport = data
     // )

@@ -3,7 +3,6 @@ package com.epam.facade.model;
 import com.epam.facade.model.projection.ClusterSnapshotEntityProjection;
 import com.epam.facade.model.projection.ServiceStatusProjection;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ClusterHealthSummary {
