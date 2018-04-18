@@ -11,7 +11,7 @@ import static com.epam.health.tool.common.AbstractEntity.DELIMITER_INDEX;
  * Created by Vasilina_Terehova on 4/6/2018.
  */
 @Entity
-@Table(name = ClusterShapshotEntity.TABLE_NAME)
+@Table(name = NodeSnapshotEntity.TABLE_NAME)
 public class NodeSnapshotEntity extends AbstractManagedEntity {
     public static final String TABLE_NAME = "node_snapshot";
     public static final String COLUMN_NODE = "column_name_";

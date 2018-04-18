@@ -33,7 +33,7 @@ public class HdpRuningClusterParamReceiver extends CommonRuningClusterParamRecei
         System.out.println(urlConfiguration);
         try {
             return CommonJsonHandler.get().getTypedValueFromInnerField(
-                    httpAuthenticationClient.makeAuthenticatedRequest(clusterName, urlConfiguration), String.class, "items", "properties", propertyName);
+                    httpAuthenticationClient.makeAuthenticatedRequest(clusterName, urlConfiguration, false), String.class, "items", "properties", propertyName);
         } catch (CommonUtilException e) {
             throw new InvalidResponseException(e);
         }
