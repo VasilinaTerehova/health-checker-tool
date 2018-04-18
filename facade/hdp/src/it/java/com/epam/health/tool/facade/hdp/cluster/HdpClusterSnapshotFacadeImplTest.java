@@ -1,4 +1,4 @@
-package com.epam.health.tool.facade.cdh.cluster;
+package com.epam.health.tool.facade.hdp.cluster;
 
 import com.epam.facade.model.accumulator.ClusterAccumulatorToken;
 import com.epam.facade.model.accumulator.HealthCheckResultsAccumulator;

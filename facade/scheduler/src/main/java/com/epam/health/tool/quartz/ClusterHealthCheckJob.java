@@ -33,7 +33,7 @@ public class ClusterHealthCheckJob {
     private IFacadeImplResolver<IClusterSnapshotFacade> clusterSnapshotFacadeIFacadeImplResolver;
 
     @Scheduled(fixedDelay = 1 * 60 * 1000)
-    public void reportCurrentTime() {
+    public void checkClustersHealth() {
         log.info("The time is now {}", dateFormat.format(new Date()));
         Date hourAgo = DateUtil.dateHourPlus(new Date());
 

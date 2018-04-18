@@ -99,7 +99,6 @@ public abstract class CommonClusterSnapshotFacadeImpl implements IClusterSnapsho
             clusterShapshotEntity.setDateOfSnapshot(new Date());
             clusterShapshotEntity.setClusterEntity(clusterEntity);
             clusterSnapshotDao.save(clusterShapshotEntity);
-
             //here - save memory, hdfs, fs
             HdfsUsageEntityProjection hdfsUsage = healthCheckResultsAccumulator.getClusterHealthSummary().getCluster().getHdfsUsage();
             HdfsUsageEntity hdfsUsageEntity = new HdfsUsageEntity(hdfsUsage.getUsedGb(), hdfsUsage.getTotalGb());
@@ -118,6 +117,7 @@ public abstract class CommonClusterSnapshotFacadeImpl implements IClusterSnapsho
 
             saveCommonServicesSnapshots(clusterEntity, healthCheckResultsAccumulator, clusterShapshotEntity);
             //refresh
+            clusterSnapshotDao.save(clusterShapshotEntity);
             //clusterShapshotEntity.getClusterServiceShapshotEntityList();
             return clusterShapshotEntity;
         } catch (InvalidResponseException e) {
