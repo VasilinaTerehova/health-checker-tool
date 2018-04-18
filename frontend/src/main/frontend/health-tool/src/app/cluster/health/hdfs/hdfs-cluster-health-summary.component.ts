@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 
+//Models
 import { Cluster } from '../../../shared/cluster/cluster.model';
 import { JobExample } from '../job-example.model';
 import { HdfsHealthReport } from './hdfs-health-report.model';

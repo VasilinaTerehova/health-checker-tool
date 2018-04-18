@@ -39,19 +39,16 @@ public abstract class CommonRestHealthCheckAction implements IServiceHealthCheck
 
     //Mb with Transferer
     protected ClusterEntityProjection recreateClusterEntityProjection(ClusterSnapshotEntityProjection clusterSnapshotEntityProjection) {
+        ClusterEntityProjectionImpl clusterEntityProjection = new ClusterEntityProjectionImpl();
         //Hack for now, should be changed
         if ( clusterSnapshotEntityProjection.getClusterServiceShapshotEntityList() != null ) {
-            ClusterEntityProjectionImpl clusterEntityProjection = new ClusterEntityProjectionImpl();
-
             clusterEntityProjection.setId( clusterSnapshotEntityProjection.getId() );
             clusterEntityProjection.setClusterType( clusterSnapshotEntityProjection.getClusterType() );
             clusterEntityProjection.setHost( clusterSnapshotEntityProjection.getHost() );
             clusterEntityProjection.setName( clusterSnapshotEntityProjection.getName() );
             clusterEntityProjection.setSecured( clusterEntityProjection.isSecured() );
-
-            return clusterEntityProjection;
         }
 
-        return null;
+        return clusterEntityProjection;
     }
 }

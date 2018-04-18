@@ -2,7 +2,8 @@ package com.epam.health.tool.facade.common.service.action.hdfs;
 
 import com.epam.facade.model.accumulator.HdfsHealthCheckResult;
 import com.epam.facade.model.accumulator.HealthCheckResultsAccumulator;
-import com.epam.health.tool.dao.cluster.ClusterDao;
+import com.epam.health.tool.facade.common.resolver.impl.action.HealthCheckAction;
+import com.epam.facade.model.HealthCheckActionType;
 import com.epam.health.tool.facade.common.service.action.CommonActionNames;
 import com.epam.health.tool.facade.common.service.action.CommonSshHealthCheckAction;
 import com.epam.health.tool.facade.exception.InvalidResponseException;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component( CommonActionNames.HDFS_CHECK )
+@HealthCheckAction( HealthCheckActionType.HDFS_SERVICE )
 public class CommonHdfsServiceHealthCheck extends CommonSshHealthCheckAction {
     @Autowired
     private List<IHdfsOperation> hdfsOperations;

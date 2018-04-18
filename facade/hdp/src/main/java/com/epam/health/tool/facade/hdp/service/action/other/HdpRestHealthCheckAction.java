@@ -1,6 +1,8 @@
-package com.epam.health.tool.facade.hdp.service.action;
+package com.epam.health.tool.facade.hdp.service.action.other;
 
 import com.epam.facade.model.ServiceStatus;
+import com.epam.health.tool.facade.common.resolver.impl.action.HealthCheckAction;
+import com.epam.facade.model.HealthCheckActionType;
 import com.epam.health.tool.facade.common.service.action.other.CommonOtherServicesHealthCheckAction;
 import com.epam.health.tool.facade.exception.InvalidResponseException;
 import com.epam.health.tool.facade.hdp.cluster.ServiceStateEnumMapper;
@@ -17,7 +19,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component("HDP-rest-action")
-public class RestHealthCheckAction extends CommonOtherServicesHealthCheckAction {
+@HealthCheckAction( HealthCheckActionType.OTHER_SERVICES )
+public class HdpRestHealthCheckAction extends CommonOtherServicesHealthCheckAction {
     @Override
     protected List<ServiceStatus> performHealthCheck(ClusterEntity clusterEntity) throws InvalidResponseException {
         try {

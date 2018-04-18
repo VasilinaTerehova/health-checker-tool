@@ -18,8 +18,8 @@ import { RouteService } from '../shared/menu/side/route.service';
 })
 export class ClusterComponent implements OnInit, OnDestroy {
   yarnAppsCount: number;
-  clusterSnapshot: ClusterSnapshot;
-  private _clusterName: string;
+  //For Inputs should use complex types
+  private _clusterName: String;
   //Reports
   private _hdfsHealthReport: HdfsHealthReport;
   private _yarnHealthReport: HdfsHealthReport;
@@ -29,13 +29,13 @@ export class ClusterComponent implements OnInit, OnDestroy {
   constructor( private router: Router, private route: ActivatedRoute,
     private clusterHealthCheckService: ClusterHealthCheckService, private routeService: RouteService ) {
       this._sub = routeService.healthCheckMessage$.subscribe(
-        clusterName => this.clusterName = clusterName
+        clusterName => this.clusterName = new String( clusterName )
       );
   }
 
   ngOnInit() {
     this.route.paramMap.subscribe( (params: ParamMap) => {
-      this.clusterName = params.get( 'id' );
+      this.clusterName = new String( params.get( 'id' ) );
     });
   }
 
@@ -47,18 +47,14 @@ export class ClusterComponent implements OnInit, OnDestroy {
     this.yarnAppsCount = newYarnAppsCount;
   }
 
-  onClusterSnapshotChange( clusterSnapshot: ClusterSnapshot ) {
-    this.clusterSnapshot = clusterSnapshot;
-  }
-
-  set clusterName( clusterName: string ) {
+  set clusterName( clusterName: String ) {
     if ( clusterName ) {
       this._clusterName = clusterName;
       this.ascForHdfsAndYarnReports();
     }
   }
 
-  get clusterName(): string {
+  get clusterName(): String {
     return this._clusterName;
   }
 
@@ -71,7 +67,7 @@ export class ClusterComponent implements OnInit, OnDestroy {
   }
 
   private ascForHdfsAndYarnReports() {
-    this.clusterHealthCheckService.getHdfsClusterState( this._clusterName ).subscribe(
+    this.clusterHealthCheckService.getHdfsClusterState( this._clusterName.toString() ).subscribe(
       data => this._hdfsHealthReport = data
     );
     //Disabled for development

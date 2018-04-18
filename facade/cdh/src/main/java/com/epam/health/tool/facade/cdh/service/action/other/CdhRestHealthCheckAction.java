@@ -1,6 +1,8 @@
 package com.epam.health.tool.facade.cdh.service.action.other;
 
 import com.epam.facade.model.ServiceStatus;
+import com.epam.health.tool.facade.common.resolver.impl.action.HealthCheckAction;
+import com.epam.facade.model.HealthCheckActionType;
 import com.epam.health.tool.facade.common.service.action.other.CommonOtherServicesHealthCheckAction;
 import com.epam.health.tool.facade.exception.InvalidResponseException;
 import com.epam.health.tool.model.ClusterEntity;
@@ -11,7 +13,8 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component("CDH-rest-action")
-public class RestHealthCheckAction extends CommonOtherServicesHealthCheckAction {
+@HealthCheckAction( HealthCheckActionType.OTHER_SERVICES )
+public class CdhRestHealthCheckAction extends CommonOtherServicesHealthCheckAction {
 
     @Override
     protected List<ServiceStatus> performHealthCheck(ClusterEntity clusterEntity) throws InvalidResponseException {

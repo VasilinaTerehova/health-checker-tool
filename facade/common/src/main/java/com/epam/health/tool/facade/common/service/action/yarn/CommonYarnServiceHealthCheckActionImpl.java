@@ -2,6 +2,8 @@ package com.epam.health.tool.facade.common.service.action.yarn;
 
 import com.epam.facade.model.accumulator.HealthCheckResultsAccumulator;
 import com.epam.facade.model.accumulator.YarnHealthCheckResult;
+import com.epam.health.tool.facade.common.resolver.impl.action.HealthCheckAction;
+import com.epam.facade.model.HealthCheckActionType;
 import com.epam.health.tool.facade.common.service.action.CommonActionNames;
 import com.epam.health.tool.facade.common.service.action.CommonSshHealthCheckAction;
 import com.epam.health.tool.facade.exception.InvalidResponseException;
@@ -15,6 +17,7 @@ import java.util.Collections;
 import java.util.stream.Collectors;
 
 @Component( CommonActionNames.YARN_EXAMPLES )
+@HealthCheckAction( HealthCheckActionType.YARN_SERVICE )
 public class CommonYarnServiceHealthCheckActionImpl extends CommonSshHealthCheckAction {
     private final static String EXAMPLES_HADOOP_JAR_MASK = "hadoop-mapreduce-examples";
     private final static String ERROR_REGEXP = "Exception";

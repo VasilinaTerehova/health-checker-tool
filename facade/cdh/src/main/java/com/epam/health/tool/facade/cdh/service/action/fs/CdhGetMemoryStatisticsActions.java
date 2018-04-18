@@ -1,6 +1,8 @@
 package com.epam.health.tool.facade.cdh.service.action.fs;
 
 import com.epam.facade.model.service.DownloadableFileConstants;
+import com.epam.health.tool.facade.common.resolver.impl.action.HealthCheckAction;
+import com.epam.facade.model.HealthCheckActionType;
 import com.epam.health.tool.facade.cluster.IRunningClusterParamReceiver;
 import com.epam.health.tool.facade.common.service.action.fs.GetMemoryStatisticsAction;
 import com.epam.health.tool.facade.exception.InvalidResponseException;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Component;
 import static com.epam.facade.model.service.DownloadableFileConstants.YarnProperties.YARN_RESOURCEMANAGER_WEBAPP_ADDRESS;
 
 @Component("CDH-memory")
+@HealthCheckAction( HealthCheckActionType.FS )
 public class CdhGetMemoryStatisticsActions extends GetMemoryStatisticsAction {
     @Autowired
     @Qualifier("CDH-cluster")

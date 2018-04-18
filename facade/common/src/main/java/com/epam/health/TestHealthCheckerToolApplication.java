@@ -79,12 +79,6 @@ public class TestHealthCheckerToolApplication {
     public IClusterSnapshotFacade iClusterSnapshotFacade(IClusterFacade iClusterFacade) {
         CommonClusterSnapshotFacadeImpl commonClusterSnapshotFacade = new CommonClusterSnapshotFacadeImpl() {
 
-
-            @Override
-            public List<ServiceStatus> askForCurrentServicesSnapshot(String clusterName) throws InvalidResponseException {
-                return null;
-            }
-
 //            @Override
 //            public String getActiveResourceManagerAddress(String clusterName) throws CommonUtilException {
 //                ClusterEntityProjection cluster = iClusterFacade.getCluster(clusterName);

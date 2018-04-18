@@ -18,7 +18,6 @@ public class CdhClusterSnapshotFacadeImpl extends CommonClusterSnapshotFacadeImp
     @Autowired
     private HttpAuthenticationClient httpAuthenticationClient;
 
-    @Override
     public List<ServiceStatus> askForCurrentServicesSnapshot(String clusterName) throws InvalidResponseException {
         ClusterEntityProjection clusterEntity = clusterFacade.getCluster(clusterName);
         String url = "http://" + clusterEntity.getHost() + ":7180/api/v10/clusters/" + clusterName + "/services";

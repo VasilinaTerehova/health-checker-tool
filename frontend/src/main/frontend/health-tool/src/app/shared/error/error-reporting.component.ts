@@ -1,8 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { ErrorReportingService } from './error-reporting.service';
+//Models
 import { ErrorAlert } from './error-alert.model';
+//Services
+import { ErrorReportingService } from './error-reporting.service';
 
 @Component({
   selector: 'error-report',
@@ -28,6 +30,7 @@ export class ErrorReportingComponent implements OnDestroy, OnInit {
 
   ngOnDestroy() {
     this.errorMessageSub.unsubscribe();
+    this.clearErrorSub.unsubscribe();
   }
 
   isErrorPresent(): boolean {

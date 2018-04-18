@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 import { Subject } from 'rxjs/Subject';
 
@@ -6,15 +6,11 @@ import { Subject } from 'rxjs/Subject';
   selector: 'confirm-modal',
   templateUrl: './confirm-modal.component.html',
 })
-export class ConfirmModalComponent implements OnInit {
+export class ConfirmModalComponent {
   isConfirmed: Subject<Boolean>;
   clusterName: String;
 
   constructor( public bsModalRef: BsModalRef ) {  }
-
-  ngOnInit() {
-
-  }
 
   confirm() {
     this.isConfirmed.next( true );

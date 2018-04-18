@@ -2,9 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 import { Subject } from 'rxjs/Subject';
 
+//Models
 import { Cluster } from '../cluster.model';
 import { ClusterType } from '../cluster-type.model';
 import { Credentials } from '../credentials.model';
+//Services
 import { ClusterTypeExService } from '../cluster-type-ex.service';
 import { ClusterComparatorService } from '../cluster-comparator.service';
 
@@ -48,7 +50,7 @@ export class ClusterEditComponent implements OnInit {
         this.changedCluster.next( this.tempCluster );
       }
 
-      this.bsModalRef.hide();  
+      this.bsModalRef.hide();
     }
   }
 

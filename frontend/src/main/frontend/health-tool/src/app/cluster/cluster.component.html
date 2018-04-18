@@ -2,7 +2,7 @@
     <div class="panel panel-default">
         <div class="panel-heading">
             <h2>{{ 'home.label.cluster.result' | translate }} - {{clusterName}}</h2>
-            <common-cluster-health-summary [cluster]="clusterSnapshot" [yarnAppsCount]="yarnAppsCount"></common-cluster-health-summary>
+            <common-cluster-health-summary [clusterName]="clusterName" [yarnAppsCount]="yarnAppsCount"></common-cluster-health-summary>
         </div>
         <div class="panel-body">
           <tabset>
@@ -12,13 +12,13 @@
               <hr/>
               <hdfs-cluster-health-summary [serviceName]="'YARN'"  [hdfsHealthReport]="yarnHealthReport"></hdfs-cluster-health-summary>
               <hr/>
-              <service-list [clusterName]="clusterName" (onClusterSnapshotChange)="onClusterSnapshotChange($event)"></service-list>
+              <service-list [clusterName]="clusterName"></service-list>
             </tab>
             <tab heading="{{ 'home.label.service.yarn.app.list' | translate }}">
-              <yarn-application-list (onYarnAppsChange)="onYarnAppsCountChange($event)"></yarn-application-list>
+              <yarn-application-list [clusterName]="clusterName" (onYarnAppsChange)="onYarnAppsCountChange($event)"></yarn-application-list>
             </tab>
             <tab heading="{{ 'home.label.cluster.snapshots' | translate }}">
-              <service-status-history></service-status-history>
+              <service-status-history [clusterName]="clusterName"></service-status-history>
             </tab>
           </tabset>
         </div>

@@ -1,8 +1,11 @@
 import { Component, Input } from '@angular/core';
 
+//Models
 import { ClusterSnapshot } from '../../cluster-snapshot.model';
 import { NodeSummary } from '../node-summary.model';
 import { NodeMemory } from '../node-memory-summary.model';
+//Services
+import { ClusterHealthCheckService } from '../cluster-health-check.service';
 
 @Component({
   selector: 'common-cluster-health-summary',
@@ -13,12 +16,12 @@ export class CommonClusterHealthSummaryComponent {
   @Input() yarnAppsCount: number;
   isCollapsed: boolean;
 
-  constructor() {}
+  constructor( private clusterHealthCheckService: ClusterHealthCheckService ) {}
 
   @Input()
-  set cluster( cluster: ClusterSnapshot ) {
-    if ( cluster ) {
-      this._cluster = cluster;
+  set clusterName( clusterName: String ) {
+    if ( clusterName ) {
+      this.askForFsClusterSnapshot( clusterName.toString() );
     }
   }
 
@@ -48,5 +51,11 @@ export class CommonClusterHealthSummaryComponent {
     else {
       return false;
     }
+  }
+
+  private askForFsClusterSnapshot( clusterName: string ) {
+    this.clusterHealthCheckService.getFsClusterState( clusterName ).subscribe(
+      data => this._cluster = data
+    )
   }
 }

@@ -1,6 +1,4 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { ActivatedRoute, ParamMap } from '@angular/router';
-import { Subscription } from 'rxjs/Subscription';
 
 //Models
 import { ClusterState } from '../../cluster/cluster-state.model';
@@ -9,7 +7,6 @@ import { ClusterSnapshot } from '../../cluster/cluster-snapshot.model';
 //Services
 import { ClusterHealthCheckService } from '../../cluster/health/cluster-health-check.service';
 import { ErrorReportingService } from '../../shared/error/error-reporting.service';
-import { RouteService } from '../../shared/menu/side/route.service';
 
 @Component({
   selector: 'service-list',
@@ -17,21 +14,20 @@ import { RouteService } from '../../shared/menu/side/route.service';
 })
 export class ServiceListComponent {
   private _clusterName: string;
-  @Output() onClusterSnapshotChange = new EventEmitter<ClusterSnapshot>();
   clusterState: ClusterState;
   isAscSort: boolean = true;
 
   constructor( private clusterHealthCheckService: ClusterHealthCheckService, private errorReportingService: ErrorReportingService ) {}
 
   @Input()
-  set clusterName( clusterName: string ) {
+  set clusterName( clusterName: String ) {
     if ( clusterName ) {
-      this._clusterName = clusterName;
+      this._clusterName = clusterName.toString();
       this.ascForClusterState();
     }
   }
 
-  get clusterName(): string {
+  get clusterName(): String {
     return this._clusterName;
   }
 
@@ -57,7 +53,6 @@ export class ServiceListComponent {
       data => {
         if ( data ) {
           this.clusterState = data.clusterHealthSummary;
-          this.onClusterSnapshotChange.emit( this.clusterState.cluster );
         }
       },
       error => this.errorReportingService.reportHttpError( error )

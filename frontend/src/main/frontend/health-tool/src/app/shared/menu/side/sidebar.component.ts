@@ -1,17 +1,19 @@
-import {Component} from '@angular/core';
-import { OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 
+//Models
 import { Cluster } from '../../cluster/cluster.model';
+import { ErrorAlert } from '../../error/error-alert.model';
+import { AlertType } from '../..//error/alert-type.model';
+//Services
 import { ClusterService } from '../../../cluster/cluster.service';
 import { RouteService } from './route.service';
 import { ErrorReportingService } from '../../error/error-reporting.service';
+//Components
 import { ClusterEditComponent } from '../../cluster/edit/cluster-edit.component';
-import { ErrorAlert } from '../../error/error-alert.model';
-import { AlertType } from '../..//error/alert-type.model';
 import { ConfirmModalComponent } from '../../modal/confirm/confirm-modal.component';
 
 @Component({
@@ -24,7 +26,8 @@ export class SideBarComponent implements OnInit{
   clusterSearch: string;
   bsModalRef: BsModalRef;
 
-  constructor( private clusterService: ClusterService, private routeService: RouteService, private errorReportingService: ErrorReportingService, private modalService: BsModalService ) {}
+  constructor( private clusterService: ClusterService, private routeService: RouteService,
+    private errorReportingService: ErrorReportingService, private modalService: BsModalService ) {}
 
   ngOnInit() {
     this.errorReportingService.clearError();
