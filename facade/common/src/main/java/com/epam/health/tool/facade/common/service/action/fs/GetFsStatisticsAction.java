@@ -7,7 +7,6 @@ import com.epam.facade.model.fs.NodeDiskUsage;
 import com.epam.facade.model.projection.NodeSnapshotEntityProjection;
 import com.epam.health.tool.authentication.ssh.SshAuthenticationClient;
 import com.epam.health.tool.dao.cluster.ClusterDao;
-import com.epam.health.tool.facade.cluster.IClusterSnapshotFacade;
 import com.epam.health.tool.facade.cluster.IRunningClusterParamReceiver;
 import com.epam.health.tool.facade.common.service.action.CommonRestHealthCheckAction;
 import com.epam.health.tool.facade.exception.ImplementationNotResolvedException;
@@ -15,15 +14,19 @@ import com.epam.health.tool.facade.exception.InvalidResponseException;
 import com.epam.health.tool.facade.resolver.IFacadeImplResolver;
 import com.epam.health.tool.model.ClusterEntity;
 import com.epam.util.common.CheckingParamsUtil;
+import com.epam.util.common.CommonUtilException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Vasilina_Terehova on 4/9/2018.
  */
-public abstract class GetFsStatisticsAction extends CommonRestHealthCheckAction {
+@Component
+public class GetFsStatisticsAction extends CommonRestHealthCheckAction {
     @Autowired
     protected ClusterDao clusterDao;
     @Autowired
@@ -60,9 +63,18 @@ public abstract class GetFsStatisticsAction extends CommonRestHealthCheckAction 
         String availableDiskDfs = getAvailableDiskDfsViaSsh(clusterEntity);
 
         //Should be for all hosts
-        nodeDiskUsages.add(mapAvailableDiskDfsStringToNodeDiskUsage(clusterEntity.getHost(), availableDiskDfs));
+        //HostExtracter.getAllNodeNames(clusterEntity.getHost(), 3)
+        //how get node count
+        try {
+            Set<String> liveNodes = runningClusterParamImplResolver.resolveFacadeImpl(clusterEntity.getClusterTypeEnum().name()).getHdfsNamenodeJson(clusterEntity).getLiveNodes();
+            for (String node : liveNodes) {
+                nodeDiskUsages.add(mapAvailableDiskDfsStringToNodeDiskUsage(node, availableDiskDfs));
+            }
 
-        return nodeDiskUsages;
+            return nodeDiskUsages;
+        } catch (CommonUtilException e) {
+            throw new InvalidResponseException(e);
+        }
         //http://svqxbdcn6hdp26n1.pentahoqa.com:8080/api/v1/clusters/HDP26Unsecure/configurations?type=yarn-site&tag=version1
         // /var/run/cloudera-scm-agent/process/253-yarn-NODEMANAGER/yarn-site.xml
         //df -h . | tail -1 | awk '{print $4}'

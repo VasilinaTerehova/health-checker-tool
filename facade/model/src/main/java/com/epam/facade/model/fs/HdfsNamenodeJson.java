@@ -3,6 +3,14 @@ package com.epam.facade.model.fs;
 import com.epam.facade.model.projection.HdfsUsageEntityProjection;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by Vasilina_Terehova on 4/5/2018.
@@ -21,6 +29,8 @@ public class HdfsNamenodeJson implements HdfsUsageEntityProjection {
     private long cacheCapacity;
     //percent used by hdfs
     private float percentUsed;
+
+    Map<String, String> liveNodes;
     //kb, mb, gb
     public static long BYTES_TO_GB_DIVIDER = 1024*1024*1024;
 
@@ -98,11 +108,30 @@ public class HdfsNamenodeJson implements HdfsUsageEntityProjection {
         this.percentUsed = percentUsed;
     }
 
+    public Set<String> getLiveNodes() {
+        return liveNodes.keySet();
+    }
+
+    @JsonProperty(value = "LiveNodes")
+    public void setLiveNodes(String liveNodes) {
+        ObjectMapper mapperObj = new ObjectMapper();
+        try {
+            TypeReference<HashMap<String,Object>> typeRef
+                    = new TypeReference<HashMap<String,Object>>() {};
+            this.liveNodes = mapperObj.readValue(liveNodes,
+                    typeRef);
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("can't read live nodes from datanode infor");
+        }
+    }
+
     @Override
     public String toString() {
         return used + " out of " + total + " \n" +
                 getUsedGb() + " out of " + getTotalGb() + "\n " +
                 " cache capacity gb: " + getCacheCapacityGb() + " non dfs used gb out of " + getNonDfsUsedGb() + "\n " +
-                " . Percent: " + percentUsed + " CacheCapacity: " + cacheCapacity + " Free: " + free + " nonDfsUsedSpace: " + nonDfsUsedSpace;
+                " . Percent: " + percentUsed + " CacheCapacity: " + cacheCapacity + " Free: " + free + " nonDfsUsedSpace: " + nonDfsUsedSpace +
+        " nodes " + liveNodes.keySet();
     }
 }

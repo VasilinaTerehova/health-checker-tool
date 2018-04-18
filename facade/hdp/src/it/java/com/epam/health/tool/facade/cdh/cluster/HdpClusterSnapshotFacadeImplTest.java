@@ -1,9 +1,13 @@
 package com.epam.health.tool.facade.cdh.cluster;
 
+import com.epam.facade.model.accumulator.ClusterAccumulatorToken;
+import com.epam.facade.model.accumulator.HealthCheckResultsAccumulator;
 import com.epam.health.TestHealthCheckerToolApplication;
+import com.epam.health.tool.dao.cluster.ClusterDao;
 import com.epam.health.tool.facade.cluster.IClusterSnapshotFacade;
 import com.epam.health.tool.facade.cluster.IRunningClusterParamReceiver;
 import com.epam.health.tool.facade.common.service.action.fs.GetFsStatisticsAction;
+import com.epam.health.tool.facade.exception.ImplementationNotResolvedException;
 import com.epam.health.tool.facade.exception.InvalidResponseException;
 import com.epam.util.common.CommonUtilException;
 import org.junit.Test;
@@ -33,8 +37,23 @@ public class HdpClusterSnapshotFacadeImplTest {
     @Qualifier("HDP-cluster")
     private IRunningClusterParamReceiver runningClusterParamReceiver;
 
+    @Autowired
+    private ClusterDao clusterDao;
+
     @Test
     public void testGetYarnLogDirectory() throws CommonUtilException, InvalidResponseException {
         assertEquals("/yarn/container-logs", runningClusterParamReceiver.getLogDirectory("HDP25Unsecure"));
     }
+
+    @Test
+    public void testGetNameNodeJson() throws CommonUtilException, InvalidResponseException, ImplementationNotResolvedException {
+        System.out.println(runningClusterParamReceiver.getHdfsNamenodeJson(clusterDao.findByClusterName("HDP26Unsecure")));
+    }
+
+    @Test
+    public void testCollectHealthSummaryAccumulator() throws CommonUtilException, InvalidResponseException, ImplementationNotResolvedException {
+        HealthCheckResultsAccumulator hdp26Unsecure = clusterSnapshotFacade.askForClusterSnapshot(ClusterAccumulatorToken.Builder.get().withClusterName("HDP26Unsecure").buildClusterAccumulatorToken());
+        System.out.println(hdp26Unsecure);
+    }
+
 }
