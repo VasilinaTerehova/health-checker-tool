@@ -1,4 +1,4 @@
-package com.epam.health.tool.facade.cdh.cluster;
+package com.epam.health.tool.facade.hdp.cluster;
 
 import com.epam.health.tool.authentication.http.HttpAuthenticationClient;
 import com.epam.health.tool.dao.cluster.ClusterDao;
