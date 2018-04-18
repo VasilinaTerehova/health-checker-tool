@@ -32,7 +32,7 @@ public class ClusterHealthCheckJob {
     @Autowired
     private IFacadeImplResolver<IClusterSnapshotFacade> clusterSnapshotFacadeIFacadeImplResolver;
 
-    @Scheduled(fixedDelay = 30 * 60 * 1000)
+    @Scheduled(fixedDelay = 1 * 60 * 1000)
     public void reportCurrentTime() {
         log.info("The time is now {}", dateFormat.format(new Date()));
         Date hourAgo = DateUtil.dateHourAgo();

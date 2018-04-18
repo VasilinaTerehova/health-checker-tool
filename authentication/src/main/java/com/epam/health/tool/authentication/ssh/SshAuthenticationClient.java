@@ -15,9 +15,13 @@ public class SshAuthenticationClient {
     private ClusterDao clusterDao;
 
     public SshExecResult executeCommand(ClusterEntity clusterEntity, String command) {
+        return executeCommand(clusterEntity, command, clusterEntity.getHost());
+    }
+
+    public SshExecResult executeCommand(ClusterEntity clusterEntity, String command, String host) {
         try {
             return SshCommonUtil.buildSshCommandExecutor( clusterEntity.getSsh().getUsername(), clusterEntity.getSsh().getPassword(), clusterEntity.getSsh().getPemFilePath() )
-                    .executeCommand( clusterEntity.getHost(), command );
+                    .executeCommand( host, command );
         } catch (CommonUtilException e) {
             throw new RuntimeException( e );
         }

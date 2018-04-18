@@ -5,10 +5,13 @@ import com.epam.facade.model.ServiceStatus;
 import com.epam.health.tool.facade.application.IApplicationFacade;
 import com.epam.health.tool.facade.cluster.IClusterFacade;
 import com.epam.health.tool.facade.cluster.IClusterSnapshotFacade;
+import com.epam.health.tool.facade.cluster.IRunningClusterParamReceiver;
 import com.epam.health.tool.facade.common.cluster.CommonClusterSnapshotFacadeImpl;
+import com.epam.health.tool.facade.common.cluster.CommonRuningClusterParamReceiver;
 import com.epam.health.tool.facade.common.service.CommonServiceSnapshotFacadeImpl;
 import com.epam.health.tool.facade.exception.InvalidResponseException;
 import com.epam.health.tool.facade.service.IServiceSnapshotFacade;
+import com.epam.health.tool.model.ClusterEntity;
 import com.epam.health.tool.model.ClusterServiceShapshotEntity;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -126,5 +129,15 @@ public class TestHealthCheckerToolApplication {
 
         };
     }
+
+//    public IRunningClusterParamReceiver iRunningClusterParamReceiver() {
+//        return new CommonRuningClusterParamReceiver() {
+//
+//            @Override
+//            public String getPropertySiteXml(ClusterEntity clusterEntity, String siteName, String propertyName) throws InvalidResponseException {
+//                return null;
+//            }
+//        };
+//    }
 
 }

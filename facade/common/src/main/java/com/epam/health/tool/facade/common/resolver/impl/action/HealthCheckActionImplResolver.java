@@ -19,8 +19,13 @@ public class HealthCheckActionImplResolver implements IActionImplResolver {
     public List<IServiceHealthCheckAction> resolveActionImplementations( String clusterType, HealthCheckActionType healthCheckActionType ) {
         return serviceHealthCheckActionMap.entrySet().stream()
                 .filter( entry -> entry.getKey().contains( clusterType ) || isCommonAction( entry.getKey() ) )
-                .filter( entry -> getHealthCheckActionType( entry.getValue() ).equals( healthCheckActionType ) )
+                .filter( entry -> filterByHealthCheckType(healthCheckActionType, entry))
                 .map(Map.Entry::getValue ).collect(Collectors.toList());
+    }
+
+    private boolean filterByHealthCheckType(HealthCheckActionType healthCheckActionType, Map.Entry<String, IServiceHealthCheckAction> entry) {
+        //if all - make all checks
+        return getHealthCheckActionType( entry.getValue() ).equals( healthCheckActionType ) || healthCheckActionType.equals(HealthCheckActionType.ALL);
     }
 
     private HealthCheckActionType getHealthCheckActionType( IServiceHealthCheckAction healthCheckAction ) {

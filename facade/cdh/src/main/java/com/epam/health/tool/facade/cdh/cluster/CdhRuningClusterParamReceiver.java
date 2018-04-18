@@ -8,6 +8,7 @@ import com.epam.health.tool.dao.cluster.ClusterDao;
 import com.epam.health.tool.facade.common.cluster.CommonRuningClusterParamReceiver;
 import com.epam.health.tool.facade.exception.InvalidResponseException;
 import com.epam.health.tool.model.ClusterEntity;
+import com.epam.util.common.CheckingParamsUtil;
 import com.epam.util.common.CommonUtilException;
 import com.epam.util.common.file.FileCommonUtil;
 import com.epam.util.common.json.CommonJsonHandler;
@@ -17,8 +18,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 
+import static com.epam.facade.model.service.DownloadableFileConstants.HdfsProperties.DFS_NAMENODE_HTTP_ADDRESS;
 import static com.epam.facade.model.service.DownloadableFileConstants.YarnProperties.YARN_NODEMANAGER_LOG_DIRS;
 
 /**
@@ -31,14 +34,6 @@ public class CdhRuningClusterParamReceiver extends CommonRuningClusterParamRecei
     protected ClusterDao clusterDao;
     @Autowired
     private HttpAuthenticationClient httpAuthenticationClient;
-
-    @Override
-    public String getLogDirectory(String clusterName) throws InvalidResponseException {
-        String logDirPropery = getPropertySiteXml(clusterDao.findByClusterName(clusterName), DownloadableFileConstants.ServiceFileName.YARN, YARN_NODEMANAGER_LOG_DIRS);
-
-        System.out.println("log.dir: " + logDirPropery);
-        return logDirPropery;
-    }
 
     public String getPropertySiteXml(ClusterEntity clusterEntity, String siteName, String propertyName) throws InvalidResponseException {
         String serviceFileName = getServiceFileName( clusterEntity.getClusterName(), siteName );

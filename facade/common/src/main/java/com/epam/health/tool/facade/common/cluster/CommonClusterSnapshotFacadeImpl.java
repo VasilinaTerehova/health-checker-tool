@@ -110,7 +110,11 @@ public abstract class CommonClusterSnapshotFacadeImpl implements IClusterSnapsho
             clusterShapshotEntity.setMemoryUsageEntity(memoryUsageEntity);
 
             List<? extends NodeSnapshotEntityProjection> nodes = healthCheckResultsAccumulator.getClusterHealthSummary().getCluster().getNodes();
-            nodes.forEach(o -> nodeSnapshotDao.save(new NodeSnapshotEntity(new FsUsageEntity(o.getUsedGb(), o.getTotalGb()), o.getNode(), clusterShapshotEntity)));
+            if (nodes != null) {
+                nodes.forEach(o -> nodeSnapshotDao.save(new NodeSnapshotEntity(new FsUsageEntity(o.getUsedGb(), o.getTotalGb()), o.getNode(), clusterShapshotEntity)));
+            } else {
+                logger.error("full statistics for nodes didn't contain needed info");
+            }
 
             saveCommonServicesSnapshots(clusterEntity, healthCheckResultsAccumulator, clusterShapshotEntity);
             //refresh

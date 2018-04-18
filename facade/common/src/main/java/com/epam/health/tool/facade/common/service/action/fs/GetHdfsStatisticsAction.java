@@ -52,33 +52,16 @@ public abstract class GetHdfsStatisticsAction extends CommonRestHealthCheckActio
         healthCheckResultsAccumulator.setClusterHealthSummary(tempClusterHealthSummary);
     }
 
-    protected abstract String getHANameNodeUrl(String clusterName) throws InvalidResponseException;
-
-    private String getNameNodeUrl(ClusterEntity clusterEntity) throws InvalidResponseException, ImplementationNotResolvedException {
-        String nameNodeUrl = runningClusterParamImplResolver.resolveFacadeImpl(clusterEntity.getClusterTypeEnum().name()).getPropertySiteXml(clusterEntity, DownloadableFileConstants.ServiceFileName.HDFS, DFS_NAMENODE_HTTP_ADDRESS);
-
-        if (CheckingParamsUtil.isParamsNullOrEmpty(nameNodeUrl)) {
-            return getHANameNodeUrl(clusterEntity.getClusterName());
-        }
-
-        return nameNodeUrl;
-    }
-
     private HdfsUsageEntityProjection getAvailableDiskHdfs(String clusterName) throws InvalidResponseException {
         ClusterEntity clusterEntity = clusterDao.findByClusterName(clusterName);
         try {
-            String nameNodeUrl = getNameNodeUrl(clusterEntity);
-            String url = "http://" + nameNodeUrl + "/jmx?qry=Hadoop:service=NameNode,name=NameNodeInfo";
-
-            System.out.println(url);
-            String answer = httpAuthenticationClient.makeAuthenticatedRequest(clusterEntity.getClusterName(), url);
-            System.out.println(answer);
-            HdfsNamenodeJson hdfsUsageJson = CommonJsonHandler.get().getTypedValueFromInnerFieldArrElement(answer, HdfsNamenodeJson.class, "beans");
-            System.out.println(hdfsUsageJson);
+            HdfsNamenodeJson hdfsUsageJson = runningClusterParamImplResolver.resolveFacadeImpl(clusterEntity.getClusterTypeEnum().name()).getHdfsNamenodeJson(clusterEntity);
 
             return hdfsUsageJson;
         } catch (ImplementationNotResolvedException | CommonUtilException ex) {
             throw new InvalidResponseException("Elements not found.", ex);
         }
     }
+
+
 }

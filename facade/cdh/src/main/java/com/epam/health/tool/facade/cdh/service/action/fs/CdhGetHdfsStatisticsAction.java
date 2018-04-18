@@ -23,16 +23,4 @@ public class CdhGetHdfsStatisticsAction extends GetHdfsStatisticsAction {
     @Qualifier("CDH-cluster")
     private IRunningClusterParamReceiver iRunningClusterParamReceiver;
 
-    @Override
-    public String getHANameNodeUrl(String clusterName) throws InvalidResponseException {
-        ClusterEntity clusterEntity = clusterDao.findByClusterName(clusterName);
-        String haIds = iRunningClusterParamReceiver.getPropertySiteXml(clusterEntity, DownloadableFileConstants.ServiceFileName.HDFS, "dfs.ha.namenodes." + clusterEntity.getClusterName());
-        if (!CheckingParamsUtil.isParamsNullOrEmpty(haIds)) {
-            return iRunningClusterParamReceiver.getPropertySiteXml(clusterEntity, DownloadableFileConstants.ServiceFileName.HDFS,
-                    DFS_NAMENODE_HTTP_ADDRESS + "." + clusterEntity.getClusterName() + "." + Arrays.stream(haIds.split(",")).findFirst()
-                            .orElseThrow(() -> new InvalidResponseException("Can't find name node url for cluster - " + clusterEntity.getClusterName())));
-        }
-
-        throw new InvalidResponseException("Can't find name node url for cluster - " + clusterEntity.getClusterName());
-    }
 }
