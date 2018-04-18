@@ -16,7 +16,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
-@Component( CommonActionNames.YARN_EXAMPLES )
+@Component( /*CommonActionNames.YARN_EXAMPLES*/ )
 @HealthCheckAction( HealthCheckActionType.YARN_SERVICE )
 public class CommonYarnServiceHealthCheckActionImpl extends CommonSshHealthCheckAction {
     private final static String EXAMPLES_HADOOP_JAR_MASK = "hadoop-mapreduce-examples";

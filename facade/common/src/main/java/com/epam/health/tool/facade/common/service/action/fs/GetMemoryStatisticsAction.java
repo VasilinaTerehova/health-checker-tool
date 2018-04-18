@@ -2,23 +2,39 @@ package com.epam.health.tool.facade.common.service.action.fs;
 
 import com.epam.facade.model.ClusterHealthSummary;
 import com.epam.facade.model.ClusterSnapshotEntityProjectionImpl;
+import com.epam.facade.model.HealthCheckActionType;
 import com.epam.facade.model.accumulator.HealthCheckResultsAccumulator;
 import com.epam.facade.model.fs.MemoryMetricsJson;
 import com.epam.facade.model.projection.MemoryUsageEntityProjection;
+import com.epam.facade.model.service.DownloadableFileConstants;
 import com.epam.health.tool.dao.cluster.ClusterDao;
+import com.epam.health.tool.facade.cluster.IRunningClusterParamReceiver;
+import com.epam.health.tool.facade.common.resolver.impl.action.HealthCheckAction;
+import com.epam.health.tool.facade.common.service.action.CommonActionNames;
 import com.epam.health.tool.facade.common.service.action.CommonRestHealthCheckAction;
+import com.epam.health.tool.facade.exception.ImplementationNotResolvedException;
 import com.epam.health.tool.facade.exception.InvalidResponseException;
+import com.epam.health.tool.facade.resolver.IFacadeImplResolver;
 import com.epam.health.tool.model.ClusterEntity;
+import com.epam.util.common.CheckingParamsUtil;
 import com.epam.util.common.CommonUtilException;
 import com.epam.util.common.json.CommonJsonHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import static com.epam.facade.model.service.DownloadableFileConstants.YarnProperties.YARN_RESOURCEMANAGER_WEBAPP_ADDRESS;
 
 /**
  * Created by Vasilina_Terehova on 4/9/2018.
  */
-public abstract class GetMemoryStatisticsAction extends CommonRestHealthCheckAction {
+@Component( CommonActionNames.MEMORY_CHECK )
+@HealthCheckAction( HealthCheckActionType.MEMORY )
+public class GetMemoryStatisticsAction extends CommonRestHealthCheckAction {
     @Autowired
     protected ClusterDao clusterDao;
+
+    @Autowired
+    private IFacadeImplResolver<IRunningClusterParamReceiver> iRunningClusterParamReceiver;
 
     @Override
     protected ClusterHealthSummary performRestHealthCheck(ClusterEntity clusterEntity) throws InvalidResponseException {
@@ -43,8 +59,6 @@ public abstract class GetMemoryStatisticsAction extends CommonRestHealthCheckAct
         healthCheckResultsAccumulator.setClusterHealthSummary(tempClusterHealthSummary);
     }
 
-    public abstract String getActiveResourceManagerAddress(String clusterName) throws InvalidResponseException;
-
     private MemoryUsageEntityProjection getMemoryTotal(String clusterName) throws InvalidResponseException {
         ClusterEntity clusterEntity = clusterDao.findByClusterName(clusterName);
         //todo: get active rm
@@ -62,5 +76,30 @@ public abstract class GetMemoryStatisticsAction extends CommonRestHealthCheckAct
         } catch (CommonUtilException ex) {
             throw new InvalidResponseException("Elements not found.", ex);
         }
+    }
+
+    public String getActiveResourceManagerAddress(String clusterName) throws InvalidResponseException {
+        ClusterEntity clusterEntity = clusterDao.findByClusterName(clusterName);
+        String rmAddress = null;
+        try {
+            IRunningClusterParamReceiver iRunningClusterParamReceiver = this.iRunningClusterParamReceiver.resolveFacadeImpl(clusterEntity.getClusterTypeEnum().name());
+            rmAddress = iRunningClusterParamReceiver.getPropertySiteXml(clusterEntity, DownloadableFileConstants.ServiceFileName.YARN, YARN_RESOURCEMANAGER_WEBAPP_ADDRESS);
+
+            if (CheckingParamsUtil.isParamsNullOrEmpty(rmAddress)) {
+                //possibly ha mode for rm
+                String haIds = iRunningClusterParamReceiver.getPropertySiteXml(clusterEntity, DownloadableFileConstants.ServiceFileName.YARN, "yarn.resourcemanager.ha.rm-ids");
+                //Optional.of(haIds).ifPresent(s -> Optional.of(s.split(",")).ifPresent(strings -> ));
+                String[] split = haIds.split(",");
+                if (split.length > 0) {
+                    String rmId = split[0];
+                    rmAddress = iRunningClusterParamReceiver.getPropertySiteXml(clusterEntity, DownloadableFileConstants.ServiceFileName.YARN, YARN_RESOURCEMANAGER_WEBAPP_ADDRESS + "." + rmId);
+                }
+            }
+
+            System.out.println("rm address: " + rmAddress);
+        } catch (ImplementationNotResolvedException e) {
+            throw new InvalidResponseException(e);
+        }
+        return rmAddress;
     }
 }

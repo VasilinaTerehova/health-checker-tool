@@ -2,12 +2,15 @@ package com.epam.health.tool.facade.common.service.action.fs;
 
 import com.epam.facade.model.ClusterHealthSummary;
 import com.epam.facade.model.ClusterSnapshotEntityProjectionImpl;
+import com.epam.facade.model.HealthCheckActionType;
 import com.epam.facade.model.accumulator.HealthCheckResultsAccumulator;
 import com.epam.facade.model.fs.NodeDiskUsage;
 import com.epam.facade.model.projection.NodeSnapshotEntityProjection;
 import com.epam.health.tool.authentication.ssh.SshAuthenticationClient;
 import com.epam.health.tool.dao.cluster.ClusterDao;
 import com.epam.health.tool.facade.cluster.IRunningClusterParamReceiver;
+import com.epam.health.tool.facade.common.resolver.impl.action.HealthCheckAction;
+import com.epam.health.tool.facade.common.service.action.CommonActionNames;
 import com.epam.health.tool.facade.common.service.action.CommonRestHealthCheckAction;
 import com.epam.health.tool.facade.exception.ImplementationNotResolvedException;
 import com.epam.health.tool.facade.exception.InvalidResponseException;
@@ -25,7 +28,8 @@ import java.util.Set;
 /**
  * Created by Vasilina_Terehova on 4/9/2018.
  */
-@Component
+@Component( CommonActionNames.FS_CHECK )
+@HealthCheckAction( HealthCheckActionType.FS )
 public class GetFsStatisticsAction extends CommonRestHealthCheckAction {
     @Autowired
     protected ClusterDao clusterDao;

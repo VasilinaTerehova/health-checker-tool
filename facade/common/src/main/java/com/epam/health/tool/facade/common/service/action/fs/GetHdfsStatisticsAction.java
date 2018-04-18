@@ -2,12 +2,15 @@ package com.epam.health.tool.facade.common.service.action.fs;
 
 import com.epam.facade.model.ClusterHealthSummary;
 import com.epam.facade.model.ClusterSnapshotEntityProjectionImpl;
+import com.epam.facade.model.HealthCheckActionType;
 import com.epam.facade.model.accumulator.HealthCheckResultsAccumulator;
 import com.epam.facade.model.fs.HdfsNamenodeJson;
 import com.epam.facade.model.projection.HdfsUsageEntityProjection;
 import com.epam.facade.model.service.DownloadableFileConstants;
 import com.epam.health.tool.dao.cluster.ClusterDao;
 import com.epam.health.tool.facade.cluster.IRunningClusterParamReceiver;
+import com.epam.health.tool.facade.common.resolver.impl.action.HealthCheckAction;
+import com.epam.health.tool.facade.common.service.action.CommonActionNames;
 import com.epam.health.tool.facade.common.service.action.CommonRestHealthCheckAction;
 import com.epam.health.tool.facade.exception.ImplementationNotResolvedException;
 import com.epam.health.tool.facade.exception.InvalidResponseException;
@@ -17,13 +20,16 @@ import com.epam.util.common.CheckingParamsUtil;
 import com.epam.util.common.CommonUtilException;
 import com.epam.util.common.json.CommonJsonHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import static com.epam.facade.model.service.DownloadableFileConstants.HdfsProperties.DFS_NAMENODE_HTTP_ADDRESS;
 
 /**
  * Created by Vasilina_Terehova on 4/9/2018.
  */
-public abstract class GetHdfsStatisticsAction extends CommonRestHealthCheckAction {
+@Component( CommonActionNames.HDFS_TOTAL_CHECK )
+@HealthCheckAction( HealthCheckActionType.HDFS_SERVICE )
+public class GetHdfsStatisticsAction extends CommonRestHealthCheckAction {
     @Autowired
     protected ClusterDao clusterDao;
     @Autowired
