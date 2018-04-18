@@ -35,7 +35,7 @@ public class ClusterHealthCheckJob {
     @Scheduled(fixedDelay = 1 * 60 * 1000)
     public void reportCurrentTime() {
         log.info("The time is now {}", dateFormat.format(new Date()));
-        Date hourAgo = DateUtil.dateHourAgo();
+        Date hourAgo = DateUtil.dateHourPlus(new Date());
 
         List<ClusterEntity> clusterEntities = clusterServiceSnapshotDao.findClustersForSnapshot(hourAgo);
         clusterEntities.forEach(clusterEntity -> {
