@@ -1,21 +1,28 @@
 <div class="container col-sm-12 col-md-12 col-xs-12">
     <div class="panel panel-default">
         <div class="panel-heading">
-            <h2>{{ 'home.label.cluster.result' | translate }} - {{clusterName}}</h2>
-            <common-cluster-health-summary [clusterName]="clusterName" [yarnAppsCount]="yarnAppsCount"></common-cluster-health-summary>
+            <div class="input-group">
+              <h2>{{ 'home.label.cluster.result' | translate }} - {{clusterName}}</h2>
+              <div class="input-group-btn">
+                <button class="btn btn-default pull-right" style="border: none; background-color: #f5f5f5" (click)="checkClusterHealth()" type="button">
+                    <i class="glyphicon glyphicon-repeat"></i>
+                </button>
+              </div>
+            </div>
+            <common-cluster-health-summary [checkHealthToken]="checkHealthToken" [yarnAppsCount]="yarnAppsCount"></common-cluster-health-summary>
         </div>
         <div class="panel-body">
           <tabset>
             <tab heading="{{ 'home.label.cluster.result' | translate }}">
               <hr/>
-              <hdfs-cluster-health-summary [serviceName]="'HDFS'" [hdfsHealthReport]="hdfsHealthReport"></hdfs-cluster-health-summary>
+              <hdfs-cluster-health-summary [serviceName]="'HDFS'" [hdfsHealthReport]="hdfsHealthReport" (onHealthCheckRefresh)="onHdfsHealthCheckRefresh($event)"></hdfs-cluster-health-summary>
               <hr/>
-              <hdfs-cluster-health-summary [serviceName]="'YARN'"  [hdfsHealthReport]="yarnHealthReport"></hdfs-cluster-health-summary>
+              <hdfs-cluster-health-summary [serviceName]="'YARN'"  [hdfsHealthReport]="yarnHealthReport" (onHealthCheckRefresh)="onYarnHealthCheckRefresh($event)"></hdfs-cluster-health-summary>
               <hr/>
-              <service-list [clusterName]="clusterName"></service-list>
+              <service-list [checkHealthToken]="checkHealthToken"></service-list>
             </tab>
             <tab heading="{{ 'home.label.service.yarn.app.list' | translate }}">
-              <yarn-application-list [clusterName]="clusterName" (onYarnAppsChange)="onYarnAppsCountChange($event)"></yarn-application-list>
+              <yarn-application-list [checkHealthToken]="checkHealthToken" (onYarnAppsChange)="onYarnAppsCountChange($event)"></yarn-application-list>
             </tab>
             <tab heading="{{ 'home.label.cluster.snapshots' | translate }}">
               <service-status-history [clusterName]="clusterName"></service-status-history>

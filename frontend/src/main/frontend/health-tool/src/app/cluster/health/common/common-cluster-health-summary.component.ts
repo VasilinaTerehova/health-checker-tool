@@ -4,6 +4,7 @@ import { Component, Input } from '@angular/core';
 import { ClusterSnapshot } from '../../cluster-snapshot.model';
 import { NodeSummary } from '../node-summary.model';
 import { NodeMemory } from '../node-memory-summary.model';
+import { CheckHealthToken } from '../check-health-token.model';
 //Services
 import { ClusterHealthCheckService } from '../cluster-health-check.service';
 
@@ -19,9 +20,9 @@ export class CommonClusterHealthSummaryComponent {
   constructor( private clusterHealthCheckService: ClusterHealthCheckService ) {}
 
   @Input()
-  set clusterName( clusterName: String ) {
-    if ( clusterName ) {
-      this.askForFsClusterSnapshot( clusterName.toString() );
+  set checkHealthToken( checkHealthToken: CheckHealthToken ) {
+    if ( checkHealthToken ) {
+      this.askForFsClusterSnapshot( checkHealthToken );
     }
   }
 
@@ -53,8 +54,8 @@ export class CommonClusterHealthSummaryComponent {
     }
   }
 
-  private askForFsClusterSnapshot( clusterName: string ) {
-    this.clusterHealthCheckService.getFsClusterState( clusterName ).subscribe(
+  private askForFsClusterSnapshot( checkHealthToken: CheckHealthToken ) {
+    this.clusterHealthCheckService.getFsClusterState( checkHealthToken.clusterName, checkHealthToken.token ).subscribe(
       data => this._cluster = data
     )
   }

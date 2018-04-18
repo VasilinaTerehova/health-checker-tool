@@ -1,7 +1,6 @@
 package com.epam.health.tool.controller.validation;
 
 import com.epam.facade.model.HealthCheckActionType;
-import com.epam.facade.model.accumulator.ClusterAccumulatorToken;
 import com.epam.facade.model.validation.ClusterHealthValidationResult;
 import com.epam.health.tool.controller.BaseFacadeResolvingController;
 import com.epam.health.tool.exception.RetrievingObjectException;
@@ -27,7 +26,7 @@ public class ClusterHealthValidationController extends BaseFacadeResolvingContro
     public ResponseEntity<ClusterHealthValidationResult> performClusterHealthValidation(@PathVariable( "name" ) String clusterName) {
         try {
             return ResponseEntity.ok( clusterHealthValidationFacade.validateClusterHealth( resolveClusterSnapshotFacade( clusterName, clusterSnapshotFacadeIFacadeImplResolver )
-                    .askForClusterSnapshot( ClusterAccumulatorToken.Builder.get().withClusterName(clusterName).withType(HealthCheckActionType.ALL).buildClusterAccumulatorToken() ) ) );
+                    .askForClusterSnapshot( buildAccumulatorToken( clusterName, HealthCheckActionType.ALL ) )));
         } catch (ImplementationNotResolvedException | InvalidResponseException e) {
             throw new RetrievingObjectException( e );
         }

@@ -7,6 +7,7 @@ import { Cluster } from '../shared/cluster/cluster.model';
 import { JobExample } from './health/job-example.model';
 import { HdfsHealthReport } from './health/hdfs/hdfs-health-report.model';
 import { ClusterSnapshot } from './cluster-snapshot.model';
+import { CheckHealthToken } from './health/check-health-token.model';
 //Services
 import { ClusterService } from './cluster.service';
 import { ClusterHealthCheckService } from './health/cluster-health-check.service';
@@ -19,7 +20,7 @@ import { RouteService } from '../shared/menu/side/route.service';
 export class ClusterComponent implements OnInit, OnDestroy {
   yarnAppsCount: number;
   //For Inputs should use complex types
-  private _clusterName: String;
+  private _checkHealthToken: CheckHealthToken;
   //Reports
   private _hdfsHealthReport: HdfsHealthReport;
   private _yarnHealthReport: HdfsHealthReport;
@@ -29,14 +30,15 @@ export class ClusterComponent implements OnInit, OnDestroy {
   constructor( private router: Router, private route: ActivatedRoute,
     private clusterHealthCheckService: ClusterHealthCheckService, private routeService: RouteService ) {
       this._sub = routeService.healthCheckMessage$.subscribe(
-        clusterName => this.clusterName = new String( clusterName )
+        clusterName => this.checkHealthToken = this.createHealthCheckToken( clusterName )
       );
+      this.makeHealthCheckOnInit();
   }
 
   ngOnInit() {
-    this.route.paramMap.subscribe( (params: ParamMap) => {
-      this.clusterName = new String( params.get( 'id' ) );
-    });
+    // this.route.paramMap.subscribe( (params: ParamMap) => {
+    //   this.checkHealthToken = new CheckHealthToken( params.get( 'id' ), this.createHealthCheckToken() );
+    // });
   }
 
   ngOnDestroy() {
@@ -47,15 +49,35 @@ export class ClusterComponent implements OnInit, OnDestroy {
     this.yarnAppsCount = newYarnAppsCount;
   }
 
-  set clusterName( clusterName: String ) {
-    if ( clusterName ) {
-      this._clusterName = clusterName;
+  onHdfsHealthCheckRefresh( isRefresh: boolean ) {
+    if ( isRefresh ) {
+      this.ascForHdfsReports();
+    }
+  }
+
+  onYarnHealthCheckRefresh( isRefresh: boolean ) {
+    if ( isRefresh ) {
+      this.ascForYarnReports();
+    }
+  }
+
+  checkClusterHealth() {
+    this.checkHealthToken = this.createNewHealthCheckToken( this._checkHealthToken.clusterName );
+  }
+
+  set checkHealthToken( checkHealthToken: CheckHealthToken ) {
+    if ( checkHealthToken ) {
+      this._checkHealthToken = checkHealthToken;
       this.ascForHdfsAndYarnReports();
     }
   }
 
   get clusterName(): String {
-    return this._clusterName;
+    return this._checkHealthToken ? this._checkHealthToken.clusterName : null;
+  }
+
+  get checkHealthToken(): CheckHealthToken {
+    return this._checkHealthToken;
   }
 
   get hdfsHealthReport(): HdfsHealthReport {
@@ -67,12 +89,43 @@ export class ClusterComponent implements OnInit, OnDestroy {
   }
 
   private ascForHdfsAndYarnReports() {
-    this.clusterHealthCheckService.getHdfsClusterState( this._clusterName.toString() ).subscribe(
+    this.ascForHdfsReports();
+    // this.ascForYarnReports();
+  }
+
+  private ascForHdfsReports() {
+    this.clusterHealthCheckService.getHdfsClusterState( this._checkHealthToken.clusterName, this._checkHealthToken.token ).subscribe(
       data => this._hdfsHealthReport = data
     );
     //Disabled for development
     // this.clusterHealthCheckService.getYarnClusterState( this._clusterName ).subscribe(
     //   data => this._yarnHealthReport = data
     // )
+  }
+
+  private ascForYarnReports() {
+    this.clusterHealthCheckService.getYarnClusterState( this._checkHealthToken.clusterName, this._checkHealthToken.token ).subscribe(
+      data => this._yarnHealthReport = data
+    )
+  }
+
+  private makeHealthCheckOnInit() {
+    this.route.paramMap.subscribe( (params: ParamMap) => {
+      this.checkHealthToken = this.createHealthCheckToken( params.get( 'id' ) )
+    });
+  }
+
+  private createHealthCheckToken( clusterName: string ) : CheckHealthToken {
+    var routeClusterName = this.routeService.clusterName;
+    return routeClusterName ? new CheckHealthToken( routeClusterName, this.createTokenString(), true )
+      : new CheckHealthToken( clusterName );
+  }
+
+  private createNewHealthCheckToken( clusterName: string ) : CheckHealthToken {
+    return new CheckHealthToken( clusterName, this.createTokenString(), true );
+  }
+
+  private createTokenString(): string {
+    return new Date().getTime().toString();
   }
 }

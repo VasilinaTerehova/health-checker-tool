@@ -12,24 +12,24 @@ import { ClusterSnapshot } from '../cluster-snapshot.model';
 export class ClusterHealthCheckService {
   constructor(private http: HttpClient) {  }
 
-  getServicesClusterState( clusterName: string ) {
-    return this.http.get<HealthCheckResult>("http://localhost:8888/api/cluster/" + clusterName + "/status/services");
+  getServicesClusterState( clusterName: string, token: string = "empty", useSave: boolean = false ) {
+    return this.http.get<HealthCheckResult>("http://localhost:8888/api/cluster/" + clusterName + "/status/services", { params: { "token": token, "useSave": useSave.toString() } });
   }
 
-  getYarnClusterState( clusterName: string ) {
-    return this.http.get<HdfsHealthReport>("http://localhost:8888/api/cluster/" + clusterName + "/status/yarn");
+  getYarnClusterState( clusterName: string, token: string = "empty", useSave: boolean = false ) {
+    return this.http.get<HdfsHealthReport>("http://localhost:8888/api/cluster/" + clusterName + "/status/yarn", { params: { "token": token, "useSave": useSave.toString() } });
   }
 
-  getHdfsClusterState( clusterName: string ) {
-    return this.http.get<HdfsHealthReport>("http://localhost:8888/api/cluster/" + clusterName + "/status/hdfs");
+  getHdfsClusterState( clusterName: string, token: string = "empty", useSave: boolean = false ) {
+    return this.http.get<HdfsHealthReport>("http://localhost:8888/api/cluster/" + clusterName + "/status/hdfs", { params: { "token": token, "useSave": useSave.toString() } });
   }
 
-  getFsClusterState( clusterName: string ) {
-    return this.http.get<ClusterSnapshot>("http://localhost:8888/api/cluster/" + clusterName + "/status/fs");
+  getFsClusterState( clusterName: string, token: string = "empty", useSave: boolean = false ) {
+    return this.http.get<ClusterSnapshot>("http://localhost:8888/api/cluster/" + clusterName + "/status/fs", { params: { "token": token, "useSave": useSave.toString() } });
   }
 
-  getAllClusterState( clusterName: string ) {
-    return this.http.get<HealthCheckResult>("http://localhost:8888/api/cluster/" + clusterName + "/status/all");
+  getAllClusterState( clusterName: string, token: string = "empty", useSave: boolean = false ) {
+    return this.http.get<HealthCheckResult>("http://localhost:8888/api/cluster/" + clusterName + "/status/all", { params: { "token": token, "useSave": useSave.toString() } });
   }
 
   getClusterStateHistory( clusterName: string ) {

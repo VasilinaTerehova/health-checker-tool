@@ -4,6 +4,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { ClusterState } from '../../cluster/cluster-state.model';
 import { Cluster } from '../../shared/cluster/cluster.model';
 import { ClusterSnapshot } from '../../cluster/cluster-snapshot.model';
+import { CheckHealthToken } from '../../cluster/health/check-health-token.model';
 //Services
 import { ClusterHealthCheckService } from '../../cluster/health/cluster-health-check.service';
 import { ErrorReportingService } from '../../shared/error/error-reporting.service';
@@ -13,22 +14,22 @@ import { ErrorReportingService } from '../../shared/error/error-reporting.servic
   templateUrl: 'service-list.component.html',
 })
 export class ServiceListComponent {
-  private _clusterName: string;
+  private _checkHealthToken: CheckHealthToken;
   clusterState: ClusterState;
   isAscSort: boolean = true;
 
   constructor( private clusterHealthCheckService: ClusterHealthCheckService, private errorReportingService: ErrorReportingService ) {}
 
   @Input()
-  set clusterName( clusterName: String ) {
-    if ( clusterName ) {
-      this._clusterName = clusterName.toString();
+  set checkHealthToken( checkHealthToken: CheckHealthToken ) {
+    if ( checkHealthToken ) {
+      this._checkHealthToken = checkHealthToken;
       this.ascForClusterState();
     }
   }
 
   get clusterName(): String {
-    return this._clusterName;
+    return this._checkHealthToken.clusterName;
   }
 
   isShowServiceActionAllow(name: string) {
@@ -47,9 +48,13 @@ export class ServiceListComponent {
     this.isAscSort = !this.isAscSort;
   }
 
+  checkClusterHealth() {
+    this.ascForClusterState();
+  }
+
   private ascForClusterState() {
     this.errorReportingService.clearError();
-    this.clusterHealthCheckService.getServicesClusterState( this._clusterName ).subscribe(
+    this.clusterHealthCheckService.getServicesClusterState( this._checkHealthToken.clusterName, this._checkHealthToken.token ).subscribe(
       data => {
         if ( data ) {
           this.clusterState = data.clusterHealthSummary;

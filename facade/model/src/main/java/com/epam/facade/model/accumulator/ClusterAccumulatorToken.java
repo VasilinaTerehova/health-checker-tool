@@ -53,7 +53,7 @@ public class ClusterAccumulatorToken {
 
         public Builder withToken( String token ) {
             setParamWithCheck( token, s -> {
-                clusterAccumulatorToken.clusterName = s;
+                clusterAccumulatorToken.token = s;
             });
 
             return this;

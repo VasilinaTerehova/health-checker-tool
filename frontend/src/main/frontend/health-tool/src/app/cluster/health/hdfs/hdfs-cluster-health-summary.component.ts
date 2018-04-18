@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 //Models
 import { Cluster } from '../../../shared/cluster/cluster.model';
@@ -11,6 +11,8 @@ import { HdfsHealthReport } from './hdfs-health-report.model';
 })
 export class HdfsClusterHealthSummaryComponent {
   @Input() serviceName: string;
+  //Trigger refresh action to parent
+  @Output() onHealthCheckRefresh = new EventEmitter<boolean>();
   private _hdfsHealthReport: HdfsHealthReport;
   isCollapsed: boolean;
 
@@ -42,5 +44,9 @@ export class HdfsClusterHealthSummaryComponent {
 
   getAlerts(): string[] {
     return this.hdfsHealthReport.jobResults.filter( jobResult => !jobResult.success ).map( jobResult => jobResult.alert );
+  }
+
+  checkClusterHealth() {
+    this.onHealthCheckRefresh.next( true );
   }
 }

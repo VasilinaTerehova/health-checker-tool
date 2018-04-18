@@ -38,8 +38,12 @@ export class SideBarComponent implements OnInit{
     this.tempCluster = new Cluster();
   }
 
-  checkClusterHealth( clusterName: string ) {
-    this.routeService.routeToHealthCheck( clusterName );
+  checkClusterHealth( clusterName: string, makeCheck: boolean = false ) {
+    this.routeService.routeToHealthCheck( clusterName, makeCheck );
+  }
+
+  checkClusterHealthIfDestIsDiffer( clusterName: string ) {
+    this.routeService.routeToHealthCheckIfDestIsDiffer( clusterName );
   }
 
   updateCluster( clusterName: string ) {

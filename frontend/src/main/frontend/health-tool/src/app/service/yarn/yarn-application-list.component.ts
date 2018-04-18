@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 //Models
 import { YarnApplication } from './application.model';
+import { CheckHealthToken } from '../../cluster/health/check-health-token.model';
 //Services
 import { YarnApplicationService } from './yarn-application.service';
 import { ErrorReportingService } from '../../shared/error/error-reporting.service';
@@ -17,14 +18,14 @@ export class YarnApplicationListComponent {
   constructor( private yarnApplicationService: YarnApplicationService, private errorReportingService: ErrorReportingService ) {}
 
   @Input()
-  set clusterName( clusterName: String ) {
-    if ( clusterName ) {
-      this.askForYarnAppsList( clusterName.toString() );
+  set checkHealthToken( checkHealthToken: CheckHealthToken ) {
+    if ( checkHealthToken ) {
+      this.askForYarnAppsList( checkHealthToken );
     }
   }
 
-  private askForYarnAppsList( clusterName: string ) {
-    this.yarnApplicationService.getYarnApps( clusterName ).subscribe(
+  private askForYarnAppsList( checkHealthToken: CheckHealthToken ) {
+    this.yarnApplicationService.getYarnApps( checkHealthToken.clusterName, checkHealthToken.token ).subscribe(
       data => {
          this.yarnApps = data;
          this.onYarnAppsChange.emit( this.yarnApps.length );
