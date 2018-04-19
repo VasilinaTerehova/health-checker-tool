@@ -32,8 +32,6 @@ import java.util.Set;
 @HealthCheckAction( HealthCheckActionType.FS )
 public class GetFsStatisticsAction extends CommonRestHealthCheckAction {
     @Autowired
-    protected ClusterDao clusterDao;
-    @Autowired
     private SshAuthenticationClient sshAuthenticationClient;
     @Autowired
     private IFacadeImplResolver<IRunningClusterParamReceiver> runningClusterParamImplResolver;

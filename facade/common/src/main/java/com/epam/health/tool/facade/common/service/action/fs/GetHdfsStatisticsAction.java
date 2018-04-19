@@ -31,8 +31,6 @@ import static com.epam.facade.model.service.DownloadableFileConstants.HdfsProper
 @HealthCheckAction( HealthCheckActionType.FS )
 public class GetHdfsStatisticsAction extends CommonRestHealthCheckAction {
     @Autowired
-    protected ClusterDao clusterDao;
-    @Autowired
     private IFacadeImplResolver<IRunningClusterParamReceiver> runningClusterParamImplResolver;
 
     @Override

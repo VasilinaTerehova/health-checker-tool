@@ -1,17 +1,12 @@
 package com.epam.health.tool.facade.hdp.cluster;
 
-import com.epam.health.tool.authentication.http.HttpAuthenticationClient;
-import com.epam.health.tool.dao.cluster.ClusterDao;
 import com.epam.health.tool.facade.common.cluster.CommonRuningClusterParamReceiver;
 import com.epam.health.tool.facade.exception.InvalidResponseException;
 import com.epam.health.tool.model.ClusterEntity;
 import com.epam.util.common.CommonUtilException;
 import com.epam.util.common.json.CommonJsonHandler;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
-
-import static com.epam.facade.model.service.DownloadableFileConstants.YarnProperties.YARN_RESOURCEMANAGER_WEBAPP_ADDRESS;
 
 /**
  * Created by Vasilina_Terehova on 4/14/2018.
@@ -19,10 +14,6 @@ import static com.epam.facade.model.service.DownloadableFileConstants.YarnProper
 @Component("HDP-param-cluster")
 @Qualifier("HDP-cluster")
 public class HdpRuningClusterParamReceiver extends CommonRuningClusterParamReceiver {
-    @Autowired
-    protected ClusterDao clusterDao;
-    @Autowired
-    private HttpAuthenticationClient httpAuthenticationClient;
 
     @Override
     public String getPropertySiteXml(ClusterEntity clusterEntity, String siteName, String propertyName) throws InvalidResponseException {

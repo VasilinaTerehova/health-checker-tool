@@ -31,9 +31,6 @@ import static com.epam.facade.model.service.DownloadableFileConstants.YarnProper
 @HealthCheckAction( HealthCheckActionType.FS )
 public class GetMemoryStatisticsAction extends CommonRestHealthCheckAction {
     @Autowired
-    protected ClusterDao clusterDao;
-
-    @Autowired
     private IFacadeImplResolver<IRunningClusterParamReceiver> iRunningClusterParamReceiver;
 
     @Override

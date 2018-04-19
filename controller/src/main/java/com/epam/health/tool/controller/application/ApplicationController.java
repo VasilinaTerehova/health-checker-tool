@@ -27,5 +27,4 @@ public class ApplicationController extends BaseFacadeResolvingController {
             throw new RetrievingObjectException( ex );
         }
     }
-
 }

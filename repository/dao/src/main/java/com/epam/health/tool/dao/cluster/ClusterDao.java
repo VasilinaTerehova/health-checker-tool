@@ -20,6 +20,8 @@ public interface ClusterDao extends CrudRepository<ClusterEntity, Long> {
     ClusterEntity findByClusterName( String clusterName );
     @Query("select c from #{#entityName} c where c.clusterName = ?1")
     ClusterIdsProjection findIdsByClusterName(String clusterName );
+    @Query("select c from #{#entityName} c where c.host = ?1")
+    List<String> findClusterNamesByHost( String host );
     @Query("select c from #{#entityName} c where c.id = ?1")
     ClusterIdsProjection findIdsByClusterId( Long id );
     void deleteByClusterName( String clusterName );

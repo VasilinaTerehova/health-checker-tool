@@ -1,5 +1,6 @@
 package com.epam.health.tool.controller.cluster;
 
+import com.epam.facade.model.ClusterSearchParam;
 import com.epam.facade.model.projection.ClusterEntityProjection;
 import com.epam.health.tool.controller.wrapper.ResponseBodyEntityWrapper;
 import com.epam.health.tool.facade.cluster.IClusterFacade;
@@ -19,6 +20,14 @@ public class ClusterController {
     @GetMapping("/clusters")
     public List<ClusterEntityProjection> getClusterList() {
         return clusterFacade.getClusterList();
+    }
+
+    @CrossOrigin( origins = "http://localhost:4200" )
+    @GetMapping("/cluster/search")
+    public String getClusterByParam( @RequestParam( value = "node", required = false) String node,
+                                     @RequestParam( value = "shimName", required = false ) String shimName,
+                                     @RequestParam( value = "secured", required = false) boolean isSecured ) {
+        return clusterFacade.getClusterNameByParam( buildClusterSearch( shimName, node, isSecured ) );
     }
 
     @CrossOrigin( origins = "http://localhost:4200" )
@@ -45,5 +54,10 @@ public class ClusterController {
         clusterFacade.deleteCluster( clusterName );
 
         return ResponseEntity.noContent().build();
+    }
+
+    private ClusterSearchParam buildClusterSearch( String shimName, String node, boolean isSecured ) {
+        return ClusterSearchParam.ClusterSearchParamBuilder.get().withNode( node ).withClusterType( shimName )
+                .withSecure( isSecured ).build();
     }
 }
