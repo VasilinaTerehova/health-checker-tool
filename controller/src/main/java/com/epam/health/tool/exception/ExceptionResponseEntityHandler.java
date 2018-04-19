@@ -18,4 +18,10 @@ public class ExceptionResponseEntityHandler extends ResponseEntityExceptionHandl
         ErrorDetails errorDetails = new ErrorDetails( ex.getMessage() );
         return ResponseEntity.status( HttpStatus.NOT_FOUND ).body( errorDetails );
     }
+
+    @ExceptionHandler(NullPointerException.class)
+    public final ResponseEntity<ErrorDetails> handleNullPointerException(RetrievingObjectException ex, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails( ex.getMessage() );
+        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+    }
 }
