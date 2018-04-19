@@ -28,7 +28,7 @@ import static com.epam.facade.model.service.DownloadableFileConstants.YarnProper
  * Created by Vasilina_Terehova on 4/9/2018.
  */
 @Component( CommonActionNames.MEMORY_CHECK )
-@HealthCheckAction( HealthCheckActionType.MEMORY )
+@HealthCheckAction( HealthCheckActionType.FS )
 public class GetMemoryStatisticsAction extends CommonRestHealthCheckAction {
     @Autowired
     protected ClusterDao clusterDao;

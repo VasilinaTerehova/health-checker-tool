@@ -28,7 +28,7 @@ import static com.epam.facade.model.service.DownloadableFileConstants.HdfsProper
  * Created by Vasilina_Terehova on 4/9/2018.
  */
 @Component( CommonActionNames.HDFS_TOTAL_CHECK )
-@HealthCheckAction( HealthCheckActionType.HDFS_SERVICE )
+@HealthCheckAction( HealthCheckActionType.FS )
 public class GetHdfsStatisticsAction extends CommonRestHealthCheckAction {
     @Autowired
     protected ClusterDao clusterDao;

@@ -8,10 +8,7 @@ import com.epam.health.tool.facade.exception.ImplementationNotResolvedException;
 import com.epam.health.tool.facade.exception.InvalidResponseException;
 import com.epam.health.tool.facade.resolver.IFacadeImplResolver;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,8 +18,8 @@ public class ApplicationController extends BaseFacadeResolvingController {
     private IFacadeImplResolver<IApplicationFacade> applicationFacadeIFacadeImplResolver;
 
     @CrossOrigin( origins = "http://localhost:4200" )
-    @RequestMapping("/getApplicationList")
-    public List<ApplicationInfo> getYarnAppList(@RequestParam( "clusterName") String clusterName ) {
+    @GetMapping("/api/cluster/{name}/applications")
+    public List<ApplicationInfo> getYarnAppList( @PathVariable( "name") String clusterName ) {
         try {
             return resolveClusterSnapshotFacade( clusterName, applicationFacadeIFacadeImplResolver ).getApplicationList( clusterName );
         }

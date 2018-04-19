@@ -41,7 +41,6 @@
       <outputDirectory>/conf</outputDirectory>
       <includes>
         <include>application.properties</include>
-        <include>clusters.json</include>
       </includes>
       <filtered>true</filtered>
     </fileSet>

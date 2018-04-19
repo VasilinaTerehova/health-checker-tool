@@ -16,6 +16,6 @@ public class ExceptionResponseEntityHandler extends ResponseEntityExceptionHandl
     @ExceptionHandler(RetrievingObjectException.class)
     public final ResponseEntity<ErrorDetails> handleRetrievingObjectException(RetrievingObjectException ex, WebRequest request) {
         ErrorDetails errorDetails = new ErrorDetails( ex.getMessage() );
-        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+        return ResponseEntity.status( HttpStatus.NOT_FOUND ).body( errorDetails );
     }
 }

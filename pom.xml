@@ -280,6 +280,7 @@
                 <module>repository</module>
                 <module>transfer</module>
                 <module>util</module>
+                <module>connector</module>
             </modules>
         </profile>
     </profiles>

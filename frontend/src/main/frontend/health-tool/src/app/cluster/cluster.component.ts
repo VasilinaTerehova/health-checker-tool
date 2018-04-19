@@ -12,6 +12,7 @@ import { CheckHealthToken } from './health/check-health-token.model';
 import { ClusterService } from './cluster.service';
 import { ClusterHealthCheckService } from './health/cluster-health-check.service';
 import { RouteService } from '../shared/menu/side/route.service';
+import { ErrorReportingService } from '../shared/error/error-reporting.service';
 
 @Component({
   selector: 'cluster-info',
@@ -28,7 +29,8 @@ export class ClusterComponent implements OnInit, OnDestroy {
   private _sub: Subscription;
 
   constructor( private router: Router, private route: ActivatedRoute,
-    private clusterHealthCheckService: ClusterHealthCheckService, private routeService: RouteService ) {
+    private clusterHealthCheckService: ClusterHealthCheckService, private routeService: RouteService,
+    private errorReportingService: ErrorReportingService ) {
       this._sub = routeService.healthCheckMessage$.subscribe(
         clusterName => this.checkHealthToken = this.createHealthCheckToken( clusterName )
       );
@@ -95,17 +97,15 @@ export class ClusterComponent implements OnInit, OnDestroy {
 
   private ascForHdfsReports() {
     this.clusterHealthCheckService.getHdfsClusterState( this._checkHealthToken.clusterName, this._checkHealthToken.token ).subscribe(
-      data => this._hdfsHealthReport = data
+      data => this._hdfsHealthReport = data,
+      error => this.errorReportingService.reportHttpError( error )
     );
-    //Disabled for development
-    // this.clusterHealthCheckService.getYarnClusterState( this._clusterName ).subscribe(
-    //   data => this._yarnHealthReport = data
-    // )
   }
 
   private ascForYarnReports() {
     this.clusterHealthCheckService.getYarnClusterState( this._checkHealthToken.clusterName, this._checkHealthToken.token ).subscribe(
-      data => this._yarnHealthReport = data
+      data => this._yarnHealthReport = data,
+      error => this.errorReportingService.reportHttpError( error )
     )
   }
 

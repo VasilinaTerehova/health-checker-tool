@@ -7,6 +7,7 @@ import { NodeMemory } from '../node-memory-summary.model';
 import { CheckHealthToken } from '../check-health-token.model';
 //Services
 import { ClusterHealthCheckService } from '../cluster-health-check.service';
+import { ErrorReportingService } from '../../../shared/error/error-reporting.service';
 
 @Component({
   selector: 'common-cluster-health-summary',
@@ -17,7 +18,7 @@ export class CommonClusterHealthSummaryComponent {
   @Input() yarnAppsCount: number;
   isCollapsed: boolean;
 
-  constructor( private clusterHealthCheckService: ClusterHealthCheckService ) {}
+  constructor( private clusterHealthCheckService: ClusterHealthCheckService, private errorReportingService: ErrorReportingService ) {}
 
   @Input()
   set checkHealthToken( checkHealthToken: CheckHealthToken ) {
@@ -56,7 +57,8 @@ export class CommonClusterHealthSummaryComponent {
 
   private askForFsClusterSnapshot( checkHealthToken: CheckHealthToken ) {
     this.clusterHealthCheckService.getFsClusterState( checkHealthToken.clusterName, checkHealthToken.token ).subscribe(
-      data => this._cluster = data
+      data => this._cluster = data,
+      error => this.errorReportingService.reportHttpError( error )
     )
   }
 }
