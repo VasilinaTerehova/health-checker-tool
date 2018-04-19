@@ -52,7 +52,7 @@ public class HdpClusterSnapshotFacadeImplTest {
 
     @Test
     public void testCollectHealthSummaryAccumulator() throws CommonUtilException, InvalidResponseException, ImplementationNotResolvedException {
-        HealthCheckResultsAccumulator hdp26Unsecure = clusterSnapshotFacade.askForClusterSnapshot(ClusterAccumulatorToken.Builder.get().withClusterName("HDP26Unsecure").buildClusterAccumulatorToken());
+        HealthCheckResultsAccumulator hdp26Unsecure = clusterSnapshotFacade.getLatestClusterSnapshot(ClusterAccumulatorToken.Builder.get().withClusterName("HDP26Unsecure").buildClusterAccumulatorToken());
         System.out.println(hdp26Unsecure);
     }
 

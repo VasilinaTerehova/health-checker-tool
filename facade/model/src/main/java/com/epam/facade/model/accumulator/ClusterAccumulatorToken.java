@@ -32,6 +32,11 @@ public class ClusterAccumulatorToken {
         return useSave;
     }
 
+    public static ClusterAccumulatorToken buildAllCheck(String clusterName) {
+        return ClusterAccumulatorToken.Builder.get()
+                .withClusterName(clusterName).withType(HealthCheckActionType.ALL.name()).buildClusterAccumulatorToken();
+    }
+
     public static class Builder {
         private ClusterAccumulatorToken clusterAccumulatorToken;
 

@@ -5,8 +5,6 @@ import com.epam.health.tool.common.AbstractManagedEntity;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
-import static com.epam.health.tool.common.AbstractEntity.DELIMITER_INDEX;
-
 /**
  * Created by Vasilina_Terehova on 4/6/2018.
  */
@@ -15,7 +13,7 @@ import static com.epam.health.tool.common.AbstractEntity.DELIMITER_INDEX;
 public class NodeSnapshotEntity extends AbstractManagedEntity {
     public static final String TABLE_NAME = "node_snapshot";
     public static final String COLUMN_NODE = "column_name_";
-    public static final String COLUMN_FK_CLUSTER_SNAPSHOT = ClusterShapshotEntity.TABLE_NAME;
+    public static final String COLUMN_FK_CLUSTER_SNAPSHOT = ClusterSnapshotEntity.TABLE_NAME;
 
     @Embedded
     FsUsageEntity fsUsageEntity;
@@ -26,15 +24,15 @@ public class NodeSnapshotEntity extends AbstractManagedEntity {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = TABLE_NAME + DELIMITER_INDEX + COLUMN_FK_CLUSTER_SNAPSHOT)
-    private ClusterShapshotEntity clusterShapshotEntity;
+    private ClusterSnapshotEntity clusterSnapshotEntity;
 
     public NodeSnapshotEntity() {
     }
 
-    public NodeSnapshotEntity(FsUsageEntity fsUsageEntity, String node, @NotNull ClusterShapshotEntity clusterShapshotEntity) {
+    public NodeSnapshotEntity(FsUsageEntity fsUsageEntity, String node, @NotNull ClusterSnapshotEntity clusterSnapshotEntity) {
         this.fsUsageEntity = fsUsageEntity;
         this.node = node;
-        this.clusterShapshotEntity = clusterShapshotEntity;
+        this.clusterSnapshotEntity = clusterSnapshotEntity;
     }
 
     public FsUsageEntity getFsUsageEntity() {
@@ -53,11 +51,11 @@ public class NodeSnapshotEntity extends AbstractManagedEntity {
         this.node = node;
     }
 
-    public ClusterShapshotEntity getClusterShapshotEntity() {
-        return clusterShapshotEntity;
+    public ClusterSnapshotEntity getClusterSnapshotEntity() {
+        return clusterSnapshotEntity;
     }
 
-    public void setClusterShapshotEntity(ClusterShapshotEntity clusterShapshotEntity) {
-        this.clusterShapshotEntity = clusterShapshotEntity;
+    public void setClusterSnapshotEntity(ClusterSnapshotEntity clusterSnapshotEntity) {
+        this.clusterSnapshotEntity = clusterSnapshotEntity;
     }
 }

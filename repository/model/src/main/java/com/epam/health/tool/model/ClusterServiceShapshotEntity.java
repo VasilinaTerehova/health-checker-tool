@@ -14,7 +14,7 @@ public class ClusterServiceShapshotEntity extends AbstractManagedEntity {
     public static final String TABLE_NAME = "cluster_service_snapshot";
     public static final String COLUMN_SERVICE_STATUS = "service_status_";
     public static final String COLUMN_FK_CLUSTER_SERVICE = ClusterServiceEntity.TABLE_NAME;
-    public static final String COLUMN_FK_CLUSTER_SNAPSHOT = ClusterShapshotEntity.TABLE_NAME;
+    public static final String COLUMN_FK_CLUSTER_SNAPSHOT = ClusterSnapshotEntity.TABLE_NAME;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
@@ -29,7 +29,7 @@ public class ClusterServiceShapshotEntity extends AbstractManagedEntity {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = TABLE_NAME + DELIMITER_INDEX + COLUMN_FK_CLUSTER_SNAPSHOT)
-    private ClusterShapshotEntity clusterShapshotEntity;
+    private ClusterSnapshotEntity clusterSnapshotEntity;
 
     public ClusterServiceEntity getClusterServiceEntity() {
         return clusterServiceEntity;
@@ -47,11 +47,11 @@ public class ClusterServiceShapshotEntity extends AbstractManagedEntity {
         this.healthStatus = healthStatus;
     }
 
-    public ClusterShapshotEntity getClusterShapshotEntity() {
-        return clusterShapshotEntity;
+    public ClusterSnapshotEntity getClusterSnapshotEntity() {
+        return clusterSnapshotEntity;
     }
 
-    public void setClusterShapshotEntity(ClusterShapshotEntity clusterShapshotEntity) {
-        this.clusterShapshotEntity = clusterShapshotEntity;
+    public void setClusterSnapshotEntity(ClusterSnapshotEntity clusterSnapshotEntity) {
+        this.clusterSnapshotEntity = clusterSnapshotEntity;
     }
 }

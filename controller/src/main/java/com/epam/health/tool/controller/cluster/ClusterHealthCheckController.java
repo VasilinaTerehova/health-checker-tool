@@ -89,7 +89,7 @@ public class ClusterHealthCheckController extends BaseFacadeResolvingController 
     public ResponseEntity<List<ClusterHealthSummary>> getClusterStatusHistory(@RequestParam( "clusterName" ) String clusterName ) {
         try {
             return ResponseEntity.ok( resolveClusterSnapshotFacade( clusterName, clusterSnapshotFacadeIFacadeImplResolver )
-                    .getClusterSnapshotHistory( clusterName ) );
+                    .getClusterSnapshotHistory( clusterName, 30 ) );
         } catch (InvalidResponseException | ImplementationNotResolvedException e) {
             throw new RetrievingObjectException( e );
         }
@@ -98,13 +98,13 @@ public class ClusterHealthCheckController extends BaseFacadeResolvingController 
     private HealthCheckResultsAccumulator askForClusterState( String clusterName, HealthCheckActionType healthCheckAction )
             throws ImplementationNotResolvedException, InvalidResponseException {
         return resolveClusterSnapshotFacade( clusterName, clusterSnapshotFacadeIFacadeImplResolver )
-                .askForClusterSnapshot( buildAccumulatorToken( clusterName, healthCheckAction ) );
+                .getLatestClusterSnapshot( buildAccumulatorToken( clusterName, healthCheckAction ) );
     }
 
     private HealthCheckResultsAccumulator askForClusterState( String clusterName, HealthCheckActionType healthCheckAction,
                                                               String token, boolean useSave )
             throws ImplementationNotResolvedException, InvalidResponseException {
         return resolveClusterSnapshotFacade( clusterName, clusterSnapshotFacadeIFacadeImplResolver )
-                .askForClusterSnapshot( buildAccumulatorToken( clusterName, token, healthCheckAction, useSave ) );
+                .getLatestClusterSnapshot( buildAccumulatorToken( clusterName, token, healthCheckAction, useSave ) );
     }
 }

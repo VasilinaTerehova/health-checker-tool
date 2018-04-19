@@ -1,10 +1,11 @@
 package com.epam.facade.model.accumulator;
 
+import com.epam.facade.model.HealthCheckActionType;
 import com.epam.health.tool.model.ServiceStatusEnum;
 
 import java.util.List;
 
-public class YarnHealthCheckResult {
+public class YarnHealthCheckResult implements BaseActionResult {
     private ServiceStatusEnum status;
     private List<YarnJob> jobResults;
 
@@ -22,6 +23,11 @@ public class YarnHealthCheckResult {
 
     public void setJobResults(List<YarnJob> jobResults) {
         this.jobResults = jobResults;
+    }
+
+    @Override
+    public HealthCheckActionType getHealthActionType() {
+        return HealthCheckActionType.YARN_SERVICE;
     }
 
     public static class YarnJob {

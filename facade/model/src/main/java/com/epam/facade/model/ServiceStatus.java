@@ -1,5 +1,6 @@
 package com.epam.facade.model;
 
+import com.epam.facade.model.accumulator.BaseActionResult;
 import com.epam.facade.model.projection.ServiceStatusProjection;
 import com.epam.health.tool.model.ServiceStatusEnum;
 import com.epam.health.tool.model.ServiceTypeEnum;
@@ -10,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  * do not update this class for vendor specific transferring, names are used for ui
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ServiceStatus implements ServiceStatusProjection {
+public class ServiceStatus implements ServiceStatusProjection, BaseActionResult {
     private ServiceTypeEnum type;
     private ServiceStatusEnum healthSummary;
 
@@ -48,5 +49,10 @@ public class ServiceStatus implements ServiceStatusProjection {
     @Override
     public String toString() {
         return "name: \"" + getDisplayName() + "\" " + getHealthStatus() + " " + getType();
+    }
+
+    @Override
+    public HealthCheckActionType getHealthActionType() {
+        return HealthCheckActionType.OTHER_SERVICES;
     }
 }
