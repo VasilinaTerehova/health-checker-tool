@@ -64,7 +64,6 @@ public class GetFsStatisticsAction extends CommonRestHealthCheckAction {
     private List<? extends NodeSnapshotEntityProjection> getAvailableDiskDfs(String clusterName) throws InvalidResponseException, ImplementationNotResolvedException {
         ClusterEntity clusterEntity = clusterDao.findByClusterName(clusterName);
         List<NodeDiskUsage> nodeDiskUsages = new ArrayList<>();
-        String availableDiskDfs = getAvailableDiskDfsViaSsh(clusterEntity);
 
         //Should be for all hosts
         //HostExtracter.getAllNodeNames(clusterEntity.getHost(), 3)
@@ -72,6 +71,7 @@ public class GetFsStatisticsAction extends CommonRestHealthCheckAction {
         try {
             Set<String> liveNodes = runningClusterParamImplResolver.resolveFacadeImpl(clusterEntity.getClusterTypeEnum().name()).getHdfsNamenodeJson(clusterEntity).getLiveNodes();
             for (String node : liveNodes) {
+                String availableDiskDfs = getAvailableDiskDfsViaSsh(clusterEntity, node);
                 nodeDiskUsages.add(mapAvailableDiskDfsStringToNodeDiskUsage(node, availableDiskDfs));
             }
 
@@ -84,7 +84,7 @@ public class GetFsStatisticsAction extends CommonRestHealthCheckAction {
         //df -h . | tail -1 | awk '{print $4}'
     }
 
-    private String getAvailableDiskDfsViaSsh(ClusterEntity clusterEntity) throws InvalidResponseException, ImplementationNotResolvedException {
+    private String getAvailableDiskDfsViaSsh(ClusterEntity clusterEntity, String host) throws InvalidResponseException, ImplementationNotResolvedException {
         String logDirPropery = runningClusterParamImplResolver.resolveFacadeImpl(clusterEntity.getClusterTypeEnum().name()).getLogDirectory(clusterEntity.getClusterName());
 
         //http://svqxbdcn6cdh513n1.pentahoqa.com:7180/api/v10/clusters/CDH513Unsecure/services/yarn/roles - take nodemanager role
@@ -96,7 +96,7 @@ public class GetFsStatisticsAction extends CommonRestHealthCheckAction {
         //receive each node
         String command = "df -h " + logDirPropery + " | tail -1";
         System.out.println(command);
-        String result = sshAuthenticationClient.executeCommand(clusterEntity, command).getOutMessage();
+        String result = sshAuthenticationClient.executeCommand(clusterEntity, command, host).getOutMessage();
         System.out.println(result);
 
         return result;
