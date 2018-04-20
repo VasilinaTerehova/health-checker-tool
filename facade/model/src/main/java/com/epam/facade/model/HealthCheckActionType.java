@@ -5,7 +5,7 @@ import java.util.*;
 public enum HealthCheckActionType {
     FS, MEMORY, HDFS_MEMORY, YARN_SERVICE, HDFS_SERVICE, OTHER_SERVICES, NONE, ALL;
 
-    public static boolean containAllActionTypes(Set<HealthCheckActionType> actionTypes) {
+    public static boolean containAllActionTypes(Collection<HealthCheckActionType> actionTypes) {
         List<HealthCheckActionType> healthCheckActionTypes = new ArrayList<HealthCheckActionType>();
         healthCheckActionTypes.addAll(Arrays.asList(HealthCheckActionType.values()));
         healthCheckActionTypes.remove(NONE);
@@ -15,5 +15,13 @@ public enum HealthCheckActionType {
 
     public static void main(String[] args) {
         HealthCheckActionType.containAllActionTypes(new HashSet<>());
+    }
+
+    public static List<HealthCheckActionType> all() {
+        List<HealthCheckActionType> healthCheckActionTypes = new ArrayList<HealthCheckActionType>();
+        healthCheckActionTypes.addAll(Arrays.asList(HealthCheckActionType.values()));
+        healthCheckActionTypes.remove(NONE);
+        healthCheckActionTypes.remove(ALL);
+        return healthCheckActionTypes;
     }
 }

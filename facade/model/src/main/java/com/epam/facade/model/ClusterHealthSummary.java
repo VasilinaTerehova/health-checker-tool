@@ -11,7 +11,6 @@ public class ClusterHealthSummary {
     //todo: rename cluster - also on ui - to cluster snapshot, cluster name is not valid
     private ClusterSnapshotEntityProjection cluster;
     private List<? extends ServiceStatusProjection> serviceStatusList;
-    Set<HealthCheckActionType> passedActionTypes = new HashSet<>();
 
     public ClusterHealthSummary(ClusterSnapshotEntityProjection cluster, List<ServiceStatusProjection> serviceProjectionsBy) {
         setCluster(cluster);
@@ -30,7 +29,6 @@ public class ClusterHealthSummary {
 
     public void setCluster(ClusterSnapshotEntityProjection cluster) {
         this.cluster = cluster;
-        passedActionTypes.addAll(cluster.getPassedActionTypes());
     }
 
     public List<? extends ServiceStatusProjection> getServiceStatusList() {
@@ -39,10 +37,6 @@ public class ClusterHealthSummary {
 
     public void setServiceStatusList(List<? extends ServiceStatusProjection> serviceStatusList) {
         this.serviceStatusList = serviceStatusList;
-        passedActionTypes.add(HealthCheckActionType.OTHER_SERVICES);
     }
 
-    public Set<HealthCheckActionType> getPassedActionTypes() {
-        return passedActionTypes;
-    }
 }

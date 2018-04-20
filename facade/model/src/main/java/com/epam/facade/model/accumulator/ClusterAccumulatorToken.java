@@ -3,7 +3,10 @@ package com.epam.facade.model.accumulator;
 import com.epam.facade.model.HealthCheckActionType;
 import com.epam.util.common.CheckingParamsUtil;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Consumer;
 
 public class ClusterAccumulatorToken {
@@ -35,6 +38,18 @@ public class ClusterAccumulatorToken {
     public static ClusterAccumulatorToken buildAllCheck(String clusterName) {
         return ClusterAccumulatorToken.Builder.get()
                 .withClusterName(clusterName).withType(HealthCheckActionType.ALL.name()).buildClusterAccumulatorToken();
+    }
+
+    public List<HealthCheckActionType> getPassedActionTypes() {
+        if (healthCheckActionType == HealthCheckActionType.ALL) {
+            return HealthCheckActionType.all();
+        }
+        if (healthCheckActionType == HealthCheckActionType.NONE) {
+            return Collections.emptyList();
+        }
+        ArrayList<HealthCheckActionType> healthCheckActionTypes = new ArrayList<>();
+        healthCheckActionTypes.add(healthCheckActionType);
+        return healthCheckActionTypes;
     }
 
     public static class Builder {

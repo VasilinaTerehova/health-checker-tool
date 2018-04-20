@@ -100,15 +100,18 @@ public abstract class CommonClusterSnapshotFacadeImpl implements IClusterSnapsho
             ClusterSnapshotEntity clusterSnapshotEntity = null;
             if (clusterAccumulatorToken.getToken() != null) {
                 clusterSnapshotEntity = clusterSnapshotDao.findByToken(clusterAccumulatorToken.getToken());
-            } else {
+            }
+            if (clusterSnapshotEntity == null) {
                 clusterSnapshotEntity = new ClusterSnapshotEntity();
                 clusterSnapshotEntity.setDateOfSnapshot(new Date());
                 clusterSnapshotEntity.setClusterEntity(clusterEntity);
                 clusterSnapshotEntity.setToken(clusterAccumulatorToken.getToken());
             }
+
             clusterSnapshotDao.save(clusterSnapshotEntity);
             ClusterSnapshotEntity finalClusterSnapshotEntity = clusterSnapshotEntity;
-            healthCheckResultsAccumulatorNotFull.getPassedActionTypes().forEach(healthCheckActionType -> {
+            List<HealthCheckActionType> passedActionTypes = clusterAccumulatorToken.getPassedActionTypes();
+            passedActionTypes.forEach(healthCheckActionType -> {
                 BiConsumer<ClusterSnapshotEntity, HealthCheckResultsAccumulator> actionConsumer = healthActionSavers.get(healthCheckActionType);
                 if (actionConsumer != null) {
                     actionConsumer.accept(finalClusterSnapshotEntity, healthCheckResultsAccumulatorNotFull);
@@ -125,12 +128,12 @@ public abstract class CommonClusterSnapshotFacadeImpl implements IClusterSnapsho
             //todo: change here - yarn and hdfs should come with the same service entities, result in JobResultEntity
             healthCheckResultsAccumulatorDb.setYarnHealthCheckResult(healthCheckResultsAccumulatorNotFull.getYarnHealthCheckResult());
             healthCheckResultsAccumulatorDb.setHdfsHealthCheckResult(healthCheckResultsAccumulatorNotFull.getHdfsHealthCheckResult());
-            if (healthCheckResultsAccumulatorDb.areAllChecksPassed()) {
+            if (HealthCheckActionType.containAllActionTypes(passedActionTypes)) {
                 clusterSnapshotEntity.setFull(true);
                 //here - clean previous for last hour
                 //clusterSnapshotDao.clearForLastHour();
             }
-            return healthCheckResultsAccumulatorDb ;
+            return healthCheckResultsAccumulatorDb;
         } catch (InvalidResponseException e) {
             logger.error(e.getMessage());
         }
@@ -158,13 +161,17 @@ public abstract class CommonClusterSnapshotFacadeImpl implements IClusterSnapsho
     @Override
     public HealthCheckResultsAccumulator getLatestClusterSnapshot(ClusterAccumulatorToken clusterAccumulatorToken) throws InvalidResponseException {
         List<ClusterHealthSummary> clusterSnapshotHistory = getClusterSnapshotHistory(clusterAccumulatorToken.getClusterName(), 1);
-        if (clusterSnapshotHistory.size() == 0) {
-            return makeClusterSnapshot(ClusterAccumulatorToken.buildAllCheck(clusterAccumulatorToken.getClusterName()));
+        if (clusterSnapshotHistory.size() == 0 || isTokenNotEmpty(clusterAccumulatorToken)) {
+            return makeClusterSnapshot(clusterAccumulatorToken);
         } else {
             HealthCheckResultsAccumulator healthCheckResultsAccumulator = new HealthCheckResultsAccumulator();
             healthCheckResultsAccumulator.setClusterHealthSummary(clusterSnapshotHistory.get(0));
             return healthCheckResultsAccumulator;
         }
+    }
+
+    private boolean isTokenNotEmpty(ClusterAccumulatorToken clusterAccumulatorToken) {
+        return clusterAccumulatorToken.getToken() != null && !clusterAccumulatorToken.getToken().trim().isEmpty() && !clusterAccumulatorToken.getToken().trim().equals("empty");
     }
 
     public void setClusterFacade(IClusterFacade clusterFacade) {

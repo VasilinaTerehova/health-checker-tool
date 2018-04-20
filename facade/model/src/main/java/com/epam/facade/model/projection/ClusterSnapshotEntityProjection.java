@@ -42,7 +42,4 @@ public interface ClusterSnapshotEntityProjection {
     @Value("#{target.nodeSnapshotEntities}")
     List<? extends NodeSnapshotEntityProjection> getNodes();
 
-    default Set<HealthCheckActionType> getPassedActionTypes() {
-        return new HashSet<>();
-    }
 }
