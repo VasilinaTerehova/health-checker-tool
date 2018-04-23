@@ -5,6 +5,9 @@ import { ClusterSnapshot } from '../../cluster-snapshot.model';
 import { NodeSummary } from '../node-summary.model';
 import { NodeMemory } from '../node-memory-summary.model';
 import { CheckHealthToken } from '../check-health-token.model';
+import { NodeFs } from './node-fs.model';
+import { HdfsUsage } from './hdfs.model';
+import { Memory } from './memory.model';
 //Services
 import { ClusterHealthCheckService } from '../cluster-health-check.service';
 import { ErrorReportingService } from '../../../shared/error/error-reporting.service';
@@ -14,7 +17,9 @@ import { ErrorReportingService } from '../../../shared/error/error-reporting.ser
   templateUrl: 'common-cluster-health-summary.component.html',
 })
 export class CommonClusterHealthSummaryComponent {
-  private _cluster: ClusterSnapshot;
+  private _nodes: NodeFs[];
+  private _hdfsUsage: HdfsUsage;
+  private _memory: Memory;
   @Input() yarnAppsCount: number;
   isCollapsed: boolean;
   isLoading: Boolean;
@@ -25,21 +30,45 @@ export class CommonClusterHealthSummaryComponent {
   set checkHealthToken( checkHealthToken: CheckHealthToken ) {
     if ( checkHealthToken ) {
       this.isLoading = true;
-      this.askForFsClusterSnapshot( checkHealthToken );
+      this.askForClusterSnapshot( checkHealthToken );
     }
   }
 
-  set cluster( clusterSnapshot: ClusterSnapshot ) {
-    this.isLoading = false;
-    this._cluster = clusterSnapshot;
+  set nodes( nodes: NodeFs[] ) {
+    if ( nodes ) {
+      this.isLoading = false;
+      this._nodes = nodes;
+    }
   }
 
-  get cluster(): ClusterSnapshot {
-    return this._cluster;
+  set hdfsUsage( hdfsUsage: HdfsUsage ) {
+    if ( hdfsUsage ) {
+      this.isLoading = false;
+      this._hdfsUsage = hdfsUsage;
+    }
+  }
+
+  set memory( memory: Memory ) {
+    if ( memory ) {
+      this.isLoading = false;
+      this._memory = memory;
+    }
+  }
+
+  get memory(): Memory {
+    return this._memory;
+  }
+
+  get hdfsUsage(): HdfsUsage {
+    return this._hdfsUsage;
+  }
+
+  get nodes(): NodeFs[] {
+    return this._nodes;
   }
 
   calcMoreUsedDisk(): any {
-    return this.isClusterSnapshotValid() ? this._cluster.nodes.map( node => {
+    return this._nodes ? this._nodes.map( node => {
       return {
         "used": (node.usedGb * 100 / node.totalGb).toPrecision(2),
         "host": node.node
@@ -53,18 +82,29 @@ export class CommonClusterHealthSummaryComponent {
     } ).pop() : 0;
   }
 
-  private isClusterSnapshotValid(): boolean {
-    if ( this._cluster && this._cluster.nodes ) {
-      return true;
-    }
-    else {
-      return false;
-    }
+  private askForClusterSnapshot( checkHealthToken: CheckHealthToken ) {
+    this.askForFsClusterSnapshot( checkHealthToken );
+    this.askForMemoryClusterSnapshot( checkHealthToken );
+    this.askForHdfsMemoryClusterSnapshot( checkHealthToken );
   }
 
   private askForFsClusterSnapshot( checkHealthToken: CheckHealthToken ) {
     this.clusterHealthCheckService.getFsClusterState( checkHealthToken.clusterName, checkHealthToken.token ).subscribe(
-      data => this.cluster = data,
+      data => this.nodes = data,
+      error => this.errorReportingService.reportHttpError( error )
+    )
+  }
+
+  private askForHdfsMemoryClusterSnapshot( checkHealthToken: CheckHealthToken ) {
+    this.clusterHealthCheckService.getHdfsMemoryClusterState( checkHealthToken.clusterName, checkHealthToken.token ).subscribe(
+      data => this.hdfsUsage = data,
+      error => this.errorReportingService.reportHttpError( error )
+    )
+  }
+
+  private askForMemoryClusterSnapshot( checkHealthToken: CheckHealthToken ) {
+    this.clusterHealthCheckService.getMemoryClusterState( checkHealthToken.clusterName, checkHealthToken.token ).subscribe(
+      data => this.memory = data,
       error => this.errorReportingService.reportHttpError( error )
     )
   }

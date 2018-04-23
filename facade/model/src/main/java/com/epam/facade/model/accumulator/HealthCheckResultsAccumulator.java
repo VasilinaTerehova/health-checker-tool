@@ -91,25 +91,25 @@ public class HealthCheckResultsAccumulator {
         }
 
         public HealthCheckResultsModifier setId( Long id ) {
-            this.healthCheckResultsAccumulator.clusterSnapshotAccumulator.setId( id );
+            verifyAndSetClusterInfo( () -> this.healthCheckResultsAccumulator.clusterSnapshotAccumulator.setId( id ) );
 
             return this;
         }
 
         public HealthCheckResultsModifier setToken( String token ) {
-            this.healthCheckResultsAccumulator.clusterSnapshotAccumulator.setToken( token );
+            verifyAndSetClusterInfo( () -> this.healthCheckResultsAccumulator.clusterSnapshotAccumulator.setToken( token ) );
 
             return this;
         }
 
         public HealthCheckResultsModifier setDate( Date date ) {
-            this.healthCheckResultsAccumulator.clusterSnapshotAccumulator.setDateOfSnapshot( date );
+            verifyAndSetClusterInfo( () -> this.healthCheckResultsAccumulator.clusterSnapshotAccumulator.setDateOfSnapshot( date ) );
 
             return this;
         }
 
         public HealthCheckResultsModifier setClusterName( String clusterName ) {
-            this.healthCheckResultsAccumulator.clusterSnapshotAccumulator.setClusterName( clusterName );
+            this.verifyAndSetClusterInfo( () -> this.healthCheckResultsAccumulator.clusterSnapshotAccumulator.setClusterName( clusterName ) );
 
             return this;
         }
@@ -139,6 +139,14 @@ public class HealthCheckResultsAccumulator {
         private void verifyAndSetFsResult( Runnable fsResultAction ) {
             if ( this.healthCheckResultsAccumulator.fsHealthCheckResult == null ) {
                 this.healthCheckResultsAccumulator.fsHealthCheckResult = new FsHealthCheckResult();
+            }
+
+            fsResultAction.run();
+        }
+
+        private void verifyAndSetClusterInfo( Runnable fsResultAction ) {
+            if ( this.healthCheckResultsAccumulator.clusterSnapshotAccumulator == null ) {
+                this.healthCheckResultsAccumulator.clusterSnapshotAccumulator = new ClusterSnapshotAccumulator();
             }
 
             fsResultAction.run();

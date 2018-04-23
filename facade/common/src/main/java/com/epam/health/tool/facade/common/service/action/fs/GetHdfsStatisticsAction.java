@@ -28,7 +28,7 @@ import static com.epam.facade.model.service.DownloadableFileConstants.HdfsProper
  * Created by Vasilina_Terehova on 4/9/2018.
  */
 @Component( CommonActionNames.HDFS_TOTAL_CHECK )
-@HealthCheckAction( HealthCheckActionType.FS )
+@HealthCheckAction( HealthCheckActionType.HDFS_MEMORY )
 public class GetHdfsStatisticsAction extends CommonRestHealthCheckAction {
     @Autowired
     private IFacadeImplResolver<IRunningClusterParamReceiver> runningClusterParamImplResolver;

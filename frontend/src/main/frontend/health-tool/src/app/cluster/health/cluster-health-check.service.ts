@@ -6,7 +6,10 @@ import { ClusterState } from '../cluster-state.model';
 import {ClusterStateHistory} from "../cluster-history-state.model";
 import { HealthCheckResult } from "../health/health-check-result.model";
 import { HdfsHealthReport } from './hdfs/hdfs-health-report.model';
-import { ClusterSnapshot } from '../cluster-snapshot.model';
+//Fs checks
+import { HdfsUsage } from './common/hdfs.model';
+import { Memory } from './common/memory.model';
+import { NodeFs } from './common/node-fs.model';
 
 @Injectable()
 export class ClusterHealthCheckService {
@@ -21,11 +24,19 @@ export class ClusterHealthCheckService {
   }
 
   getHdfsClusterState( clusterName: string, token: string = "empty", useSave: boolean = false ) {
-    return this.http.get<HdfsHealthReport>("http://localhost:8888/api/cluster/" + clusterName + "/status/hdfs", { params: { "token": token, "useSave": useSave.toString() } });
+    return this.http.get<HdfsHealthReport>("http://localhost:8888/api/cluster/" + clusterName + "/status/hdfs/job", { params: { "token": token, "useSave": useSave.toString() } });
   }
 
   getFsClusterState( clusterName: string, token: string = "empty", useSave: boolean = false ) {
-    return this.http.get<ClusterSnapshot>("http://localhost:8888/api/cluster/" + clusterName + "/status/fs", { params: { "token": token, "useSave": useSave.toString() } });
+    return this.http.get<Array<NodeFs>>("http://localhost:8888/api/cluster/" + clusterName + "/status/fs", { params: { "token": token, "useSave": useSave.toString() } });
+  }
+
+  getHdfsMemoryClusterState( clusterName: string, token: string = "empty", useSave: boolean = false ) {
+    return this.http.get<HdfsUsage>("http://localhost:8888/api/cluster/" + clusterName + "/status/hdfs/memory", { params: { "token": token, "useSave": useSave.toString() } });
+  }
+
+  getMemoryClusterState( clusterName: string, token: string = "empty", useSave: boolean = false ) {
+    return this.http.get<Memory>("http://localhost:8888/api/cluster/" + clusterName + "/status/memory", { params: { "token": token, "useSave": useSave.toString() } });
   }
 
   getAllClusterState( clusterName: string, token: string = "empty", useSave: boolean = false ) {

@@ -68,6 +68,9 @@
             "startTime": "Start time"
           },
           "apps": "Applications"
+        },
+        "hdfs": {
+          "memory": "Hdfs memory"
         }
       },
       "common": {

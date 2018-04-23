@@ -6,6 +6,9 @@ import com.epam.facade.model.accumulator.results.impl.FsHealthCheckResult;
 import com.epam.facade.model.accumulator.results.impl.HdfsHealthCheckResult;
 import com.epam.facade.model.accumulator.HealthCheckResultsAccumulator;
 import com.epam.facade.model.accumulator.results.impl.YarnHealthCheckResult;
+import com.epam.facade.model.projection.HdfsUsageEntityProjection;
+import com.epam.facade.model.projection.MemoryUsageEntityProjection;
+import com.epam.facade.model.projection.NodeSnapshotEntityProjection;
 import com.epam.health.tool.controller.BaseFacadeResolvingController;
 import com.epam.health.tool.exception.RetrievingObjectException;
 import com.epam.health.tool.facade.cluster.IClusterSnapshotFacade;
@@ -61,18 +64,45 @@ public class ClusterHealthCheckController extends BaseFacadeResolvingController 
 
     @CrossOrigin( origins = "http://localhost:4200" )
     @GetMapping( "/api/cluster/{name}/status/fs" )
-    public ResponseEntity<FsHealthCheckResult> getFsClusterStatus(@PathVariable( "name" ) String clusterName,
-                                                                  @RequestParam( value = "token", defaultValue = "none") String token,
-                                                                  @RequestParam( value = "useSave", defaultValue = "false" ) boolean useSave) {
+    public ResponseEntity<List<? extends NodeSnapshotEntityProjection>> getFsClusterStatus(@PathVariable( "name" ) String clusterName,
+                                                                                           @RequestParam( value = "token", defaultValue = "none") String token,
+                                                                                           @RequestParam( value = "useSave", defaultValue = "false" ) boolean useSave) {
         try {
-            return ResponseEntity.ok( askForClusterState( clusterName, HealthCheckActionType.FS, token, useSave ).getFsHealthCheckResult() );
+            return ResponseEntity.ok( askForClusterState( clusterName, HealthCheckActionType.FS, token, useSave )
+                    .getFsHealthCheckResult().getNodeSnapshotEntityProjections() );
         } catch (ImplementationNotResolvedException | InvalidResponseException e) {
             throw new RetrievingObjectException( e );
         }
     }
 
     @CrossOrigin( origins = "http://localhost:4200" )
-    @GetMapping( "/api/cluster/{name}/status/hdfs" )
+    @GetMapping( "/api/cluster/{name}/status/hdfs/memory" )
+    public ResponseEntity<HdfsUsageEntityProjection> getHdfsMemoryClusterStatus(@PathVariable( "name" ) String clusterName,
+                                                                                @RequestParam( value = "token", defaultValue = "none") String token,
+                                                                                @RequestParam( value = "useSave", defaultValue = "false" ) boolean useSave) {
+        try {
+            return ResponseEntity.ok( askForClusterState( clusterName, HealthCheckActionType.HDFS_MEMORY, token, useSave )
+                    .getFsHealthCheckResult().getHdfsUsageEntityProjection() );
+        } catch (ImplementationNotResolvedException | InvalidResponseException e) {
+            throw new RetrievingObjectException( e );
+        }
+    }
+
+    @CrossOrigin( origins = "http://localhost:4200" )
+    @GetMapping( "/api/cluster/{name}/status/memory" )
+    public ResponseEntity<MemoryUsageEntityProjection> getMemoryClusterStatus(@PathVariable( "name" ) String clusterName,
+                                                                              @RequestParam( value = "token", defaultValue = "none") String token,
+                                                                              @RequestParam( value = "useSave", defaultValue = "false" ) boolean useSave) {
+        try {
+            return ResponseEntity.ok( askForClusterState( clusterName, HealthCheckActionType.MEMORY, token, useSave )
+                    .getFsHealthCheckResult().getMemoryUsageEntityProjection() );
+        } catch (ImplementationNotResolvedException | InvalidResponseException e) {
+            throw new RetrievingObjectException( e );
+        }
+    }
+
+    @CrossOrigin( origins = "http://localhost:4200" )
+    @GetMapping( "/api/cluster/{name}/status/hdfs/job" )
     public ResponseEntity<HdfsHealthCheckResult> getHdfsClusterStatus(@PathVariable( "name" ) String clusterName,
                                                                       @RequestParam( value = "token", defaultValue = "none") String token,
                                                                       @RequestParam( value = "useSave", defaultValue = "false" ) boolean useSave) {

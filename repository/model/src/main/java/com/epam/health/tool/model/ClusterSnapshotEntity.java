@@ -29,7 +29,7 @@ public class ClusterSnapshotEntity extends AbstractManagedEntity {
     private Date dateOfSnapshot;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = TABLE_NAME + DELIMITER_INDEX + COLUMN_FK_CLUSTER)
     private ClusterEntity clusterEntity;
 
