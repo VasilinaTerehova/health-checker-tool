@@ -1,5 +1,6 @@
 <div class="table-responsive" style="margin-top: 1%" *ngFor="let clusterState of clusterStateHistory">
   <h4 class="mb-3">{{clusterState.cluster.dateOfSnapshot | date: "MM/dd/yyyy hh:mm:ss"}}</h4>
   <h4 class="mb-3">{{clusterState.cluster.host}}</h4>
+  <common-static-cluster-health-summary [clusterSnapshot]="clusterState.cluster"></common-static-cluster-health-summary>
   <service-list-static [clusterState]="clusterState"></service-list-static>
 </div>
