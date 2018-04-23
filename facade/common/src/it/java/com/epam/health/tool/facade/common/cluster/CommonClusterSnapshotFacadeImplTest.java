@@ -40,7 +40,7 @@ public class CommonClusterSnapshotFacadeImplTest {
     public void testGetDiskSpace() throws InvalidResponseException {
         HealthCheckResultsAccumulator healthCheckResultsAccumulator = new HealthCheckResultsAccumulator();
         getAvailableDiskHdfs.performHealthCheck("CDH512Unsecure", healthCheckResultsAccumulator);
-        healthCheckResultsAccumulator.getClusterHealthSummary().getCluster().getHdfsUsage();
+        healthCheckResultsAccumulator.getFsHealthCheckResult().getHdfsUsageEntityProjection();
     }
 
     @Test
@@ -48,13 +48,13 @@ public class CommonClusterSnapshotFacadeImplTest {
         //svqxbdcn6cdh512n3.pentahoqa.com
         HealthCheckResultsAccumulator healthCheckResultsAccumulator = new HealthCheckResultsAccumulator();
         getMemoryStatisticsAction.performHealthCheck("CDH512Unsecure", healthCheckResultsAccumulator);
-        healthCheckResultsAccumulator.getClusterHealthSummary().getCluster().getMemoryUsage();
+        healthCheckResultsAccumulator.getFsHealthCheckResult().getMemoryUsageEntityProjection();
     }
 
     @Test
     public void testGetAvailableDiskDfs() throws InvalidResponseException, ImplementationNotResolvedException {
         HealthCheckResultsAccumulator healthCheckResultsAccumulator = new HealthCheckResultsAccumulator();
         getFsStatisticsAction.performHealthCheck("CDH512Unsecure", healthCheckResultsAccumulator);
-        List<? extends NodeSnapshotEntityProjection> nodes = healthCheckResultsAccumulator.getClusterHealthSummary().getCluster().getNodes();
+        List<? extends NodeSnapshotEntityProjection> nodes = healthCheckResultsAccumulator.getFsHealthCheckResult().getNodeSnapshotEntityProjections();
     }
 }
