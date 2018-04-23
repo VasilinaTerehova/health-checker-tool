@@ -1,5 +1,7 @@
 package com.epam.health.tool.quartz;
 
+import com.epam.facade.model.HealthCheckActionType;
+import com.epam.facade.model.accumulator.ClusterAccumulatorToken;
 import com.epam.health.tool.dao.cluster.ClusterServiceSnapshotDao;
 import com.epam.health.tool.facade.cluster.IClusterSnapshotFacade;
 import com.epam.health.tool.facade.common.util.DateUtil;
@@ -41,7 +43,8 @@ public class ClusterHealthCheckJob {
         clusterEntities.forEach(clusterEntity -> {
 
             try {
-                clusterSnapshotFacadeIFacadeImplResolver.resolveFacadeImpl(clusterEntity.getClusterTypeEnum().name()).receiveAndSaveClusterSnapshot(clusterEntity);
+                clusterSnapshotFacadeIFacadeImplResolver.resolveFacadeImpl(clusterEntity.getClusterTypeEnum().name()).makeClusterSnapshot(
+                        ClusterAccumulatorToken.buildAllCheck(clusterEntity.getClusterName()));
             } catch (ImplementationNotResolvedException e) {
                 log.error("Can't find facade implementation for this vendor ", e);
             }

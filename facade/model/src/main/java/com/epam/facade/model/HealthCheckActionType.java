@@ -1,5 +1,27 @@
 package com.epam.facade.model;
 
+import java.util.*;
+
 public enum HealthCheckActionType {
-    FS, YARN_SERVICE, HDFS_SERVICE, OTHER_SERVICES, NONE, ALL
+    FS, MEMORY, HDFS_MEMORY, YARN_SERVICE, HDFS_SERVICE, OTHER_SERVICES, NONE, ALL;
+
+    public static boolean containAllActionTypes(Collection<HealthCheckActionType> actionTypes) {
+        List<HealthCheckActionType> healthCheckActionTypes = new ArrayList<HealthCheckActionType>();
+        healthCheckActionTypes.addAll(Arrays.asList(HealthCheckActionType.values()));
+        healthCheckActionTypes.remove(NONE);
+        healthCheckActionTypes.remove(ALL);
+        return actionTypes.containsAll(healthCheckActionTypes);
+    }
+
+    public static void main(String[] args) {
+        HealthCheckActionType.containAllActionTypes(new HashSet<>());
+    }
+
+    public static List<HealthCheckActionType> all() {
+        List<HealthCheckActionType> healthCheckActionTypes = new ArrayList<HealthCheckActionType>();
+        healthCheckActionTypes.addAll(Arrays.asList(HealthCheckActionType.values()));
+        healthCheckActionTypes.remove(NONE);
+        healthCheckActionTypes.remove(ALL);
+        return healthCheckActionTypes;
+    }
 }

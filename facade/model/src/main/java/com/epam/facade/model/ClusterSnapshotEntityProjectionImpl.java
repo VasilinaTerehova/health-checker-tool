@@ -4,7 +4,9 @@ import com.epam.facade.model.projection.*;
 import com.epam.health.tool.model.ClusterTypeEnum;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Vasilina_Terehova on 3/30/2018.
@@ -75,4 +77,5 @@ public class ClusterSnapshotEntityProjectionImpl implements ClusterSnapshotEntit
     public List<? extends NodeSnapshotEntityProjection> getNodes() {
         return nodeSnapshotEntityProjectionList;
     }
+
 }

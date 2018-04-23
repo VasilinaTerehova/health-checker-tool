@@ -30,4 +30,5 @@ public class HealthCheckResultsAccumulator {
     public void setHdfsHealthCheckResult(HdfsHealthCheckResult hdfsHealthCheckResult) {
         this.hdfsHealthCheckResult = hdfsHealthCheckResult;
     }
+
 }

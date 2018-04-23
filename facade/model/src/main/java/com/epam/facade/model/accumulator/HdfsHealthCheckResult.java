@@ -1,11 +1,12 @@
 package com.epam.facade.model.accumulator;
 
+import com.epam.facade.model.HealthCheckActionType;
 import com.epam.health.tool.model.ServiceStatusEnum;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class HdfsHealthCheckResult {
+public class HdfsHealthCheckResult implements BaseActionResult {
     private List<HdfsOperationResult> jobResults;
     private ServiceStatusEnum status;
 
@@ -31,6 +32,11 @@ public class HdfsHealthCheckResult {
 
     public void addHdfsOperationResult(HdfsOperationResult hdfsOperationResult ) {
         this.jobResults.add( hdfsOperationResult );
+    }
+
+    @Override
+    public HealthCheckActionType getHealthActionType() {
+        return HealthCheckActionType.HDFS_SERVICE;
     }
 
     public static class HdfsOperationResult {
