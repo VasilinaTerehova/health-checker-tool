@@ -1,7 +1,7 @@
 package com.epam.facade.model.projection;
 
 import com.epam.facade.model.HealthCheckActionType;
-import com.epam.facade.model.accumulator.BaseActionResult;
+import com.epam.facade.model.accumulator.results.BaseActionResult;
 import org.springframework.beans.factory.annotation.Value;
 
 /**

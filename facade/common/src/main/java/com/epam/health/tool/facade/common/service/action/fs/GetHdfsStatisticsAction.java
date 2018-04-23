@@ -42,18 +42,8 @@ public class GetHdfsStatisticsAction extends CommonRestHealthCheckAction {
 
     @Override
     protected void saveClusterHealthSummaryToAccumulator(HealthCheckResultsAccumulator healthCheckResultsAccumulator, ClusterHealthSummary clusterHealthSummary) {
-        ClusterHealthSummary tempClusterHealthSummary = healthCheckResultsAccumulator.getClusterHealthSummary();
-
-        if (tempClusterHealthSummary == null) {
-            tempClusterHealthSummary = clusterHealthSummary;
-        } else {
-            tempClusterHealthSummary = new ClusterHealthSummary(
-                    new ClusterSnapshotEntityProjectionImpl(recreateClusterEntityProjection(tempClusterHealthSummary.getCluster()),
-                            tempClusterHealthSummary.getServiceStatusList(), tempClusterHealthSummary.getCluster().getMemoryUsage(),
-                            clusterHealthSummary.getCluster().getHdfsUsage(), tempClusterHealthSummary.getCluster().getNodes()));
-        }
-
-        healthCheckResultsAccumulator.setClusterHealthSummary(tempClusterHealthSummary);
+        HealthCheckResultsAccumulator.HealthCheckResultsModifier.get( healthCheckResultsAccumulator )
+                .setHdfsUsage( clusterHealthSummary.getCluster().getHdfsUsage() ).modify();
     }
 
     private HdfsUsageEntityProjection getAvailableDiskHdfs(String clusterName) throws InvalidResponseException {

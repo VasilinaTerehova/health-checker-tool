@@ -1,6 +1,6 @@
 package com.epam.facade.model;
 
-import com.epam.facade.model.accumulator.BaseActionResult;
+import com.epam.facade.model.accumulator.results.BaseActionResult;
 import com.epam.facade.model.projection.ServiceStatusProjection;
 import com.epam.health.tool.model.ServiceStatusEnum;
 import com.epam.health.tool.model.ServiceTypeEnum;

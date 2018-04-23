@@ -26,10 +26,9 @@ public class ClusterHealthValidationController extends BaseFacadeResolvingContro
     public ResponseEntity<ClusterHealthValidationResult> performClusterHealthValidation(@PathVariable( "name" ) String clusterName) {
         try {
             return ResponseEntity.ok( clusterHealthValidationFacade.validateClusterHealth( resolveClusterSnapshotFacade( clusterName, clusterSnapshotFacadeIFacadeImplResolver )
-                    .getLatestClusterSnapshot( buildAccumulatorToken( clusterName, HealthCheckActionType.ALL ) )));
-        } catch (ImplementationNotResolvedException | InvalidResponseException e) {
+                    .makeClusterSnapshot( buildAccumulatorToken( clusterName, HealthCheckActionType.ALL ) )));
+        } catch (ImplementationNotResolvedException e) {
             throw new RetrievingObjectException( e );
         }
     }
-
 }

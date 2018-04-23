@@ -1,6 +1,6 @@
 package com.epam.health.tool.facade.common.service.action.hdfs.impl;
 
-import com.epam.facade.model.accumulator.HdfsHealthCheckResult;
+import com.epam.facade.model.accumulator.results.impl.HdfsHealthCheckResult;
 import com.epam.health.tool.authentication.ssh.SshAuthenticationClient;
 import com.epam.health.tool.facade.common.service.action.hdfs.CommonHdfsOperation;
 import com.epam.health.tool.model.ClusterEntity;

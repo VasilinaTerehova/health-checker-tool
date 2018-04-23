@@ -1,14 +1,10 @@
 package com.epam.facade.model.projection;
 
-import com.epam.facade.model.HealthCheckActionType;
 import com.epam.health.tool.model.ClusterTypeEnum;
-import com.epam.health.tool.model.NodeSnapshotEntity;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public interface ClusterSnapshotEntityProjection {
 

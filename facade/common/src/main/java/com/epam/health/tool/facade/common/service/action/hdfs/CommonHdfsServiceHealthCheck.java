@@ -1,6 +1,6 @@
 package com.epam.health.tool.facade.common.service.action.hdfs;
 
-import com.epam.facade.model.accumulator.HdfsHealthCheckResult;
+import com.epam.facade.model.accumulator.results.impl.HdfsHealthCheckResult;
 import com.epam.facade.model.accumulator.HealthCheckResultsAccumulator;
 import com.epam.health.tool.facade.common.resolver.impl.action.HealthCheckAction;
 import com.epam.facade.model.HealthCheckActionType;
@@ -28,7 +28,7 @@ public class CommonHdfsServiceHealthCheck extends CommonSshHealthCheckAction {
         hdfsHealthCheckResult.setJobResults( performHdfsOperations( clusterDao.findByClusterName(clusterName) ) );
         hdfsHealthCheckResult.setStatus( getHdfsServiceStatus( hdfsHealthCheckResult ) );
 
-        healthCheckResultsAccumulator.setHdfsHealthCheckResult( hdfsHealthCheckResult );
+        HealthCheckResultsAccumulator.HealthCheckResultsModifier.get( healthCheckResultsAccumulator ).setHdfsHealthCheckResult( hdfsHealthCheckResult );
     }
 
     private List<HdfsHealthCheckResult.HdfsOperationResult> performHdfsOperations(ClusterEntity clusterEntity ) {

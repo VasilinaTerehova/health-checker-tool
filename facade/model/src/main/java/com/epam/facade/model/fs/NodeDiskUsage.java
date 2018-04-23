@@ -1,7 +1,5 @@
 package com.epam.facade.model.fs;
 
-import com.epam.facade.model.HealthCheckActionType;
-import com.epam.facade.model.accumulator.BaseActionResult;
 import com.epam.facade.model.projection.NodeSnapshotEntityProjection;
 
 /**

@@ -1,4 +1,4 @@
-package com.epam.facade.model.accumulator;
+package com.epam.facade.model.accumulator.results;
 
 import com.epam.facade.model.HealthCheckActionType;
 

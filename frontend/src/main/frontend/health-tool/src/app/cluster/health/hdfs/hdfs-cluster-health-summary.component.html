@@ -7,7 +7,8 @@
       </button>
     </div>
   </div>
-  <ul class="list-group list-group-flush">
+  <loading-label [show]="isLoading"></loading-label>
+  <ul class="list-group list-group-flush" *ngIf="!isLoading">
       <li class="list-group-item">Examples Jobs run - {{getSuccessfullyRunJobsCount()}} of {{hdfsHealthReport?.jobResults.length}} successfully passed <span class="label label-success pull-right" *ngIf="isJobRunSuccessfully()">SUCCESS</span><span class="label label-danger pull-right" *ngIf="!isJobRunSuccessfully()" (click)="isCollapsed = !isCollapsed">{{getAlertsCount()}}</span>
         <ul class="list-group list-group-flush" style="margin-top: 2%" [collapse]="!isCollapsed">
             <li class="list-group-item" *ngFor="let alert of getAlerts()">Alert - {{alert}}</li>

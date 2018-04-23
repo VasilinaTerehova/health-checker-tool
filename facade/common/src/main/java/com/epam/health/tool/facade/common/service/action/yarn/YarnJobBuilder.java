@@ -1,6 +1,6 @@
 package com.epam.health.tool.facade.common.service.action.yarn;
 
-import com.epam.facade.model.accumulator.YarnHealthCheckResult;
+import com.epam.facade.model.accumulator.results.impl.YarnHealthCheckResult;
 import com.epam.util.common.CheckingParamsUtil;
 
 import java.util.ArrayList;

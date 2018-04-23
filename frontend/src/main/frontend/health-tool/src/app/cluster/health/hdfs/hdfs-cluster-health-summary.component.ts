@@ -15,14 +15,17 @@ export class HdfsClusterHealthSummaryComponent {
   @Output() onHealthCheckRefresh = new EventEmitter<boolean>();
   private _hdfsHealthReport: HdfsHealthReport;
   isCollapsed: boolean;
+  isLoading: Boolean;
 
   @Input()
   set hdfsHealthReport( hdfsHealthReport: HdfsHealthReport ) {
     if ( hdfsHealthReport ) {
       this._hdfsHealthReport = hdfsHealthReport;
+      this.isLoading = false;
     }
     else {
       this._hdfsHealthReport = new HdfsHealthReport( "", "", new Array<JobExample>());
+      this.isLoading = true;
     }
   }
 

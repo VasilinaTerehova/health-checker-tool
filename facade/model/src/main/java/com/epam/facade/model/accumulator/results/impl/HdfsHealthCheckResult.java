@@ -1,6 +1,7 @@
-package com.epam.facade.model.accumulator;
+package com.epam.facade.model.accumulator.results.impl;
 
 import com.epam.facade.model.HealthCheckActionType;
+import com.epam.facade.model.accumulator.results.BaseActionResult;
 import com.epam.health.tool.model.ServiceStatusEnum;
 
 import java.util.ArrayList;

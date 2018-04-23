@@ -8,6 +8,10 @@ public class CheckingParamsUtil {
     return !(params != null && Arrays.stream( params ).allMatch( param -> Objects.nonNull( param ) && !param.isEmpty() ));
   }
 
+  public static boolean isParamsNotNullOrEmpty( String... params ) {
+    return params != null && Arrays.stream( params ).allMatch( param -> Objects.nonNull( param ) && !param.isEmpty() );
+  }
+
   public static boolean isParamsNull( String... params ) {
     return !(params != null && Arrays.stream( params ).allMatch( Objects::nonNull ));
   }

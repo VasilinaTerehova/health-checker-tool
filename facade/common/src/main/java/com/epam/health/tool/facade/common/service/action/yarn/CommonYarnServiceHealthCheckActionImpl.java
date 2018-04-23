@@ -1,7 +1,7 @@
 package com.epam.health.tool.facade.common.service.action.yarn;
 
 import com.epam.facade.model.accumulator.HealthCheckResultsAccumulator;
-import com.epam.facade.model.accumulator.YarnHealthCheckResult;
+import com.epam.facade.model.accumulator.results.impl.YarnHealthCheckResult;
 import com.epam.health.tool.facade.common.resolver.impl.action.HealthCheckAction;
 import com.epam.facade.model.HealthCheckActionType;
 import com.epam.health.tool.facade.common.service.action.CommonActionNames;
@@ -30,7 +30,8 @@ public class CommonYarnServiceHealthCheckActionImpl extends CommonSshHealthCheck
         yarnHealthCheckResult.setJobResults(Collections.singletonList( runExamplesJob( clusterDao.findByClusterName(clusterName), "pi", "5", "10" ) ));
         yarnHealthCheckResult.setStatus( getYarnServiceStatus( yarnHealthCheckResult ) );
 
-        healthCheckResultsAccumulator.setYarnHealthCheckResult( yarnHealthCheckResult );
+        HealthCheckResultsAccumulator.HealthCheckResultsModifier.get( healthCheckResultsAccumulator )
+                .setYarnHealthCheck( yarnHealthCheckResult ).modify();
     }
 
     private YarnHealthCheckResult.YarnJob runExamplesJob(ClusterEntity clusterEntity, String jobName, String... jobParams) {

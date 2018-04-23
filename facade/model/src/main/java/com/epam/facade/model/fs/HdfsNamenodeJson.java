@@ -1,7 +1,5 @@
 package com.epam.facade.model.fs;
 
-import com.epam.facade.model.HealthCheckActionType;
-import com.epam.facade.model.accumulator.BaseActionResult;
 import com.epam.facade.model.projection.HdfsUsageEntityProjection;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,7 +8,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 

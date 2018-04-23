@@ -17,14 +17,21 @@ export class CommonClusterHealthSummaryComponent {
   private _cluster: ClusterSnapshot;
   @Input() yarnAppsCount: number;
   isCollapsed: boolean;
+  isLoading: Boolean;
 
   constructor( private clusterHealthCheckService: ClusterHealthCheckService, private errorReportingService: ErrorReportingService ) {}
 
   @Input()
   set checkHealthToken( checkHealthToken: CheckHealthToken ) {
     if ( checkHealthToken ) {
+      this.isLoading = true;
       this.askForFsClusterSnapshot( checkHealthToken );
     }
+  }
+
+  set cluster( clusterSnapshot: ClusterSnapshot ) {
+    this.isLoading = false;
+    this._cluster = clusterSnapshot;
   }
 
   get cluster(): ClusterSnapshot {
@@ -57,7 +64,7 @@ export class CommonClusterHealthSummaryComponent {
 
   private askForFsClusterSnapshot( checkHealthToken: CheckHealthToken ) {
     this.clusterHealthCheckService.getFsClusterState( checkHealthToken.clusterName, checkHealthToken.token ).subscribe(
-      data => this._cluster = data,
+      data => this.cluster = data,
       error => this.errorReportingService.reportHttpError( error )
     )
   }

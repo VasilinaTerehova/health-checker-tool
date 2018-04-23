@@ -5,7 +5,7 @@ import com.epam.facade.model.HealthCheckActionType;
 import com.epam.facade.model.ServiceStatus;
 import com.epam.facade.model.accumulator.ClusterAccumulatorToken;
 import com.epam.facade.model.accumulator.HealthCheckResultsAccumulator;
-import com.epam.facade.model.accumulator.YarnHealthCheckResult;
+import com.epam.facade.model.accumulator.results.impl.YarnHealthCheckResult;
 import com.epam.facade.model.projection.ClusterSnapshotEntityProjection;
 import com.epam.facade.model.projection.HdfsUsageEntityProjection;
 import com.epam.facade.model.projection.MemoryUsageEntityProjection;
@@ -50,7 +50,7 @@ public abstract class CommonClusterSnapshotFacadeImpl implements IClusterSnapsho
 
     {
         healthActionSavers.put(HealthCheckActionType.FS, (clusterShapshotEntity, healthCheckResultsAccumulator) -> {
-            List<? extends NodeSnapshotEntityProjection> nodes = healthCheckResultsAccumulator.getClusterHealthSummary().getCluster().getNodes();
+            List<? extends NodeSnapshotEntityProjection> nodes = healthCheckResultsAccumulator.getFsHealthCheckResult().getNodeSnapshotEntityProjections();
             if (nodes != null) {
                 nodes.forEach(o -> nodeSnapshotDao.save(new NodeSnapshotEntity(new FsUsageEntity(o.getUsedGb(), o.getTotalGb()), o.getNode(), clusterShapshotEntity)));
             } else {
@@ -58,12 +58,12 @@ public abstract class CommonClusterSnapshotFacadeImpl implements IClusterSnapsho
             }
         });
         healthActionSavers.put(HealthCheckActionType.HDFS_MEMORY, (clusterShapshotEntity, healthCheckResultsAccumulator) -> {
-            HdfsUsageEntityProjection hdfsUsage = healthCheckResultsAccumulator.getClusterHealthSummary().getCluster().getHdfsUsage();
+            HdfsUsageEntityProjection hdfsUsage = healthCheckResultsAccumulator.getFsHealthCheckResult().getHdfsUsageEntityProjection();
             HdfsUsageEntity hdfsUsageEntity = new HdfsUsageEntity(hdfsUsage.getUsedGb(), hdfsUsage.getTotalGb());
             clusterShapshotEntity.setHdfsUsageEntity(hdfsUsageEntity);
         });
         healthActionSavers.put(HealthCheckActionType.MEMORY, (clusterShapshotEntity, healthCheckResultsAccumulator) -> {
-            MemoryUsageEntityProjection memoryUsage = healthCheckResultsAccumulator.getClusterHealthSummary().getCluster().getMemoryUsage();
+            MemoryUsageEntityProjection memoryUsage = healthCheckResultsAccumulator.getFsHealthCheckResult().getMemoryUsageEntityProjection();
             MemoryUsageEntity memoryUsageEntity = new MemoryUsageEntity(memoryUsage.getUsed(), memoryUsage.getTotal());
             clusterShapshotEntity.setMemoryUsageEntity(memoryUsageEntity);
         });
@@ -122,17 +122,14 @@ public abstract class CommonClusterSnapshotFacadeImpl implements IClusterSnapsho
 
             //refresh
             clusterSnapshotDao.save(clusterSnapshotEntity);
-            HealthCheckResultsAccumulator healthCheckResultsAccumulatorDb = new HealthCheckResultsAccumulator();
-            healthCheckResultsAccumulatorDb.setClusterHealthSummary(
-                    new ClusterHealthSummary(clusterSnapshotDao.findClusterSnapshotById(clusterSnapshotEntity.getId()), clusterServiceSnapshotDao.findServiceProjectionsBy(clusterSnapshotEntity.getId())));
-            //todo: change here - yarn and hdfs should come with the same service entities, result in JobResultEntity
-            healthCheckResultsAccumulatorDb.setYarnHealthCheckResult(healthCheckResultsAccumulatorNotFull.getYarnHealthCheckResult());
-            healthCheckResultsAccumulatorDb.setHdfsHealthCheckResult(healthCheckResultsAccumulatorNotFull.getHdfsHealthCheckResult());
+            HealthCheckResultsAccumulator healthCheckResultsAccumulatorDb = recreateHealthCheckResultFromDB( clusterSnapshotEntity, healthCheckResultsAccumulatorNotFull );
+
             if (HealthCheckActionType.containAllActionTypes(passedActionTypes)) {
                 clusterSnapshotEntity.setFull(true);
                 //here - clean previous for last hour
                 //clusterSnapshotDao.clearForLastHour();
             }
+
             return healthCheckResultsAccumulatorDb;
         } catch (InvalidResponseException e) {
             logger.error(e.getMessage());
@@ -141,9 +138,19 @@ public abstract class CommonClusterSnapshotFacadeImpl implements IClusterSnapsho
         return null;
     }
 
+    private HealthCheckResultsAccumulator recreateHealthCheckResultFromDB( ClusterSnapshotEntity clusterSnapshotEntity, HealthCheckResultsAccumulator healthCheckResultsAccumulator ) {
+        ClusterSnapshotEntityProjection clusterSnapshotEntityProjection = clusterSnapshotDao.findClusterSnapshotById(clusterSnapshotEntity.getId());
+
+        return HealthCheckResultsAccumulator.HealthCheckResultsModifier.get().setClusterInfoFromClusterSnapshot( clusterSnapshotEntityProjection )
+                .setServiceStatusList( clusterServiceSnapshotDao.findServiceProjectionsBy(clusterSnapshotEntity.getId()) )
+                .setYarnHealthCheck( healthCheckResultsAccumulator.getYarnHealthCheckResult() )
+                .setHdfsHealthCheckResult( healthCheckResultsAccumulator.getHdfsHealthCheckResult() )
+                .setFsResultFromClusterSnapshot( clusterSnapshotEntityProjection ).modify();
+    }
+
     private void saveCommonServicesSnapshots(HealthCheckResultsAccumulator healthCheckResultsAccumulator, ClusterSnapshotEntity clusterSnapshotEntity) {
         ClusterEntity clusterEntity = clusterSnapshotEntity.getClusterEntity();
-        healthCheckResultsAccumulator.getClusterHealthSummary().getServiceStatusList().forEach(serviceStatus -> {
+        healthCheckResultsAccumulator.getServiceStatusList().forEach(serviceStatus -> {
             ClusterServiceEntity clusterServiceEntity = clusterServiceDao.findByClusterIdAndServiceType(clusterEntity.getId(), serviceStatus.getType());
             ClusterServiceShapshotEntity clusterServiceShapshotEntity = svTransfererManager.<ServiceStatus, ClusterServiceShapshotEntity>getTransferer(ServiceStatus.class, ClusterServiceShapshotEntity.class).transfer((ServiceStatus) serviceStatus, ClusterServiceShapshotEntity.class);
             clusterServiceShapshotEntity.setClusterSnapshotEntity(clusterSnapshotEntity);
@@ -164,9 +171,9 @@ public abstract class CommonClusterSnapshotFacadeImpl implements IClusterSnapsho
         if (clusterSnapshotHistory.size() == 0 || isTokenNotEmpty(clusterAccumulatorToken)) {
             return makeClusterSnapshot(clusterAccumulatorToken);
         } else {
-            HealthCheckResultsAccumulator healthCheckResultsAccumulator = new HealthCheckResultsAccumulator();
-            healthCheckResultsAccumulator.setClusterHealthSummary(clusterSnapshotHistory.get(0));
-            return healthCheckResultsAccumulator;
+            return HealthCheckResultsAccumulator.HealthCheckResultsModifier.get().setClusterInfoFromClusterSnapshot( clusterSnapshotHistory.get(0).getCluster() )
+                    .setFsResultFromClusterSnapshot( clusterSnapshotHistory.get(0).getCluster() )
+                    .setServiceStatusList( clusterSnapshotHistory.get(0).getServiceStatusList() ).modify();
         }
     }
 

@@ -1,7 +1,7 @@
 package com.epam.health.tool.facade.common.recap.impl;
 
 import com.epam.facade.model.accumulator.HealthCheckResultsAccumulator;
-import com.epam.facade.model.accumulator.YarnHealthCheckResult;
+import com.epam.facade.model.accumulator.results.impl.YarnHealthCheckResult;
 import com.epam.facade.model.validation.ClusterHealthValidationResult;
 import com.epam.health.tool.facade.common.recap.IServiceHealthCheckRecapAction;
 import org.springframework.stereotype.Component;

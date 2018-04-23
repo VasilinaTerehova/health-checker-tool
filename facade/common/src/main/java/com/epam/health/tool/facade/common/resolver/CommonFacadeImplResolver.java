@@ -9,7 +9,7 @@ public abstract class CommonFacadeImplResolver<T> implements IFacadeImplResolver
     @Override
     public T resolveFacadeImpl(String clusterType) throws ImplementationNotResolvedException {
         return getFacadeImplBeansMap().entrySet().stream().filter( entry -> entry.getKey().contains( clusterType ) )
-                .map(Map.Entry::getValue ).findFirst()
+                .map( Map.Entry::getValue ).findFirst()
                 .orElseThrow(() -> new ImplementationNotResolvedException( "Can't find implementation for + " + clusterType ));
     }
 

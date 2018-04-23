@@ -42,18 +42,8 @@ public class GetMemoryStatisticsAction extends CommonRestHealthCheckAction {
 
     @Override
     protected void saveClusterHealthSummaryToAccumulator(HealthCheckResultsAccumulator healthCheckResultsAccumulator, ClusterHealthSummary clusterHealthSummary) {
-        ClusterHealthSummary tempClusterHealthSummary = healthCheckResultsAccumulator.getClusterHealthSummary();
-
-        if (tempClusterHealthSummary == null) {
-            tempClusterHealthSummary = clusterHealthSummary;
-        } else {
-            tempClusterHealthSummary = new ClusterHealthSummary(
-                    new ClusterSnapshotEntityProjectionImpl(recreateClusterEntityProjection(tempClusterHealthSummary.getCluster()),
-                            tempClusterHealthSummary.getServiceStatusList(), clusterHealthSummary.getCluster().getMemoryUsage(),
-                            tempClusterHealthSummary.getCluster().getHdfsUsage(), tempClusterHealthSummary.getCluster().getNodes()));
-        }
-
-        healthCheckResultsAccumulator.setClusterHealthSummary(tempClusterHealthSummary);
+        HealthCheckResultsAccumulator.HealthCheckResultsModifier.get( healthCheckResultsAccumulator )
+                .setMemoryUsage( clusterHealthSummary.getCluster().getMemoryUsage() ).modify();
     }
 
     private MemoryUsageEntityProjection getMemoryTotal(String clusterName) throws InvalidResponseException {

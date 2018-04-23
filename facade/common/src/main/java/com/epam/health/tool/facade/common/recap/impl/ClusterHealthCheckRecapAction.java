@@ -9,24 +9,24 @@ import com.epam.health.tool.model.ServiceStatusEnum;
 import com.epam.health.tool.model.ServiceTypeEnum;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Component("cluster")
 public class ClusterHealthCheckRecapAction implements IServiceHealthCheckRecapAction {
     @Override
     public void doRecapHealthCheck(HealthCheckResultsAccumulator healthCheckResultsAccumulator, ClusterHealthValidationResult clusterHealthValidationResult) {
-        if ( isClusterServicesUnHealthy( healthCheckResultsAccumulator.getClusterHealthSummary() ) ) {
-            clusterHealthValidationResult.appendErrorSummary( getServiceBadList( healthCheckResultsAccumulator.getClusterHealthSummary() ) );
+        if ( isClusterServicesUnHealthy( healthCheckResultsAccumulator.getServiceStatusList() ) ) {
+            clusterHealthValidationResult.appendErrorSummary( getServiceBadList( healthCheckResultsAccumulator.getServiceStatusList() ) );
         }
     }
 
-    private boolean isClusterServicesUnHealthy(ClusterHealthSummary clusterHealthSummary) {
-        return clusterHealthSummary.getServiceStatusList().stream()
-                .map(ServiceStatusProjection::getHealthSummary).anyMatch( this::isServiceBad );
+    private boolean isClusterServicesUnHealthy( List<? extends ServiceStatusProjection> serviceStatusProjections ) {
+        return serviceStatusProjections.stream().map(ServiceStatusProjection::getHealthSummary).anyMatch( this::isServiceBad );
     }
 
-    private String getServiceBadList( ClusterHealthSummary clusterHealthSummary ) {
-        return clusterHealthSummary.getServiceStatusList().stream().filter( this::isServiceBad )
+    private String getServiceBadList( List<? extends ServiceStatusProjection> serviceStatusProjections ) {
+        return serviceStatusProjections.stream().filter( this::isServiceBad )
                 .map( ServiceStatusProjection::getDisplayName ).map( this::createServiceBadString )
                 .collect( Collectors.joining( " " ) );
     }

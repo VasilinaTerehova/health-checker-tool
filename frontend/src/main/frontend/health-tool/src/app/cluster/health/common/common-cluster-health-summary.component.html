@@ -1,4 +1,5 @@
-<ul class="list-group list-group-flush">
+<loading-label [show]="isLoading"></loading-label>
+<ul class="list-group list-group-flush" *ngIf="!isLoading">
     <li class="list-group-item" style="font-size: 15px">
       {{ 'home.label.cluster.disk' | translate }}(File system usage) - more used {{calcMoreUsedDisk()?.used}}% on host <span class="label label-success">{{calcMoreUsedDisk()?.host}}</span>
       <i class="glyphicon glyphicon-chevron-left pull-right" *ngIf="!isCollapsed" (click)="isCollapsed = !isCollapsed"></i>

@@ -7,7 +7,6 @@ import com.epam.facade.model.accumulator.HealthCheckResultsAccumulator;
 import com.epam.facade.model.fs.NodeDiskUsage;
 import com.epam.facade.model.projection.NodeSnapshotEntityProjection;
 import com.epam.health.tool.authentication.ssh.SshAuthenticationClient;
-import com.epam.health.tool.dao.cluster.ClusterDao;
 import com.epam.health.tool.facade.cluster.IRunningClusterParamReceiver;
 import com.epam.health.tool.facade.common.resolver.impl.action.HealthCheckAction;
 import com.epam.health.tool.facade.common.service.action.CommonActionNames;
@@ -45,18 +44,8 @@ public class GetFsStatisticsAction extends CommonRestHealthCheckAction {
 
     @Override
     protected void saveClusterHealthSummaryToAccumulator(HealthCheckResultsAccumulator healthCheckResultsAccumulator, ClusterHealthSummary clusterHealthSummary) {
-        ClusterHealthSummary tempClusterHealthSummary = healthCheckResultsAccumulator.getClusterHealthSummary();
-
-        if (tempClusterHealthSummary == null) {
-            tempClusterHealthSummary = clusterHealthSummary;
-        } else {
-            tempClusterHealthSummary = new ClusterHealthSummary(
-                    new ClusterSnapshotEntityProjectionImpl(recreateClusterEntityProjection(tempClusterHealthSummary.getCluster()),
-                            tempClusterHealthSummary.getServiceStatusList(), tempClusterHealthSummary.getCluster().getMemoryUsage(),
-                            tempClusterHealthSummary.getCluster().getHdfsUsage(), clusterHealthSummary.getCluster().getNodes()));
-        }
-
-        healthCheckResultsAccumulator.setClusterHealthSummary(tempClusterHealthSummary);
+        HealthCheckResultsAccumulator.HealthCheckResultsModifier.get( healthCheckResultsAccumulator )
+                .setNodeSnapshot( clusterHealthSummary.getCluster().getNodes() ).modify();
     }
 
     private List<? extends NodeSnapshotEntityProjection> getAvailableDiskDfs(String clusterName) throws InvalidResponseException, ImplementationNotResolvedException {
