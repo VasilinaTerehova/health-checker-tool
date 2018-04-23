@@ -17,6 +17,7 @@ import com.epam.health.tool.facade.cluster.IHealthCheckFacade;
 import com.epam.health.tool.facade.exception.InvalidResponseException;
 import com.epam.health.tool.model.*;
 import com.epam.health.tool.transfer.impl.SVTransfererManager;
+import com.epam.util.common.CheckingParamsUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -178,7 +179,7 @@ public abstract class CommonClusterSnapshotFacadeImpl implements IClusterSnapsho
     }
 
     private boolean isTokenNotEmpty(ClusterAccumulatorToken clusterAccumulatorToken) {
-        return clusterAccumulatorToken.getToken() != null && !clusterAccumulatorToken.getToken().trim().isEmpty() && !clusterAccumulatorToken.getToken().trim().equals("empty");
+        return CheckingParamsUtil.isParamsNotNullOrEmpty( clusterAccumulatorToken.getToken() ) && !clusterAccumulatorToken.getToken().trim().equals("empty");
     }
 
     public void setClusterFacade(IClusterFacade clusterFacade) {

@@ -5,6 +5,7 @@ import { ClusterState } from '../../cluster/cluster-state.model';
 import { Cluster } from '../../shared/cluster/cluster.model';
 import { ClusterSnapshot } from '../../cluster/cluster-snapshot.model';
 import { CheckHealthToken } from '../../cluster/health/check-health-token.model';
+import { ServiceStatus } from '../../service/service-status.model';
 //Services
 import { ClusterHealthCheckService } from '../../cluster/health/cluster-health-check.service';
 import { ErrorReportingService } from '../../shared/error/error-reporting.service';
@@ -15,7 +16,8 @@ import { ErrorReportingService } from '../../shared/error/error-reporting.servic
 })
 export class ServiceListComponent {
   private _checkHealthToken: CheckHealthToken;
-  clusterState: ClusterState;
+  isLoading: Boolean;
+  serviceStatusList: ServiceStatus[];
   isAscSort: boolean = true;
 
   constructor( private clusterHealthCheckService: ClusterHealthCheckService, private errorReportingService: ErrorReportingService ) {}
@@ -23,6 +25,7 @@ export class ServiceListComponent {
   @Input()
   set checkHealthToken( checkHealthToken: CheckHealthToken ) {
     if ( checkHealthToken ) {
+      this.isLoading = true;
       this._checkHealthToken = checkHealthToken;
       this.ascForClusterState();
     }
@@ -57,7 +60,8 @@ export class ServiceListComponent {
     this.clusterHealthCheckService.getServicesClusterState( this._checkHealthToken.clusterName, this._checkHealthToken.token ).subscribe(
       data => {
         if ( data ) {
-          this.clusterState = data.clusterHealthSummary;
+          this.serviceStatusList = data.serviceStatusList;
+          this.isLoading = false;
         }
       },
       error => this.errorReportingService.reportHttpError( error )

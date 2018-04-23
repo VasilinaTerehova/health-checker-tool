@@ -11,7 +11,8 @@ public enum ClusterTypeEnum {
     HDP("hdp", "hdp"),
     MAPR("mapr", "mapr"),
     HDI("hdi", "hdi"),
-    EMR("emr", "emr");
+    EMR("emr", "emr"),
+    NONE("none", "none");
 
     String code;
     String title;

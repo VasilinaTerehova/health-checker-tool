@@ -6,7 +6,9 @@ import com.epam.health.tool.authentication.http.HttpAuthenticationClient;
 import com.epam.health.tool.authentication.ssh.SshAuthenticationClient;
 import com.epam.health.tool.facade.application.IApplicationFacade;
 import com.epam.health.tool.facade.cluster.IClusterFacade;
+import com.epam.health.tool.facade.common.resolver.impl.ClusterSpecificComponent;
 import com.epam.health.tool.facade.exception.InvalidResponseException;
+import com.epam.health.tool.model.ClusterTypeEnum;
 import com.epam.health.tool.transfer.impl.SVTransfererManager;
 import com.epam.util.common.CheckingParamsUtil;
 import com.epam.util.common.CommonUtilException;
@@ -17,8 +19,9 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component("HDP-application")
-public class ApplicationFacadeImpl implements IApplicationFacade {
+@Component
+@ClusterSpecificComponent( ClusterTypeEnum.HDP )
+public class HdpApplicationFacadeImpl implements IApplicationFacade {
     @Autowired
     private IClusterFacade clusterFacade;
     @Autowired

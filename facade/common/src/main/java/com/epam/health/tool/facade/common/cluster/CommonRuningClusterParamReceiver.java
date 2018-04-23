@@ -70,5 +70,4 @@ public abstract class CommonRuningClusterParamReceiver implements IRunningCluste
 
         throw new InvalidResponseException("Can't find name node url for cluster - " + clusterEntity.getClusterName());
     }
-
 }

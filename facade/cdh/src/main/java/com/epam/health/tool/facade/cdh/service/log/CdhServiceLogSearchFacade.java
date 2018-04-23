@@ -1,14 +1,17 @@
 package com.epam.health.tool.facade.cdh.service.log;
 
+import com.epam.health.tool.facade.common.resolver.impl.ClusterSpecificComponent;
 import com.epam.health.tool.facade.common.service.log.CommonServiceLogSearchFacade;
 import com.epam.health.tool.facade.service.log.IServiceLogsSearcher;
+import com.epam.health.tool.model.ClusterTypeEnum;
 import com.epam.health.tool.model.ServiceTypeEnum;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@Component("CDH-log-search-manager")
+@Component
+@ClusterSpecificComponent( ClusterTypeEnum.CDH )
 public class CdhServiceLogSearchFacade extends CommonServiceLogSearchFacade {
     private static final String HBASE_DEFAULT_LOG_PATH = "/var/log/hbase1";
     private static final String ZOOKEEPER_DEFAULT_LOG_PATH = "/var/log/zookeeper";

@@ -1,8 +1,10 @@
 package com.epam.health.tool.facade.hdp.cluster;
 
 import com.epam.health.tool.facade.common.cluster.CommonRuningClusterParamReceiver;
+import com.epam.health.tool.facade.common.resolver.impl.ClusterSpecificComponent;
 import com.epam.health.tool.facade.exception.InvalidResponseException;
 import com.epam.health.tool.model.ClusterEntity;
+import com.epam.health.tool.model.ClusterTypeEnum;
 import com.epam.util.common.CommonUtilException;
 import com.epam.util.common.json.CommonJsonHandler;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -11,8 +13,9 @@ import org.springframework.stereotype.Component;
 /**
  * Created by Vasilina_Terehova on 4/14/2018.
  */
-@Component("HDP-param-cluster")
+@Component
 @Qualifier("HDP-cluster")
+@ClusterSpecificComponent( ClusterTypeEnum.HDP )
 public class HdpRuningClusterParamReceiver extends CommonRuningClusterParamReceiver {
 
     @Override

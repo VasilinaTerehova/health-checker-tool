@@ -7,7 +7,8 @@
       </button>
     </div>
   </div>
-  <table class="table table-hover">
+  <loading-label [show]="isLoading"></loading-label>
+  <table class="table table-hover" *ngIf="!isLoading">
       <thead class="thead-inverse">
       <tr>
           <th (click)="changeSort()">
@@ -21,11 +22,11 @@
       </tr>
       </thead>
       <tbody>
-      <tr *ngFor="let x of clusterState?.serviceStatusList | serviceSortList : isAscSort">
+      <tr *ngFor="let x of serviceStatusList | serviceSortList : isAscSort">
           <td>{{x.displayName}}</td>
           <td service-table-row serviceState="{{x.healthSummary}}">{{x.healthSummary}}</td>
           <td service-table-row serviceState="{{x.healthSummary}}" *ngIf="isShowLogsLocationAllow(x.healthSummary)">
-            {{ 'home.label.cluster.host' | translate }}: {{clusterState.cluster.host}}, {{ 'home.label.cluster.path' | translate }}: /yarn/containers-logs
+            {{ 'home.label.cluster.host' | translate }}:  /yarn/containers-logs
           </td>
           <td *ngIf="isShowServiceActionAllow(x.displayName)" align="center">
               <button type="button" style="text-decoration: underline" class="btn btn-primary" (click)="restartService(x.displayName)">{{ 'home.button.cluster.restart' | translate }}</button>

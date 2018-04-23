@@ -1,14 +1,14 @@
 package com.epam.health.tool.facade.cdh.cluster;
 
-import com.epam.facade.model.service.DownloadableFileConstants;
 import com.epam.facade.model.service.RoleJson;
 import com.epam.facade.model.service.YarnRoleEnum;
 import com.epam.health.tool.authentication.http.HttpAuthenticationClient;
 import com.epam.health.tool.dao.cluster.ClusterDao;
 import com.epam.health.tool.facade.common.cluster.CommonRuningClusterParamReceiver;
+import com.epam.health.tool.facade.common.resolver.impl.ClusterSpecificComponent;
 import com.epam.health.tool.facade.exception.InvalidResponseException;
 import com.epam.health.tool.model.ClusterEntity;
-import com.epam.util.common.CheckingParamsUtil;
+import com.epam.health.tool.model.ClusterTypeEnum;
 import com.epam.util.common.CommonUtilException;
 import com.epam.util.common.file.FileCommonUtil;
 import com.epam.util.common.json.CommonJsonHandler;
@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.List;
 
 import static com.epam.facade.model.service.DownloadableFileConstants.HdfsProperties.DFS_NAMENODE_HTTP_ADDRESS;
@@ -27,8 +26,9 @@ import static com.epam.facade.model.service.DownloadableFileConstants.YarnProper
 /**
  * Created by Vasilina_Terehova on 4/14/2018.
  */
-@Component("CDH-param-cluster")
+@Component
 @Qualifier("CDH-cluster")
+@ClusterSpecificComponent( ClusterTypeEnum.CDH )
 public class CdhRuningClusterParamReceiver extends CommonRuningClusterParamReceiver {
     @Autowired
     protected ClusterDao clusterDao;
