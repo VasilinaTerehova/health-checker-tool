@@ -1,7 +1,6 @@
 import { Component, Input } from '@angular/core';
 
 //Models
-import { ClusterSnapshot } from '../../cluster-snapshot.model';
 import { NodeSummary } from '../node-summary.model';
 import { NodeMemory } from '../node-memory-summary.model';
 import { CheckHealthToken } from '../check-health-token.model';
@@ -21,35 +20,34 @@ export class CommonClusterHealthSummaryComponent {
   private _hdfsUsage: HdfsUsage;
   private _memory: Memory;
   @Input() yarnAppsCount: number;
-  isCollapsed: boolean;
   isLoading: Boolean;
 
-  constructor( private clusterHealthCheckService: ClusterHealthCheckService, private errorReportingService: ErrorReportingService ) {}
+  constructor(private clusterHealthCheckService: ClusterHealthCheckService, private errorReportingService: ErrorReportingService) { }
 
   @Input()
-  set checkHealthToken( checkHealthToken: CheckHealthToken ) {
-    if ( checkHealthToken ) {
+  set checkHealthToken(checkHealthToken: CheckHealthToken) {
+    if (checkHealthToken) {
       this.isLoading = true;
-      this.askForClusterSnapshot( checkHealthToken );
+      this.askForClusterSnapshot(checkHealthToken);
     }
   }
 
-  set nodes( nodes: NodeFs[] ) {
-    if ( nodes ) {
+  set nodes(nodes: NodeFs[]) {
+    if (nodes) {
       this.isLoading = false;
       this._nodes = nodes;
     }
   }
 
-  set hdfsUsage( hdfsUsage: HdfsUsage ) {
-    if ( hdfsUsage ) {
+  set hdfsUsage(hdfsUsage: HdfsUsage) {
+    if (hdfsUsage) {
       this.isLoading = false;
       this._hdfsUsage = hdfsUsage;
     }
   }
 
-  set memory( memory: Memory ) {
-    if ( memory ) {
+  set memory(memory: Memory) {
+    if (memory) {
       this.isLoading = false;
       this._memory = memory;
     }
@@ -67,45 +65,30 @@ export class CommonClusterHealthSummaryComponent {
     return this._nodes;
   }
 
-  calcMoreUsedDisk(): any {
-    return this._nodes ? this._nodes.map( node => {
-      return {
-        "used": (node.usedGb * 100 / node.totalGb).toPrecision(2),
-        "host": node.node
-      }
-    } ).sort( ( one, two  ) => {
-      if ( one.used > two.used ) {
-        return 1;
-      }
-
-      return -1;
-    } ).pop() : 0;
+  private askForClusterSnapshot(checkHealthToken: CheckHealthToken) {
+    this.askForFsClusterSnapshot(checkHealthToken);
+    this.askForMemoryClusterSnapshot(checkHealthToken);
+    this.askForHdfsMemoryClusterSnapshot(checkHealthToken);
   }
 
-  private askForClusterSnapshot( checkHealthToken: CheckHealthToken ) {
-    this.askForFsClusterSnapshot( checkHealthToken );
-    this.askForMemoryClusterSnapshot( checkHealthToken );
-    this.askForHdfsMemoryClusterSnapshot( checkHealthToken );
-  }
-
-  private askForFsClusterSnapshot( checkHealthToken: CheckHealthToken ) {
-    this.clusterHealthCheckService.getFsClusterState( checkHealthToken.clusterName, checkHealthToken.token ).subscribe(
+  private askForFsClusterSnapshot(checkHealthToken: CheckHealthToken) {
+    this.clusterHealthCheckService.getFsClusterState(checkHealthToken.clusterName, checkHealthToken.token).subscribe(
       data => this.nodes = data,
-      error => this.errorReportingService.reportHttpError( error )
+      error => this.errorReportingService.reportHttpError(error)
     )
   }
 
-  private askForHdfsMemoryClusterSnapshot( checkHealthToken: CheckHealthToken ) {
-    this.clusterHealthCheckService.getHdfsMemoryClusterState( checkHealthToken.clusterName, checkHealthToken.token ).subscribe(
+  private askForHdfsMemoryClusterSnapshot(checkHealthToken: CheckHealthToken) {
+    this.clusterHealthCheckService.getHdfsMemoryClusterState(checkHealthToken.clusterName, checkHealthToken.token).subscribe(
       data => this.hdfsUsage = data,
-      error => this.errorReportingService.reportHttpError( error )
+      error => this.errorReportingService.reportHttpError(error)
     )
   }
 
-  private askForMemoryClusterSnapshot( checkHealthToken: CheckHealthToken ) {
-    this.clusterHealthCheckService.getMemoryClusterState( checkHealthToken.clusterName, checkHealthToken.token ).subscribe(
+  private askForMemoryClusterSnapshot(checkHealthToken: CheckHealthToken) {
+    this.clusterHealthCheckService.getMemoryClusterState(checkHealthToken.clusterName, checkHealthToken.token).subscribe(
       data => this.memory = data,
-      error => this.errorReportingService.reportHttpError( error )
+      error => this.errorReportingService.reportHttpError(error)
     )
   }
 }

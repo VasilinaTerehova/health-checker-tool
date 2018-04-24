@@ -13,21 +13,24 @@ import { ErrorReportingService } from '../../shared/error/error-reporting.servic
 })
 export class ServiceListHistoryComponent {
   clusterStateHistory: ClusterState[];
+  isLoading: Boolean;
 
-  constructor( private clusterHealthCheckService: ClusterHealthCheckService, private errorReportingService: ErrorReportingService ) {}
+  constructor(private clusterHealthCheckService: ClusterHealthCheckService, private errorReportingService: ErrorReportingService) { }
 
   @Input()
-  set clusterName( clusterName: String ) {
-    if ( clusterName ) {
-      this.ascForClusterState( clusterName.toString() );
+  set clusterName(clusterName: String) {
+    if (clusterName) {
+      this.ascForClusterState(clusterName.toString());
     }
+    this.isLoading = false;
   }
 
-  private ascForClusterState( clusterName: string ) {
+  private ascForClusterState(clusterName: string) {
+    this.isLoading = true;
     this.errorReportingService.clearError();
-    this.clusterHealthCheckService.getClusterStateHistory( clusterName ).subscribe(
+    this.clusterHealthCheckService.getClusterStateHistory(clusterName).subscribe(
       data => this.clusterStateHistory = data,
-      error => this.errorReportingService.reportHttpError( error )
+      error => this.errorReportingService.reportHttpError(error)
     );
   }
 }
