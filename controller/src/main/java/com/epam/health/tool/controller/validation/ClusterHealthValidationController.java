@@ -27,7 +27,7 @@ public class ClusterHealthValidationController extends BaseFacadeResolvingContro
         try {
             return ResponseEntity.ok( clusterHealthValidationFacade.validateClusterHealth( resolveClusterSnapshotFacade( clusterName, clusterSnapshotFacadeIFacadeImplResolver )
                     .makeClusterSnapshot( buildAccumulatorToken( clusterName, HealthCheckActionType.ALL ) )));
-        } catch (ImplementationNotResolvedException e) {
+        } catch (ImplementationNotResolvedException | InvalidResponseException e) {
             throw new RetrievingObjectException( e );
         }
     }

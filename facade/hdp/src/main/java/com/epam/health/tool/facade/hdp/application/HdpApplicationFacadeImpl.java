@@ -2,6 +2,7 @@ package com.epam.health.tool.facade.hdp.application;
 
 import com.epam.facade.model.ApplicationInfo;
 import com.epam.facade.model.projection.ClusterEntityProjection;
+import com.epam.health.tool.authentication.exception.AuthenticationRequestException;
 import com.epam.health.tool.authentication.http.HttpAuthenticationClient;
 import com.epam.health.tool.authentication.ssh.SshAuthenticationClient;
 import com.epam.health.tool.facade.application.IApplicationFacade;
@@ -46,7 +47,7 @@ public class HdpApplicationFacadeImpl implements IApplicationFacade {
                 throw new InvalidResponseException( "Elements not found. Answer string - " + answer );
             }
         }
-        catch ( CommonUtilException ex ) {
+        catch ( CommonUtilException | AuthenticationRequestException ex ) {
             throw new InvalidResponseException( "Elements not found. Reason - " + ex.getMessage(), ex );
         }
     }
@@ -79,7 +80,7 @@ public class HdpApplicationFacadeImpl implements IApplicationFacade {
 
             return yarnRestUrl;
         }
-        catch ( CommonUtilException ex ) {
+        catch ( CommonUtilException | AuthenticationRequestException ex ) {
             throw new InvalidResponseException( ex );
         }
     }

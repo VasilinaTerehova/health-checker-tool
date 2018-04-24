@@ -47,7 +47,7 @@ public class ClusterSearchParam {
         }
 
         public ClusterSearchParamBuilder withSecure( String secured ) {
-            setParamWithCheck( secured, ( param ) -> this.clusterSearchParam.secured = Boolean.parseBoolean( param ) );
+            setParamWithCheck( secured, ( param ) -> this.clusterSearchParam.secured = param.equals( "secured" ) );
 
             return this;
         }

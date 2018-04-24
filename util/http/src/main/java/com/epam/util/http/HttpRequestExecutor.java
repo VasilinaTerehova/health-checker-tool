@@ -10,11 +10,13 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.config.Registry;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.impl.client.*;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.util.function.Function;
 
 public class HttpRequestExecutor {
@@ -26,7 +28,8 @@ public class HttpRequestExecutor {
     private IHeaderCreator headerCreator;
 
     private HttpRequestExecutor() {
-        httpClientBuilderSetupAction = this::setDefaultAuthSchemeRegistry;
+        httpClientBuilderSetupAction = this::setSslContextAllowAll;
+        httpClientBuilderSetupAction.andThen( this::setDefaultAuthSchemeRegistry );
         httpClientBuilderSetupAction.andThen( this::setDefaultCredentialsProvider );
     }
 
@@ -85,8 +88,8 @@ public class HttpRequestExecutor {
         return createHttpClientBuilder().build();
     }
 
-    private HttpClientBuilder createHttpClientBuilder() {
-        return httpClientBuilderSetupAction.apply( HttpClients.custom() );
+    private HttpClientBuilder createHttpClientBuilder() throws CommonUtilException {
+        return httpClientBuilderSetupAction.apply( HttpClients.custom());
     }
 
     private HttpUriRequest createHttpUriRequest( String uri, HttpContext httpClientContext ) throws CommonUtilException {
@@ -107,5 +110,14 @@ public class HttpRequestExecutor {
     private HttpClientBuilder setDefaultCredentialsProvider( HttpClientBuilder httpClientBuilder ) {
         return credentialsProvider != null ? httpClientBuilder.setDefaultCredentialsProvider( credentialsProvider )
                 : httpClientBuilder;
+    }
+
+    private HttpClientBuilder setSslContextAllowAll( HttpClientBuilder httpClientBuilder ) {
+        try {
+            return httpClientBuilder.setSSLContext( SslContextCreator.get().createSslContextAllowAll() ).setSSLHostnameVerifier( new NoopHostnameVerifier());
+        } catch (CommonUtilException e) {
+            //Add logging
+            return httpClientBuilder;
+        }
     }
 }

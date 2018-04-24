@@ -120,7 +120,7 @@ public class ClusterFacadeImpl implements IClusterFacade {
     private ClusterNodes getClusterLiveNodes(ClusterEntity clusterEntity ) {
         try {
             return new ClusterNodes( this.clusterParamReceiverIFacadeImplResolver.resolveFacadeImpl( clusterEntity.getClusterTypeEnum().name() )
-                    .getHdfsNamenodeJson( clusterEntity ).getLiveNodes(), clusterEntity.getClusterName() );
+                    .getHdfsNamenodeJson( clusterEntity.getClusterName() ).getLiveNodes(), clusterEntity.getClusterName() );
         } catch (InvalidResponseException | ImplementationNotResolvedException | CommonUtilException e) {
             return new ClusterNodes( Collections.emptySet(), clusterEntity.getClusterName() );
         }

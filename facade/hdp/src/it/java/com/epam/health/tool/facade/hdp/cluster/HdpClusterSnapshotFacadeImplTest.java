@@ -47,7 +47,7 @@ public class HdpClusterSnapshotFacadeImplTest {
 
     @Test
     public void testGetNameNodeJson() throws CommonUtilException, InvalidResponseException, ImplementationNotResolvedException {
-        System.out.println(runningClusterParamReceiver.getHdfsNamenodeJson(clusterDao.findByClusterName("HDP26Unsecure")));
+        System.out.println(runningClusterParamReceiver.getHdfsNamenodeJson("HDP26Unsecure"));
     }
 
     @Test

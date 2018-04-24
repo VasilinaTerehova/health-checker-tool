@@ -26,7 +26,6 @@ import org.springframework.data.domain.Pageable;
 import java.util.*;
 import java.util.function.BiConsumer;
 
-
 public abstract class CommonClusterSnapshotFacadeImpl implements IClusterSnapshotFacade {
 
     @Autowired
@@ -87,66 +86,71 @@ public abstract class CommonClusterSnapshotFacadeImpl implements IClusterSnapsho
     }
 
     @Override
-    public HealthCheckResultsAccumulator makeClusterSnapshot(ClusterAccumulatorToken clusterAccumulatorToken) {
-        try {
-//            List<ClusterSnapshotEntityProjection> top10ClusterName = clusterSnapshotDao.findTop10ClusterName(clusterAccumulatorToken.getClusterName().get(), new PageRequest(0, 1));
-//            //for now getting and saving happen once an hour, to be revisited
-//            if (!top10ClusterName.isEmpty() && new Date().before(DateUtil.dateHourPlus(top10ClusterName.get(0).getDateOfSnapshot()))) {
-//                return clusterSnapshotDao.findById(top10ClusterName.get(0).getId()).get();
-//            }
-            ClusterEntity clusterEntity = clusterDao.findByClusterName(clusterAccumulatorToken.getClusterName());
+    public HealthCheckResultsAccumulator makeClusterSnapshot(ClusterAccumulatorToken clusterAccumulatorToken) throws InvalidResponseException {
+        HealthCheckResultsAccumulator healthCheckResultsAccumulatorNotFull = healthCheckFacade.askForClusterSnapshot(clusterAccumulatorToken);
+        ClusterSnapshotEntity clusterSnapshotEntity = getOrCreateClusterSnapshot( clusterAccumulatorToken );
 
-            HealthCheckResultsAccumulator healthCheckResultsAccumulatorNotFull = healthCheckFacade.askForClusterSnapshot(clusterAccumulatorToken);
-
-            ClusterSnapshotEntity clusterSnapshotEntity = null;
-            if (clusterAccumulatorToken.getToken() != null) {
-                clusterSnapshotEntity = clusterSnapshotDao.findByToken(clusterAccumulatorToken.getToken());
+        List<HealthCheckActionType> passedActionTypes = clusterAccumulatorToken.getPassedActionTypes();
+        passedActionTypes.forEach(healthCheckActionType -> {
+            BiConsumer<ClusterSnapshotEntity, HealthCheckResultsAccumulator> actionConsumer = healthActionSavers.get(healthCheckActionType);
+            if (actionConsumer != null) {
+                actionConsumer.accept( clusterSnapshotEntity, healthCheckResultsAccumulatorNotFull );
+            } else {
+                logger.error("action type " + healthCheckActionType + " can't be handled, no implementation found");
             }
-            if (clusterSnapshotEntity == null) {
-                clusterSnapshotEntity = new ClusterSnapshotEntity();
-                clusterSnapshotEntity.setDateOfSnapshot(new Date());
-                clusterSnapshotEntity.setClusterEntity(clusterEntity);
-                clusterSnapshotEntity.setToken(clusterAccumulatorToken.getToken());
-            }
+        });
 
-            clusterSnapshotDao.save(clusterSnapshotEntity);
-            ClusterSnapshotEntity finalClusterSnapshotEntity = clusterSnapshotEntity;
-            List<HealthCheckActionType> passedActionTypes = clusterAccumulatorToken.getPassedActionTypes();
-            passedActionTypes.forEach(healthCheckActionType -> {
-                BiConsumer<ClusterSnapshotEntity, HealthCheckResultsAccumulator> actionConsumer = healthActionSavers.get(healthCheckActionType);
-                if (actionConsumer != null) {
-                    actionConsumer.accept(finalClusterSnapshotEntity, healthCheckResultsAccumulatorNotFull);
-                } else {
-                    logger.error("action type " + healthCheckActionType + " can't be handled, no implementation found");
-                }
-            });
+        //refresh
+        HealthCheckResultsAccumulator healthCheckResultsAccumulatorDb = recreateHealthCheckResultFromDB( clusterSnapshotDao.save(clusterSnapshotEntity),
+                healthCheckResultsAccumulatorNotFull );
 
-            //refresh
-            clusterSnapshotDao.save(clusterSnapshotEntity);
-            HealthCheckResultsAccumulator healthCheckResultsAccumulatorDb = recreateHealthCheckResultFromDB( clusterSnapshotEntity, healthCheckResultsAccumulatorNotFull );
-
-            if (HealthCheckActionType.containAllActionTypes(passedActionTypes)) {
-                clusterSnapshotEntity.setFull(true);
-                //here - clean previous for last hour
-                //clusterSnapshotDao.clearForLastHour();
-            }
-
-            return healthCheckResultsAccumulatorDb;
-        } catch (InvalidResponseException e) {
-            logger.error(e.getMessage());
+        if (HealthCheckActionType.containAllActionTypes(passedActionTypes)) {
+            clusterSnapshotEntity.setFull(true);
+            //here - clean previous for last hour
+            //clusterSnapshotDao.clearForLastHour();
         }
 
-        return null;
+        return healthCheckResultsAccumulatorDb;
+    }
+
+    @Override
+    public HealthCheckResultsAccumulator getLatestClusterSnapshot(ClusterAccumulatorToken clusterAccumulatorToken) throws InvalidResponseException {
+        List<ClusterHealthSummary> clusterSnapshotHistory = getClusterSnapshotHistory(clusterAccumulatorToken.getClusterName(), 1);
+        if (clusterSnapshotHistory.size() == 0 || isTokenNotEmpty(clusterAccumulatorToken)) {
+            return makeClusterSnapshot(clusterAccumulatorToken);
+        } else {
+            return HealthCheckResultsAccumulator.HealthCheckResultsModifier.get().setClusterInfoFromClusterSnapshot( clusterSnapshotHistory.get(0).getCluster() )
+                    .setFsResultFromClusterSnapshot( clusterSnapshotHistory.get(0).getCluster() )
+                    .setServiceStatusList( clusterSnapshotHistory.get(0).getServiceStatusList() ).modify();
+        }
+    }
+
+    private ClusterSnapshotEntity getOrCreateClusterSnapshot( ClusterAccumulatorToken clusterAccumulatorToken ) {
+        if (clusterAccumulatorToken.getToken() != null) {
+            ClusterSnapshotEntity clusterSnapshotEntity = clusterSnapshotDao.findByToken(clusterAccumulatorToken.getToken());
+
+            return clusterSnapshotEntity != null ? clusterSnapshotEntity : createClusterSnapshot( clusterAccumulatorToken );
+        } else  {
+            //Empty token for new check??
+            return createClusterSnapshot( clusterAccumulatorToken );
+        }
+    }
+
+    private ClusterSnapshotEntity createClusterSnapshot( ClusterAccumulatorToken clusterAccumulatorToken ) {
+        ClusterSnapshotEntity clusterSnapshotEntity = new ClusterSnapshotEntity();
+
+        clusterSnapshotEntity.setDateOfSnapshot(new Date());
+        clusterSnapshotEntity.setClusterEntity( clusterDao.findByClusterName(clusterAccumulatorToken.getClusterName()) );
+        clusterSnapshotEntity.setToken(clusterAccumulatorToken.getToken());
+
+        return clusterSnapshotDao.save(clusterSnapshotEntity);
     }
 
     private HealthCheckResultsAccumulator recreateHealthCheckResultFromDB( ClusterSnapshotEntity clusterSnapshotEntity, HealthCheckResultsAccumulator healthCheckResultsAccumulator ) {
         ClusterSnapshotEntityProjection clusterSnapshotEntityProjection = clusterSnapshotDao.findClusterSnapshotById(clusterSnapshotEntity.getId());
 
-        return HealthCheckResultsAccumulator.HealthCheckResultsModifier.get().setClusterInfoFromClusterSnapshot( clusterSnapshotEntityProjection )
-                .setServiceStatusList( clusterServiceSnapshotDao.findServiceProjectionsBy(clusterSnapshotEntity.getId()) )
-                .setYarnHealthCheck( healthCheckResultsAccumulator.getYarnHealthCheckResult() )
-                .setHdfsHealthCheckResult( healthCheckResultsAccumulator.getHdfsHealthCheckResult() )
-                .setFsResultFromClusterSnapshot( clusterSnapshotEntityProjection ).modify();
+        return HealthCheckResultsAccumulator.HealthCheckResultsModifier.get( healthCheckResultsAccumulator )
+                .setClusterInfoFromClusterSnapshot( clusterSnapshotEntityProjection ).modify();
     }
 
     private void saveCommonServicesSnapshots(HealthCheckResultsAccumulator healthCheckResultsAccumulator, ClusterSnapshotEntity clusterSnapshotEntity) {
@@ -164,18 +168,6 @@ public abstract class CommonClusterSnapshotFacadeImpl implements IClusterSnapsho
             }
             clusterServiceSnapshotDao.save(clusterServiceShapshotEntity);
         });
-    }
-
-    @Override
-    public HealthCheckResultsAccumulator getLatestClusterSnapshot(ClusterAccumulatorToken clusterAccumulatorToken) throws InvalidResponseException {
-        List<ClusterHealthSummary> clusterSnapshotHistory = getClusterSnapshotHistory(clusterAccumulatorToken.getClusterName(), 1);
-        if (clusterSnapshotHistory.size() == 0 || isTokenNotEmpty(clusterAccumulatorToken)) {
-            return makeClusterSnapshot(clusterAccumulatorToken);
-        } else {
-            return HealthCheckResultsAccumulator.HealthCheckResultsModifier.get().setClusterInfoFromClusterSnapshot( clusterSnapshotHistory.get(0).getCluster() )
-                    .setFsResultFromClusterSnapshot( clusterSnapshotHistory.get(0).getCluster() )
-                    .setServiceStatusList( clusterSnapshotHistory.get(0).getServiceStatusList() ).modify();
-        }
     }
 
     private boolean isTokenNotEmpty(ClusterAccumulatorToken clusterAccumulatorToken) {

@@ -11,7 +11,8 @@ import com.epam.util.common.CommonUtilException;
  */
 public interface IRunningClusterParamReceiver {
     String getLogDirectory(String clusterName) throws InvalidResponseException;
-    String getPropertySiteXml(ClusterEntity clusterEntity, String siteName, String propertyName) throws InvalidResponseException;
-    HdfsNamenodeJson getHdfsNamenodeJson(ClusterEntity clusterEntity) throws InvalidResponseException, ImplementationNotResolvedException, CommonUtilException;
-    String getHANameNodeUrl(String clusterName) throws InvalidResponseException;
+    String getPropertySiteXml( String clusterName, String siteName, String propertyName ) throws InvalidResponseException;
+    HdfsNamenodeJson getHdfsNamenodeJson( String clusterName ) throws InvalidResponseException, ImplementationNotResolvedException, CommonUtilException;
+    String getActiveResourceManagerAddress( String clusterName ) throws InvalidResponseException;
+    String getNameNodeUrl( String clusterName ) throws InvalidResponseException;
 }

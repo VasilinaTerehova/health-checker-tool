@@ -1,6 +1,7 @@
 package com.epam.health.tool.facade.hdp.service.action.other;
 
 import com.epam.facade.model.ServiceStatus;
+import com.epam.health.tool.authentication.exception.AuthenticationRequestException;
 import com.epam.health.tool.facade.common.resolver.impl.ClusterSpecificComponent;
 import com.epam.health.tool.facade.common.resolver.impl.action.HealthCheckAction;
 import com.epam.facade.model.HealthCheckActionType;
@@ -29,7 +30,7 @@ public class HdpRestHealthCheckAction extends CommonOtherServicesHealthCheckActi
         try {
             return Arrays.stream(ServiceTypeEnum.values())
                     .map(serviceTypeEnum -> "http://" + clusterEntity.getHost() + ":8080/api/v1/clusters/" + clusterEntity.getClusterName() + "/services/" + serviceTypeEnum.toString())
-                    .map(url -> httpAuthenticationClient.makeAuthenticatedRequest( clusterEntity.getClusterName(), url, false ))
+                    .map(url -> makeHttpRequest( clusterEntity.getClusterName(), url, false ))
                     .map(this::extractFromJsonString)
                     .filter(Objects::nonNull)
                     .map(this::mapHealthStateToServiceStatusEnum)
@@ -38,6 +39,14 @@ public class HdpRestHealthCheckAction extends CommonOtherServicesHealthCheckActi
         }
         catch ( RuntimeException ex ) {
             throw new InvalidResponseException( ex );
+        }
+    }
+
+    private String makeHttpRequest( String clusterName, String url, boolean useSpnego ) {
+        try {
+            return httpAuthenticationClient.makeAuthenticatedRequest( clusterName, url, useSpnego );
+        } catch (AuthenticationRequestException e) {
+            throw new RuntimeException( e );
         }
     }
 

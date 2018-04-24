@@ -1,5 +1,6 @@
 package com.epam.health.tool.authentication.http;
 
+import com.epam.health.tool.authentication.exception.AuthenticationRequestException;
 import com.epam.health.tool.authentication.kerberos.KerberosAuthenticationClient;
 import com.epam.health.tool.authentication.ssh.SshAuthenticationClient;
 import com.epam.health.tool.dao.cluster.ClusterDao;
@@ -17,16 +18,16 @@ public class HttpAuthenticationClient {
     @Autowired
     private KerberosAuthenticationClient kerberosAuthenticationClient;
 
-    public String makeAuthenticatedRequest(ClusterEntity clusterEntity, String url, boolean useSpnego) {
+    public String makeAuthenticatedRequest(ClusterEntity clusterEntity, String url, boolean useSpnego) throws AuthenticationRequestException {
         return isUsingSpnego( useSpnego, clusterEntity.isSecured() ) ? makeDoAsRequest( clusterEntity, url )
                 : makeSimpleRequest( clusterEntity, url );
     }
 
-    public String makeAuthenticatedRequest( String clusterName, String url ) {
+    public String makeAuthenticatedRequest( String clusterName, String url ) throws AuthenticationRequestException {
         return makeAuthenticatedRequest( getClusterEntity( clusterName ), url, true );
     }
 
-    public String makeAuthenticatedRequest( String clusterName, String url, boolean useSpnego ) {
+    public String makeAuthenticatedRequest( String clusterName, String url, boolean useSpnego ) throws AuthenticationRequestException {
         return makeAuthenticatedRequest( getClusterEntity( clusterName ), url, useSpnego );
     }
 
@@ -38,15 +39,15 @@ public class HttpAuthenticationClient {
         return clusterDao.findByClusterName( clusterName );
     }
 
-    private String makeDoAsRequest( ClusterEntity clusterEntity, String url ) {
+    private String makeDoAsRequest( ClusterEntity clusterEntity, String url ) throws AuthenticationRequestException {
         return kerberosAuthenticationClient.makeDoAsAction( clusterEntity, () -> makeSimpleRequest( clusterEntity, url, true ));
     }
 
-    private String makeSimpleRequest( ClusterEntity clusterEntity, String url ) {
+    private String makeSimpleRequest( ClusterEntity clusterEntity, String url ) throws AuthenticationRequestException {
         return makeSimpleRequest( clusterEntity, url, false );
     }
 
-    private String makeSimpleRequest( ClusterEntity clusterEntity, String url, boolean useSpnego ) {
+    private String makeSimpleRequest( ClusterEntity clusterEntity, String url, boolean useSpnego ) throws AuthenticationRequestException {
         try {
             return BaseHttpAuthenticatedAction.get()
                     .withUsername( clusterEntity.getHttp().getUsername() )
@@ -54,7 +55,7 @@ public class HttpAuthenticationClient {
                     .withSpnego( useSpnego )
                     .makeAuthenticatedRequest( url );
         } catch (CommonUtilException e) {
-            throw new RuntimeException( e );
+            throw new AuthenticationRequestException( e );
         }
     }
 }

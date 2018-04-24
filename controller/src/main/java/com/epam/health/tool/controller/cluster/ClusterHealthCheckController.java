@@ -2,7 +2,6 @@ package com.epam.health.tool.controller.cluster;
 
 import com.epam.facade.model.ClusterHealthSummary;
 import com.epam.facade.model.HealthCheckActionType;
-import com.epam.facade.model.accumulator.results.impl.FsHealthCheckResult;
 import com.epam.facade.model.accumulator.results.impl.HdfsHealthCheckResult;
 import com.epam.facade.model.accumulator.HealthCheckResultsAccumulator;
 import com.epam.facade.model.accumulator.results.impl.YarnHealthCheckResult;

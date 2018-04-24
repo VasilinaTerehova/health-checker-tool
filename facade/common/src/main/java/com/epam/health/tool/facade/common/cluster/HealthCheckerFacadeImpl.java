@@ -18,20 +18,22 @@ import reactor.core.publisher.Flux;
 @Component
 public class HealthCheckerFacadeImpl implements IHealthCheckFacade {
     @Autowired
-    ClusterDao clusterDao;
+    protected ClusterDao clusterDao;
 
     @Autowired
     private HealthCheckActionImplResolver healthCheckActionImplResolver;
 
     public HealthCheckResultsAccumulator performHealthChecks(String clusterName, HealthCheckActionType healthCheckType) {
         ClusterEntity clusterEntity = clusterDao.findByClusterName( clusterName );
-        HealthCheckResultsAccumulator healthCheckResultsAccumulator = new HealthCheckResultsAccumulator();
+        HealthCheckResultsAccumulator healthCheckResultsAccumulator = HealthCheckResultsAccumulator.HealthCheckResultsModifier.get()
+                .setClusterName( clusterName ).modify();
 
         Flux.fromStream( healthCheckActionImplResolver.resolveActionImplementations( clusterEntity.getClusterTypeEnum().name(), healthCheckType ).stream() )
                 .parallel().doOnNext( serviceHealthCheckAction -> {
             try {
                 serviceHealthCheckAction.performHealthCheck(clusterEntity.getClusterName(), healthCheckResultsAccumulator);
             } catch (InvalidResponseException e) {
+                //Should be changed
                 throw new RuntimeException( e );
             }
         } ).subscribe();

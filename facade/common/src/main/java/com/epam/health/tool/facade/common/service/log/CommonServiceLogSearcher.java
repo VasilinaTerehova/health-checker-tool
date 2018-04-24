@@ -23,7 +23,8 @@ public abstract class CommonServiceLogSearcher implements IServiceLogsSearcher {
     private static final String PS_AUX_CLI = "ps aux | grep";
     private static final String NAME_VALUE_SEPARATOR = "=";
 
-    public CommonServiceLogSearcher(SshAuthenticationClient sshAuthenticationClient, ClusterDao clusterDao, IFacadeImplResolver<IRunningClusterParamReceiver> clusterParamReceiverIFacadeImplResolver) {
+    public CommonServiceLogSearcher(SshAuthenticationClient sshAuthenticationClient, ClusterDao clusterDao,
+                                    IFacadeImplResolver<IRunningClusterParamReceiver> clusterParamReceiverIFacadeImplResolver) {
         this.sshAuthenticationClient = sshAuthenticationClient;
         this.clusterDao = clusterDao;
         this.clusterParamReceiverIFacadeImplResolver = clusterParamReceiverIFacadeImplResolver;
@@ -42,7 +43,7 @@ public abstract class CommonServiceLogSearcher implements IServiceLogsSearcher {
     private ClusterNodes getClusterLiveNodes( ClusterEntity clusterEntity ) {
         try {
             return new ClusterNodes( this.clusterParamReceiverIFacadeImplResolver.resolveFacadeImpl( clusterEntity.getClusterTypeEnum().name() )
-                    .getHdfsNamenodeJson( clusterEntity ).getLiveNodes(), clusterEntity.getClusterName() );
+                    .getHdfsNamenodeJson( clusterEntity.getClusterName() ).getLiveNodes(), clusterEntity.getClusterName() );
         } catch (InvalidResponseException | ImplementationNotResolvedException | CommonUtilException e) {
             return new ClusterNodes( Collections.emptySet(), clusterEntity.getClusterName() );
         }

@@ -23,12 +23,14 @@ public class DownloadableFileConstants {
   }
 
   public static class YarnProperties {
-    public static final String YARN_RESOURCEMANAGER_WEBAPP_ADDRESS = "yarn.resourcemanager.webapp.address";;
+    public static final String YARN_RESOURCEMANAGER_WEBAPP_ADDRESS = "yarn.resourcemanager.webapp.address";
+    public static final String YARN_RESOURCEMANAGER_HTTPS_WEBAPP_ADDRESS = "yarn.resourcemanager.webapp.https.address";
+    public static final String YARN_RESOURCEMANAGER_HA_RM_IDS = "yarn.resourcemanager.ha.rm-ids";
     public static final String YARN_NODEMANAGER_LOG_DIRS = "yarn.nodemanager.log-dirs";
   }
 
   public static class HdfsProperties {
     public static final String DFS_NAMENODE_HTTP_ADDRESS = "dfs.namenode.http-address";
+    public static final String DFS_NAMENODE_HTTPS_ADDRESS = "dfs.namenode.https-address";
   }
-
 }

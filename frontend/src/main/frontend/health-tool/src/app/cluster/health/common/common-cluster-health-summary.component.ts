@@ -65,7 +65,14 @@ export class CommonClusterHealthSummaryComponent {
     return this._nodes;
   }
 
+  private clearFields() {
+    this._nodes = null;
+    this._memory = null;
+    this._hdfsUsage = null;
+  }
+
   private askForClusterSnapshot(checkHealthToken: CheckHealthToken) {
+    this.clearFields();
     this.askForFsClusterSnapshot(checkHealthToken);
     this.askForMemoryClusterSnapshot(checkHealthToken);
     this.askForHdfsMemoryClusterSnapshot(checkHealthToken);

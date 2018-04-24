@@ -2,8 +2,8 @@ package com.epam.health.tool.facade.cdh.cluster;
 
 import com.epam.facade.model.service.RoleJson;
 import com.epam.facade.model.service.YarnRoleEnum;
+import com.epam.health.tool.authentication.exception.AuthenticationRequestException;
 import com.epam.health.tool.authentication.http.HttpAuthenticationClient;
-import com.epam.health.tool.dao.cluster.ClusterDao;
 import com.epam.health.tool.facade.common.cluster.CommonRuningClusterParamReceiver;
 import com.epam.health.tool.facade.common.resolver.impl.ClusterSpecificComponent;
 import com.epam.health.tool.facade.exception.InvalidResponseException;
@@ -20,9 +20,6 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.util.List;
 
-import static com.epam.facade.model.service.DownloadableFileConstants.HdfsProperties.DFS_NAMENODE_HTTP_ADDRESS;
-import static com.epam.facade.model.service.DownloadableFileConstants.YarnProperties.YARN_NODEMANAGER_LOG_DIRS;
-
 /**
  * Created by Vasilina_Terehova on 4/14/2018.
  */
@@ -31,12 +28,11 @@ import static com.epam.facade.model.service.DownloadableFileConstants.YarnProper
 @ClusterSpecificComponent( ClusterTypeEnum.CDH )
 public class CdhRuningClusterParamReceiver extends CommonRuningClusterParamReceiver {
     @Autowired
-    protected ClusterDao clusterDao;
-    @Autowired
     private HttpAuthenticationClient httpAuthenticationClient;
 
-    public String getPropertySiteXml(ClusterEntity clusterEntity, String siteName, String propertyName) throws InvalidResponseException {
+    public String getPropertySiteXml( ClusterEntity clusterEntity, String siteName, String propertyName ) throws InvalidResponseException {
         String serviceFileName = getServiceFileName( clusterEntity.getClusterName(), siteName );
+
         if ( !isFileExist( clusterEntity.getClusterName(), siteName ) ) {
             String siteFileUrl = "http://" + clusterEntity.getHost() + ":7180/api/v10/clusters/" + clusterEntity.getClusterName()
                     + "/services/yarn/roles/" + findNodeManagerRole( clusterEntity ) + "/process/configFiles/" + siteName;
@@ -57,7 +53,7 @@ public class CdhRuningClusterParamReceiver extends CommonRuningClusterParamRecei
             return yarnRoles.stream().filter(roleJson -> roleJson.getType().equals(YarnRoleEnum.NODEMANAGER)).findAny()
                     .orElseThrow( () -> new InvalidResponseException( "Can't find NodeManager role on cluster - " + clusterEntity.getClusterName() ) ).getName();
         }
-        catch ( CommonUtilException ex ) {
+        catch ( CommonUtilException | AuthenticationRequestException ex ) {
             throw new InvalidResponseException( ex );
         }
     }
@@ -68,7 +64,7 @@ public class CdhRuningClusterParamReceiver extends CommonRuningClusterParamRecei
             System.out.println(xmlContent);
             FileCommonUtil.writeStringToFile( dest, xmlContent );
         }
-        catch ( CommonUtilException ex ) {
+        catch ( CommonUtilException | AuthenticationRequestException ex ) {
             throw new InvalidResponseException( ex );
         }
     }

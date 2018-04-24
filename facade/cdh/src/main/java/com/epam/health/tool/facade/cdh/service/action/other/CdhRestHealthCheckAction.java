@@ -1,6 +1,7 @@
 package com.epam.health.tool.facade.cdh.service.action.other;
 
 import com.epam.facade.model.ServiceStatus;
+import com.epam.health.tool.authentication.exception.AuthenticationRequestException;
 import com.epam.health.tool.facade.common.resolver.impl.ClusterSpecificComponent;
 import com.epam.health.tool.facade.common.resolver.impl.action.HealthCheckAction;
 import com.epam.facade.model.HealthCheckActionType;
@@ -21,11 +22,16 @@ public class CdhRestHealthCheckAction extends CommonOtherServicesHealthCheckActi
 
     @Override
     protected List<ServiceStatus> performHealthCheck(ClusterEntity clusterEntity) throws InvalidResponseException {
-        String url = "http://" + clusterEntity.getHost() + ":7180/api/v10/clusters/" + clusterEntity.getClusterName() + "/services";
+        try {
+            String url = "http://" + clusterEntity.getHost() + ":7180/api/v10/clusters/" + clusterEntity.getClusterName() + "/services";
 
-        String answer = httpAuthenticationClient.makeAuthenticatedRequest( clusterEntity.getClusterName(), url, false );
+            String answer = httpAuthenticationClient.makeAuthenticatedRequest( clusterEntity.getClusterName(), url, false );
 
-        return extractFromJsonString(answer);
+            return extractFromJsonString(answer);
+        }
+        catch ( AuthenticationRequestException ex ) {
+            throw new InvalidResponseException( ex );
+        }
     }
 
     private List<ServiceStatus> extractFromJsonString(String jsonString) throws InvalidResponseException {

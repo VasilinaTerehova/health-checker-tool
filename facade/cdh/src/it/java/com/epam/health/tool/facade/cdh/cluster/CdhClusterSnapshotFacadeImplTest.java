@@ -42,9 +42,9 @@ public class CdhClusterSnapshotFacadeImplTest {
         assertEquals("/yarn/container-logs", iRunningClusterParamReceiver.getLogDirectory("CDH512Unsecure"));
     }
 
-    @Test
-    public void testGetRmAddress() throws CommonUtilException, InvalidResponseException {
-        assertEquals("svqxbdcn6cdh512n3.pentahoqa.com:8088", getMemoryStatisticsAction.getActiveResourceManagerAddress("CDH512Unsecure"));
-    }
+//    @Test
+//    public void testGetRmAddress() throws CommonUtilException, InvalidResponseException {
+//        assertEquals("svqxbdcn6cdh512n3.pentahoqa.com:8088", getMemoryStatisticsAction.getActiveResourceManagerAddress("CDH512Unsecure"));
+//    }
 
 }

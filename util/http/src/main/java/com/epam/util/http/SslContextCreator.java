@@ -11,13 +11,16 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 
 public class SslContextCreator {
-    public static SSLContext createSslContext() throws CommonUtilException {
-        try {
-            SSLContextBuilder sslcb = new SSLContextBuilder();
-            sslcb.loadTrustMaterial( KeyStore.getInstance( KeyStore.getDefaultType() ),
-                    new TrustSelfSignedStrategy() );
+    private SslContextCreator() {}
 
-            return sslcb.build();
+    public static SslContextCreator get() {
+        return new SslContextCreator();
+    }
+
+    public SSLContext createSslContextAllowAll() throws CommonUtilException {
+        try {
+            return new SSLContextBuilder()
+                    .loadTrustMaterial(null, (certificate, authType) -> true).build();
         } catch ( NoSuchAlgorithmException | KeyStoreException | KeyManagementException e ) {
             throw new CommonUtilException( e );
         }

@@ -1,5 +1,6 @@
 package com.epam.health.tool.facade.hdp.cluster;
 
+import com.epam.health.tool.authentication.exception.AuthenticationRequestException;
 import com.epam.health.tool.facade.common.cluster.CommonRuningClusterParamReceiver;
 import com.epam.health.tool.facade.common.resolver.impl.ClusterSpecificComponent;
 import com.epam.health.tool.facade.exception.InvalidResponseException;
@@ -28,10 +29,8 @@ public class HdpRuningClusterParamReceiver extends CommonRuningClusterParamRecei
         try {
             return CommonJsonHandler.get().getTypedValueFromInnerField(
                     httpAuthenticationClient.makeAuthenticatedRequest(clusterName, urlConfiguration, false), String.class, "items", "properties", propertyName);
-        } catch (CommonUtilException e) {
+        } catch ( CommonUtilException | AuthenticationRequestException e ) {
             throw new InvalidResponseException(e);
         }
-
     }
-
 }

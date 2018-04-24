@@ -1,6 +1,5 @@
 package com.epam.health.tool.facade.common.service.action;
 
-import com.epam.facade.model.ClusterHealthSummary;
 import com.epam.facade.model.accumulator.HealthCheckResultsAccumulator;
 import com.epam.facade.model.projection.ClusterEntityProjection;
 import com.epam.facade.model.projection.ClusterSnapshotEntityProjection;
@@ -13,9 +12,7 @@ import com.epam.health.tool.facade.service.action.IServiceHealthCheckAction;
 import com.epam.health.tool.model.ClusterEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
-
-public abstract class CommonRestHealthCheckAction implements IServiceHealthCheckAction {
+public abstract class CommonRestHealthCheckAction<T> implements IServiceHealthCheckAction {
     @Autowired
     protected HttpAuthenticationClient httpAuthenticationClient;
 
@@ -32,10 +29,10 @@ public abstract class CommonRestHealthCheckAction implements IServiceHealthCheck
     }
 
     //Use for FS actions
-    protected abstract ClusterHealthSummary performRestHealthCheck(ClusterEntity clusterEntity) throws InvalidResponseException, ImplementationNotResolvedException;
+    protected abstract T performRestHealthCheck( ClusterEntity clusterEntity ) throws InvalidResponseException, ImplementationNotResolvedException;
 
     protected abstract void saveClusterHealthSummaryToAccumulator( HealthCheckResultsAccumulator healthCheckResultsAccumulator,
-                                                        ClusterHealthSummary clusterHealthSummary );
+                                                                   T healthCheckResult );
 
     //Mb with Transferer
     protected ClusterEntityProjection recreateClusterEntityProjection(ClusterSnapshotEntityProjection clusterSnapshotEntityProjection) {

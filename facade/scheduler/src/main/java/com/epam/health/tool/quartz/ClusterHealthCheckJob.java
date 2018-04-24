@@ -6,6 +6,7 @@ import com.epam.health.tool.dao.cluster.ClusterServiceSnapshotDao;
 import com.epam.health.tool.facade.cluster.IClusterSnapshotFacade;
 import com.epam.health.tool.facade.common.util.DateUtil;
 import com.epam.health.tool.facade.exception.ImplementationNotResolvedException;
+import com.epam.health.tool.facade.exception.InvalidResponseException;
 import com.epam.health.tool.facade.resolver.IFacadeImplResolver;
 import com.epam.health.tool.model.ClusterEntity;
 import org.slf4j.Logger;
@@ -34,7 +35,7 @@ public class ClusterHealthCheckJob {
     @Autowired
     private IFacadeImplResolver<IClusterSnapshotFacade> clusterSnapshotFacadeIFacadeImplResolver;
 
-    @Scheduled(fixedDelay = 1 * 60 * 1000)
+    @Scheduled(fixedDelay = 60 * 60 * 1000)
     public void checkClustersHealth() {
         log.info("The time is now {}", dateFormat.format(new Date()));
         Date hourAgo = DateUtil.dateHourPlus(new Date());
@@ -45,7 +46,7 @@ public class ClusterHealthCheckJob {
             try {
                 clusterSnapshotFacadeIFacadeImplResolver.resolveFacadeImpl(clusterEntity.getClusterTypeEnum().name()).makeClusterSnapshot(
                         ClusterAccumulatorToken.buildAllCheck(clusterEntity.getClusterName()));
-            } catch (ImplementationNotResolvedException e) {
+            } catch (ImplementationNotResolvedException | InvalidResponseException e) {
                 log.error("Can't find facade implementation for this vendor ", e);
             }
 

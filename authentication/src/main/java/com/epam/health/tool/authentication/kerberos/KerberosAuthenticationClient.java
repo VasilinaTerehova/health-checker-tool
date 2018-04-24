@@ -1,5 +1,6 @@
 package com.epam.health.tool.authentication.kerberos;
 
+import com.epam.health.tool.authentication.exception.AuthenticationRequestException;
 import com.epam.health.tool.authentication.http.HttpAuthenticationClient;
 import com.epam.health.tool.authentication.ssh.SshAuthenticationClient;
 import com.epam.health.tool.model.ClusterEntity;
@@ -29,12 +30,12 @@ public class KerberosAuthenticationClient {
     private Subject lastUsedSubject;
     private static final Logger logger = Logger.getLogger( KerberosAuthenticationClient.class );
 
-    public <T> T makeDoAsAction( ClusterEntity clusterEntity, PrivilegedExceptionAction<T> action ) {
+    public <T> T makeDoAsAction( ClusterEntity clusterEntity, PrivilegedExceptionAction<T> action ) throws AuthenticationRequestException {
         lock.lock();
         try {
             return Subject.doAs( getKerberosSubject( clusterEntity ), action );
         } catch (PrivilegedActionException e) {
-            throw new RuntimeException( e );
+            throw new AuthenticationRequestException( e );
         }
         finally {
             lock.unlock();

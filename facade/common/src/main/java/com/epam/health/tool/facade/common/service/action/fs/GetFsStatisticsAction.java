@@ -1,7 +1,5 @@
 package com.epam.health.tool.facade.common.service.action.fs;
 
-import com.epam.facade.model.ClusterHealthSummary;
-import com.epam.facade.model.ClusterSnapshotEntityProjectionImpl;
 import com.epam.facade.model.HealthCheckActionType;
 import com.epam.facade.model.accumulator.HealthCheckResultsAccumulator;
 import com.epam.facade.model.fs.NodeDiskUsage;
@@ -29,23 +27,22 @@ import java.util.Set;
  */
 @Component( CommonActionNames.FS_CHECK )
 @HealthCheckAction( HealthCheckActionType.FS )
-public class GetFsStatisticsAction extends CommonRestHealthCheckAction {
+public class GetFsStatisticsAction extends CommonRestHealthCheckAction<List<? extends NodeSnapshotEntityProjection>> {
     @Autowired
     private SshAuthenticationClient sshAuthenticationClient;
     @Autowired
     private IFacadeImplResolver<IRunningClusterParamReceiver> runningClusterParamImplResolver;
 
     @Override
-    protected ClusterHealthSummary performRestHealthCheck(ClusterEntity clusterEntity) throws InvalidResponseException, ImplementationNotResolvedException {
-        return new ClusterHealthSummary(
-                new ClusterSnapshotEntityProjectionImpl(null, null,
-                        null, null, getAvailableDiskDfs(clusterEntity.getClusterName())));
+    protected List<? extends NodeSnapshotEntityProjection> performRestHealthCheck(ClusterEntity clusterEntity) throws InvalidResponseException, ImplementationNotResolvedException {
+        return getAvailableDiskDfs(clusterEntity.getClusterName());
     }
 
     @Override
-    protected void saveClusterHealthSummaryToAccumulator(HealthCheckResultsAccumulator healthCheckResultsAccumulator, ClusterHealthSummary clusterHealthSummary) {
+    protected void saveClusterHealthSummaryToAccumulator(HealthCheckResultsAccumulator healthCheckResultsAccumulator,
+                                                         List<? extends NodeSnapshotEntityProjection> healthCheckResult) {
         HealthCheckResultsAccumulator.HealthCheckResultsModifier.get( healthCheckResultsAccumulator )
-                .setNodeSnapshot( clusterHealthSummary.getCluster().getNodes() ).modify();
+                .setNodeSnapshot( healthCheckResult ).modify();
     }
 
     private List<? extends NodeSnapshotEntityProjection> getAvailableDiskDfs(String clusterName) throws InvalidResponseException, ImplementationNotResolvedException {
@@ -56,7 +53,8 @@ public class GetFsStatisticsAction extends CommonRestHealthCheckAction {
         //HostExtracter.getAllNodeNames(clusterEntity.getHost(), 3)
         //how get node count
         try {
-            Set<String> liveNodes = runningClusterParamImplResolver.resolveFacadeImpl(clusterEntity.getClusterTypeEnum().name()).getHdfsNamenodeJson(clusterEntity).getLiveNodes();
+            Set<String> liveNodes = runningClusterParamImplResolver.resolveFacadeImpl(clusterEntity.getClusterTypeEnum().name())
+                    .getHdfsNamenodeJson(clusterEntity.getClusterName()).getLiveNodes();
             for (String node : liveNodes) {
                 String availableDiskDfs = getAvailableDiskDfsViaSsh(clusterEntity, node);
                 nodeDiskUsages.add(mapAvailableDiskDfsStringToNodeDiskUsage(node, availableDiskDfs));

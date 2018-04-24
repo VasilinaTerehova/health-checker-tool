@@ -1,11 +1,7 @@
 package com.epam.health.tool.facade.common.service.action.other;
 
-import com.epam.facade.model.ClusterHealthSummary;
-import com.epam.facade.model.ClusterSnapshotEntityProjectionImpl;
 import com.epam.facade.model.ServiceStatus;
 import com.epam.facade.model.accumulator.HealthCheckResultsAccumulator;
-import com.epam.facade.model.projection.ClusterEntityProjection;
-import com.epam.facade.model.projection.impl.ClusterEntityProjectionImpl;
 import com.epam.health.tool.facade.common.service.action.CommonRestHealthCheckAction;
 import com.epam.health.tool.facade.exception.ImplementationNotResolvedException;
 import com.epam.health.tool.facade.exception.InvalidResponseException;
@@ -18,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-public abstract class CommonOtherServicesHealthCheckAction extends CommonRestHealthCheckAction {
+public abstract class CommonOtherServicesHealthCheckAction extends CommonRestHealthCheckAction<List<ServiceStatus>> {
     @Autowired
     protected SVTransfererManager svTransfererManager;
     @Autowired
@@ -28,17 +24,15 @@ public abstract class CommonOtherServicesHealthCheckAction extends CommonRestHea
     protected abstract List<ServiceStatus> performHealthCheck( ClusterEntity clusterEntity ) throws InvalidResponseException;
 
     @Override
-    protected ClusterHealthSummary performRestHealthCheck(ClusterEntity clusterEntity) throws InvalidResponseException {
-        return new ClusterHealthSummary(
-                new ClusterSnapshotEntityProjectionImpl( mapEntityToProjection( clusterEntity ), getServiceStatuses( clusterEntity ),
-                        null, null, null));
+    protected List<ServiceStatus> performRestHealthCheck(ClusterEntity clusterEntity) throws InvalidResponseException {
+        return getServiceStatuses( clusterEntity );
     }
 
     //Don't clear existing data
     protected void saveClusterHealthSummaryToAccumulator( HealthCheckResultsAccumulator healthCheckResultsAccumulator,
-                                                          ClusterHealthSummary clusterHealthSummary ) {
+                                                          List<ServiceStatus> healthCheckResult ) {
         HealthCheckResultsAccumulator.HealthCheckResultsModifier.get( healthCheckResultsAccumulator )
-                .setServiceStatusList( clusterHealthSummary.getServiceStatusList() ).modify();
+                .setServiceStatusList( healthCheckResult ).modify();
     }
 
     private List<ServiceStatus> getServiceStatuses( ClusterEntity clusterEntity ) throws InvalidResponseException {
@@ -58,10 +52,5 @@ public abstract class CommonOtherServicesHealthCheckAction extends CommonRestHea
         } catch (ImplementationNotResolvedException e) {
             logger.error( e.getMessage() );
         }
-    }
-
-    private ClusterEntityProjection mapEntityToProjection(ClusterEntity clusterEntity ) {
-        return svTransfererManager.<ClusterEntity, ClusterEntityProjectionImpl>getTransferer( ClusterEntity.class, ClusterEntityProjectionImpl.class )
-                .transfer( clusterEntity, ClusterEntityProjectionImpl.class );
     }
 }
