@@ -1,6 +1,9 @@
 import { Component, Input } from '@angular/core';
 
-import { ClusterSnapshot } from '../../../../cluster/cluster-snapshot.model';
+import { ClusterState } from '../../../../cluster/cluster-state.model';
+import { NodeFs } from '../node-fs.model';
+import { HdfsUsage } from '../hdfs.model';
+import { Memory } from '../memory.model';
 
 @Component({
   selector: 'common-static-cluster-health-summary',
@@ -8,36 +11,17 @@ import { ClusterSnapshot } from '../../../../cluster/cluster-snapshot.model';
 })
 export class CommonStaticClusterHealthSummaryComponent {
 
-  isCollapsed: boolean;
+  @Input() clusterState: ClusterState;
 
-  @Input() clusterSnapshot: ClusterSnapshot;
-
-  get cluster(): ClusterSnapshot {
-    return this.clusterSnapshot;
+  get nodes(): NodeFs[] {
+    return this.clusterState.cluster.nodes;
   }
 
-  calcMoreUsedDisk(): any {
-    return this.isClusterSnapshotValid() ? this.clusterSnapshot.nodes.map(node => {
-      return {
-        "used": (node.usedGb * 100 / node.totalGb).toPrecision(2),
-        "host": node.node
-      }
-    }).sort((one, two) => {
-      if (one.used > two.used) {
-        return 1;
-      }
-
-      return -1;
-    }).pop() : 0;
+  get hdfsUsage(): HdfsUsage {
+    return this.clusterState.cluster.hdfsUsage;
   }
 
-  private isClusterSnapshotValid(): boolean {
-    if (this.clusterSnapshot && this.clusterSnapshot.nodes) {
-      return true;
-    }
-    else {
-      return false;
-    }
+  get memory(): Memory {
+    return this.clusterState.cluster.memoryUsage;
   }
-
 }

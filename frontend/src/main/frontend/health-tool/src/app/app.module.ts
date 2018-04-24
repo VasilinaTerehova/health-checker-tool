@@ -28,6 +28,7 @@ import { ServiceListHistoryComponent } from "./service/service-status-history/se
 import { ServiceListStaticComponent } from "./service/list/static/service-list-static.component";
 import { CommonStaticClusterHealthSummaryComponent } from "./cluster/health/common/static/common-static-cluster-health-summary.component";
 import { LoadingLabelComponent } from "./shared/loading/loading-label.component";
+import { CommonClusterHealthComponent } from './cluster/health/common/common-cluster-health.component';
 //Directives and pipes
 import { ClusterListSearchByNamePipe } from './shared/menu/side/cluster-list.pipe';
 import { ServiceTableRowDirective } from './service/list/table/service-table-row.directive';
@@ -53,7 +54,7 @@ export function createTranslateLoader(http: HttpClient) {
   declarations: [
     AppComponent, TopMenuComponent, SideBarComponent, HomeComponent, ClusterListSearchByNamePipe, ClusterComponent, ErrorReportingComponent, YarnApplicationListComponent,
     ServiceListComponent, ServiceListStaticComponent, ServiceListHistoryComponent, ClusterEditComponent, ConfirmModalComponent, ServiceTableRowDirective, ServiceListSortPipe,
-    CommonClusterHealthSummaryComponent, HdfsClusterHealthSummaryComponent, ServiceHealthLabelDirective, CommonStaticClusterHealthSummaryComponent, LoadingLabelComponent
+    CommonClusterHealthSummaryComponent, HdfsClusterHealthSummaryComponent, ServiceHealthLabelDirective, CommonStaticClusterHealthSummaryComponent, LoadingLabelComponent, CommonClusterHealthComponent
   ],
   entryComponents: [ClusterEditComponent, ConfirmModalComponent],
   imports: [
