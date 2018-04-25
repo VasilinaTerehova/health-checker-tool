@@ -7,7 +7,7 @@ import com.epam.facade.model.projection.JobResultProjection;
 import com.epam.health.tool.facade.common.resolver.impl.action.HealthCheckAction;
 import com.epam.health.tool.facade.common.service.action.CommonActionNames;
 import com.epam.health.tool.facade.common.service.action.CommonSshHealthCheckAction;
-import com.epam.health.tool.facade.exception.InvalidResponseException;
+import com.epam.facade.model.exception.InvalidResponseException;
 import com.epam.health.tool.model.ClusterEntity;
 import com.epam.health.tool.model.ServiceStatusEnum;
 import org.springframework.beans.factory.annotation.Autowired;

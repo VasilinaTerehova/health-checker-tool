@@ -1,6 +1,6 @@
 package com.epam.health.tool.facade.common.resolver.impl;
 
-import com.epam.health.tool.facade.cluster.IRunningClusterParamReceiver;
+import com.epam.health.tool.facade.cluster.receiver.IRunningClusterParamReceiver;
 import com.epam.health.tool.facade.common.resolver.CommonFacadeImplResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

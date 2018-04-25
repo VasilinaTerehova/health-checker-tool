@@ -3,7 +3,7 @@ package com.epam.health.tool.facade.cluster;
 import com.epam.facade.model.ClusterHealthSummary;
 import com.epam.facade.model.accumulator.ClusterAccumulatorToken;
 import com.epam.facade.model.accumulator.HealthCheckResultsAccumulator;
-import com.epam.health.tool.facade.exception.InvalidResponseException;
+import com.epam.facade.model.exception.InvalidResponseException;
 
 import java.util.List;
 

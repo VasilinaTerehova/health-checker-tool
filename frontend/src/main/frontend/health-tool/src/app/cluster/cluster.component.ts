@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs/Subscription';
 //Models
 import { Cluster } from '../shared/cluster/cluster.model';
 import { JobExample } from './health/job-example.model';
-import { HdfsHealthReport } from './health/hdfs/hdfs-health-report.model';
+import { ServiceStatus } from "../service/service-status.model";
 import { ClusterSnapshot } from './cluster-snapshot.model';
 import { CheckHealthToken } from './health/check-health-token.model';
 //Services
@@ -23,8 +23,8 @@ export class ClusterComponent implements OnInit, OnDestroy {
   //For Inputs should use complex types
   private _checkHealthToken: CheckHealthToken;
   //Reports
-  private _hdfsHealthReport: HdfsHealthReport;
-  private _yarnHealthReport: HdfsHealthReport;
+  private _hdfsHealthReport: ServiceStatus;
+  private _yarnHealthReport: ServiceStatus;
   //Sub notification chanel
   private _sub: Subscription;
 
@@ -82,11 +82,11 @@ export class ClusterComponent implements OnInit, OnDestroy {
     return this._checkHealthToken;
   }
 
-  get hdfsHealthReport(): HdfsHealthReport {
+  get hdfsHealthReport(): ServiceStatus {
     return this._hdfsHealthReport;
   }
 
-  get yarnHealthReport(): HdfsHealthReport {
+  get yarnHealthReport(): ServiceStatus {
     return this._yarnHealthReport;
   }
 
@@ -98,7 +98,11 @@ export class ClusterComponent implements OnInit, OnDestroy {
   private ascForHdfsReports() {
     this._hdfsHealthReport = null;
     this.clusterHealthCheckService.getHdfsClusterState( this._checkHealthToken.clusterName, this._checkHealthToken.token ).subscribe(
-      data => this._hdfsHealthReport = data,
+      data => {
+        if ( data ) {
+          this._hdfsHealthReport = data.serviceStatusList.filter( status => status.displayName == "YARN" )[0];
+        }
+      },
       error => this.errorReportingService.reportHttpError( error )
     );
   }
@@ -106,7 +110,11 @@ export class ClusterComponent implements OnInit, OnDestroy {
   private ascForYarnReports() {
     this._yarnHealthReport = null;
     this.clusterHealthCheckService.getYarnClusterState( this._checkHealthToken.clusterName, this._checkHealthToken.token ).subscribe(
-      data => this._yarnHealthReport = data,
+      data => {
+        if ( data ) {
+          this._hdfsHealthReport = data.serviceStatusList.filter( status => status.displayName == "HDFS" )[0];
+        }
+      },
       error => this.errorReportingService.reportHttpError( error )
     )
   }

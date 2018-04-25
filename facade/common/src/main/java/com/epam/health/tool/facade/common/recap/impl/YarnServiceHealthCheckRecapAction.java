@@ -1,6 +1,7 @@
 package com.epam.health.tool.facade.common.recap.impl;
 
 import com.epam.facade.model.accumulator.HealthCheckResultsAccumulator;
+import com.epam.facade.model.exception.InvalidResponseException;
 import com.epam.facade.model.projection.JobResultProjection;
 import com.epam.facade.model.projection.ServiceStatusProjection;
 import com.epam.facade.model.validation.ClusterHealthValidationResult;
@@ -15,10 +16,15 @@ import java.util.stream.Collectors;
 public class YarnServiceHealthCheckRecapAction implements IServiceHealthCheckRecapAction {
     @Override
     public void doRecapHealthCheck(HealthCheckResultsAccumulator healthCheckResultsAccumulator, ClusterHealthValidationResult clusterHealthValidationResult) {
-        ServiceStatusProjection serviceHealthCheckResult = healthCheckResultsAccumulator.getServiceHealthCheckResult(ServiceTypeEnum.YARN);
-        if (!isYarnCheckSuccess(serviceHealthCheckResult)) {
-            clusterHealthValidationResult.setClusterHealthy(false);
-            clusterHealthValidationResult.appendErrorSummary(getYarnCheckErrorsAsString(serviceHealthCheckResult));
+        try {
+            ServiceStatusProjection serviceHealthCheckResult = healthCheckResultsAccumulator.getServiceHealthCheckResult(ServiceTypeEnum.YARN);
+            if (!isYarnCheckSuccess(serviceHealthCheckResult)) {
+                clusterHealthValidationResult.setClusterHealthy(false);
+                clusterHealthValidationResult.appendErrorSummary(getYarnCheckErrorsAsString(serviceHealthCheckResult));
+            }
+        }
+        catch ( InvalidResponseException ex ) {
+            //logging here
         }
     }
 

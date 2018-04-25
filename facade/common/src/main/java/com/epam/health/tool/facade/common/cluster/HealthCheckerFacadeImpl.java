@@ -6,7 +6,7 @@ import com.epam.facade.model.accumulator.HealthCheckResultsAccumulator;
 import com.epam.health.tool.dao.cluster.ClusterDao;
 import com.epam.health.tool.facade.cluster.IHealthCheckFacade;
 import com.epam.health.tool.facade.common.resolver.impl.action.HealthCheckActionImplResolver;
-import com.epam.health.tool.facade.exception.InvalidResponseException;
+import com.epam.facade.model.exception.InvalidResponseException;
 import com.epam.health.tool.model.ClusterEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

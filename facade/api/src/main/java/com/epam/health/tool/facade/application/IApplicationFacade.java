@@ -1,7 +1,7 @@
 package com.epam.health.tool.facade.application;
 
 import com.epam.facade.model.ApplicationInfo;
-import com.epam.health.tool.facade.exception.InvalidResponseException;
+import com.epam.facade.model.exception.InvalidResponseException;
 
 import java.util.List;
 

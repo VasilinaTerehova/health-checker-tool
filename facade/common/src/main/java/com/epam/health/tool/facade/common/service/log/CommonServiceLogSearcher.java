@@ -3,14 +3,13 @@ package com.epam.health.tool.facade.common.service.log;
 import com.epam.facade.model.ClusterNodes;
 import com.epam.health.tool.authentication.ssh.SshAuthenticationClient;
 import com.epam.health.tool.dao.cluster.ClusterDao;
-import com.epam.health.tool.facade.cluster.IRunningClusterParamReceiver;
-import com.epam.health.tool.facade.exception.ImplementationNotResolvedException;
-import com.epam.health.tool.facade.exception.InvalidResponseException;
+import com.epam.health.tool.facade.cluster.receiver.IRunningClusterParamReceiver;
+import com.epam.facade.model.exception.ImplementationNotResolvedException;
+import com.epam.facade.model.exception.InvalidResponseException;
 import com.epam.health.tool.facade.resolver.IFacadeImplResolver;
 import com.epam.health.tool.facade.service.log.IServiceLogsSearcher;
 import com.epam.health.tool.model.ClusterEntity;
 import com.epam.util.common.CheckingParamsUtil;
-import com.epam.util.common.CommonUtilException;
 import com.epam.util.ssh.delegating.SshExecResult;
 
 import java.util.Arrays;
@@ -43,8 +42,8 @@ public abstract class CommonServiceLogSearcher implements IServiceLogsSearcher {
     private ClusterNodes getClusterLiveNodes( ClusterEntity clusterEntity ) {
         try {
             return new ClusterNodes( this.clusterParamReceiverIFacadeImplResolver.resolveFacadeImpl( clusterEntity.getClusterTypeEnum().name() )
-                    .getHdfsNamenodeJson( clusterEntity.getClusterName() ).getLiveNodes(), clusterEntity.getClusterName() );
-        } catch (InvalidResponseException | ImplementationNotResolvedException | CommonUtilException e) {
+                    .getLiveNodes( clusterEntity.getClusterName() ), clusterEntity.getClusterName() );
+        } catch (InvalidResponseException | ImplementationNotResolvedException e) {
             return new ClusterNodes( Collections.emptySet(), clusterEntity.getClusterName() );
         }
     }
@@ -59,6 +58,6 @@ public abstract class CommonServiceLogSearcher implements IServiceLogsSearcher {
     }
 
     private boolean isLogPropertyExpression( String property ) {
-        return !CheckingParamsUtil.isParamsNullOrEmpty( property ) && property.equals( getLogPropertyName().concat( NAME_VALUE_SEPARATOR ) );
+        return !CheckingParamsUtil.isParamsNullOrEmpty( property ) && property.contains( getLogPropertyName().concat( NAME_VALUE_SEPARATOR ) );
     }
 }

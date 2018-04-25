@@ -1,12 +1,11 @@
 package com.epam.health.tool.quartz;
 
-import com.epam.facade.model.HealthCheckActionType;
 import com.epam.facade.model.accumulator.ClusterAccumulatorToken;
 import com.epam.health.tool.dao.cluster.ClusterServiceSnapshotDao;
 import com.epam.health.tool.facade.cluster.IClusterSnapshotFacade;
 import com.epam.health.tool.facade.common.util.DateUtil;
-import com.epam.health.tool.facade.exception.ImplementationNotResolvedException;
-import com.epam.health.tool.facade.exception.InvalidResponseException;
+import com.epam.facade.model.exception.ImplementationNotResolvedException;
+import com.epam.facade.model.exception.InvalidResponseException;
 import com.epam.health.tool.facade.resolver.IFacadeImplResolver;
 import com.epam.health.tool.model.ClusterEntity;
 import org.slf4j.Logger;

@@ -1,6 +1,6 @@
 package com.epam.health.tool.facade.resolver;
 
-import com.epam.health.tool.facade.exception.ImplementationNotResolvedException;
+import com.epam.facade.model.exception.ImplementationNotResolvedException;
 import com.epam.health.tool.model.ClusterTypeEnum;
 
 public interface IFacadeImplResolver<T> {

@@ -1,8 +1,7 @@
 package com.epam.health.tool.facade.service.status;
 
-import com.epam.facade.model.ServiceStatus;
 import com.epam.facade.model.projection.ServiceStatusProjection;
-import com.epam.health.tool.facade.exception.InvalidResponseException;
+import com.epam.facade.model.exception.InvalidResponseException;
 import com.epam.health.tool.model.ClusterEntity;
 import com.epam.health.tool.model.ServiceTypeEnum;
 

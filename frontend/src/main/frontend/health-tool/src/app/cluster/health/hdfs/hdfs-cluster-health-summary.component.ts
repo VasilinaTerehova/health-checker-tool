@@ -3,7 +3,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 //Models
 import { Cluster } from '../../../shared/cluster/cluster.model';
 import { JobExample } from '../job-example.model';
-import { HdfsHealthReport } from './hdfs-health-report.model';
+import { ServiceStatus } from "../../../service/service-status.model";
 
 @Component({
   selector: 'hdfs-cluster-health-summary',
@@ -13,23 +13,23 @@ export class HdfsClusterHealthSummaryComponent {
   @Input() serviceName: string;
   //Trigger refresh action to parent
   @Output() onHealthCheckRefresh = new EventEmitter<boolean>();
-  private _hdfsHealthReport: HdfsHealthReport;
+  private _hdfsHealthReport: ServiceStatus;
   isCollapsed: boolean;
   isLoading: Boolean;
 
   @Input()
-  set hdfsHealthReport( hdfsHealthReport: HdfsHealthReport ) {
+  set hdfsHealthReport( hdfsHealthReport: ServiceStatus ) {
     if ( hdfsHealthReport ) {
       this._hdfsHealthReport = hdfsHealthReport;
       this.isLoading = false;
     }
     else {
-      this._hdfsHealthReport = new HdfsHealthReport( "", "", new Array<JobExample>());
+      this._hdfsHealthReport = new ServiceStatus();
       this.isLoading = true;
     }
   }
 
-  get hdfsHealthReport(): HdfsHealthReport {
+  get hdfsHealthReport(): ServiceStatus {
     return this._hdfsHealthReport;
   }
 

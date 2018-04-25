@@ -21,7 +21,7 @@ public class SshAuthenticationClient {
     public SshExecResult executeCommand(ClusterEntity clusterEntity, String command, String host) {
         try {
             return SshCommonUtil.buildSshCommandExecutor( clusterEntity.getSsh().getUsername(), clusterEntity.getSsh().getPassword(), clusterEntity.getSsh().getPemFilePath() )
-                    .executeCommand( host, command );
+                    .executeCommand( trimHost( host ), command );
         } catch (CommonUtilException e) {
             throw new RuntimeException( e );
         }
@@ -46,5 +46,9 @@ public class SshAuthenticationClient {
 
     private ClusterEntity getClusterEntity( String clusterName ) {
         return clusterDao.findByClusterName( clusterName );
+    }
+
+    private String trimHost( String host ) {
+        return host.contains( ":" ) ? host.split( ":" )[0] : host;
     }
 }

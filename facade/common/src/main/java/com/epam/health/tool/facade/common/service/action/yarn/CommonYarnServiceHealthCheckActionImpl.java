@@ -8,8 +8,8 @@ import com.epam.facade.model.projection.ServiceStatusProjection;
 import com.epam.health.tool.facade.common.resolver.impl.action.HealthCheckAction;
 import com.epam.health.tool.facade.common.service.action.CommonActionNames;
 import com.epam.health.tool.facade.common.service.action.CommonSshHealthCheckAction;
-import com.epam.health.tool.facade.exception.ImplementationNotResolvedException;
-import com.epam.health.tool.facade.exception.InvalidResponseException;
+import com.epam.facade.model.exception.ImplementationNotResolvedException;
+import com.epam.facade.model.exception.InvalidResponseException;
 import com.epam.health.tool.facade.resolver.IFacadeImplResolver;
 import com.epam.health.tool.facade.service.status.IServiceStatusReceiver;
 import com.epam.health.tool.model.ClusterEntity;
@@ -30,11 +30,11 @@ public class CommonYarnServiceHealthCheckActionImpl extends CommonSshHealthCheck
     private final static String ERROR_REGEXP = "Exception";
     private final static String IS_SUCCESS_REGEXP = ".*Job .* completed.*";
     @Autowired
-    protected IFacadeImplResolver<IServiceStatusReceiver> serviceStatusReceiverIFacadeImplResolver;
+    private IFacadeImplResolver<IServiceStatusReceiver> serviceStatusReceiverIFacadeImplResolver;
 
     @Override
     public void performHealthCheck(String clusterName, HealthCheckResultsAccumulator healthCheckResultsAccumulator) throws InvalidResponseException {
-        ServiceStatus yarnHealthCheckResult = (ServiceStatus) healthCheckResultsAccumulator.getServiceHealthCheckResult(ServiceTypeEnum.YARN);
+        ServiceStatus yarnHealthCheckResult = (ServiceStatus) healthCheckResultsAccumulator.getServiceHealthCheckResultIfExists(ServiceTypeEnum.YARN);
 
         ClusterEntity clusterEntity = clusterDao.findByClusterName(clusterName);
         try {

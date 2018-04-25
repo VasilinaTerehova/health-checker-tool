@@ -1,4 +1,4 @@
-package com.epam.health.tool.facade.exception;
+package com.epam.facade.model.exception;
 
 public class ImplementationNotResolvedException extends Exception {
     public ImplementationNotResolvedException() {

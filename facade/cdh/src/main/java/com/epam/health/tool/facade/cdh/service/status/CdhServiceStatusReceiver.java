@@ -5,7 +5,7 @@ import com.epam.facade.model.projection.ServiceStatusProjection;
 import com.epam.health.tool.authentication.exception.AuthenticationRequestException;
 import com.epam.health.tool.facade.common.resolver.impl.ClusterSpecificComponent;
 import com.epam.health.tool.facade.common.service.status.CommonServiceStatusReceiver;
-import com.epam.health.tool.facade.exception.InvalidResponseException;
+import com.epam.facade.model.exception.InvalidResponseException;
 import com.epam.health.tool.model.ClusterEntity;
 import com.epam.health.tool.model.ClusterTypeEnum;
 import com.epam.health.tool.model.ServiceTypeEnum;

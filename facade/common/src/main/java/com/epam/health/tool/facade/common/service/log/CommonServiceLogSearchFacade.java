@@ -2,7 +2,7 @@ package com.epam.health.tool.facade.common.service.log;
 
 import com.epam.health.tool.authentication.ssh.SshAuthenticationClient;
 import com.epam.health.tool.dao.cluster.ClusterDao;
-import com.epam.health.tool.facade.cluster.IRunningClusterParamReceiver;
+import com.epam.health.tool.facade.cluster.receiver.IRunningClusterParamReceiver;
 import com.epam.health.tool.facade.resolver.IFacadeImplResolver;
 import com.epam.health.tool.facade.service.log.IServiceLogSearchFacade;
 import com.epam.health.tool.facade.service.log.IServiceLogsSearcher;

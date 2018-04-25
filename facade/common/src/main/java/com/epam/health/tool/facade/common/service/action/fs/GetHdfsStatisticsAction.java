@@ -4,15 +4,14 @@ import com.epam.facade.model.HealthCheckActionType;
 import com.epam.facade.model.accumulator.HealthCheckResultsAccumulator;
 import com.epam.facade.model.fs.HdfsNamenodeJson;
 import com.epam.facade.model.projection.HdfsUsageEntityProjection;
-import com.epam.health.tool.facade.cluster.IRunningClusterParamReceiver;
+import com.epam.health.tool.facade.cluster.receiver.IRunningClusterParamReceiver;
 import com.epam.health.tool.facade.common.resolver.impl.action.HealthCheckAction;
 import com.epam.health.tool.facade.common.service.action.CommonActionNames;
 import com.epam.health.tool.facade.common.service.action.CommonRestHealthCheckAction;
-import com.epam.health.tool.facade.exception.ImplementationNotResolvedException;
-import com.epam.health.tool.facade.exception.InvalidResponseException;
+import com.epam.facade.model.exception.ImplementationNotResolvedException;
+import com.epam.facade.model.exception.InvalidResponseException;
 import com.epam.health.tool.facade.resolver.IFacadeImplResolver;
 import com.epam.health.tool.model.ClusterEntity;
-import com.epam.util.common.CommonUtilException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -43,7 +42,7 @@ public class GetHdfsStatisticsAction extends CommonRestHealthCheckAction<HdfsUsa
                     .getHdfsNamenodeJson(clusterEntity.getClusterName());
 
             return hdfsUsageJson;
-        } catch (ImplementationNotResolvedException | CommonUtilException ex) {
+        } catch (ImplementationNotResolvedException ex) {
             throw new InvalidResponseException("Elements not found.", ex);
         }
     }

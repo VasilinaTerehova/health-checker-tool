@@ -8,15 +8,14 @@ import com.epam.facade.model.projection.impl.ClusterEntityProjectionImpl;
 import com.epam.health.tool.dao.cluster.ClusterDao;
 import com.epam.health.tool.dao.cluster.ClusterSnapshotDao;
 import com.epam.health.tool.facade.cluster.IClusterFacade;
-import com.epam.health.tool.facade.cluster.IRunningClusterParamReceiver;
+import com.epam.health.tool.facade.cluster.receiver.IRunningClusterParamReceiver;
 import com.epam.health.tool.facade.common.util.ClusterEntityModifier;
-import com.epam.health.tool.facade.exception.ImplementationNotResolvedException;
-import com.epam.health.tool.facade.exception.InvalidResponseException;
+import com.epam.facade.model.exception.ImplementationNotResolvedException;
+import com.epam.facade.model.exception.InvalidResponseException;
 import com.epam.health.tool.facade.resolver.IFacadeImplResolver;
 import com.epam.health.tool.model.ClusterEntity;
 import com.epam.health.tool.transfer.impl.SVTransfererManager;
 import com.epam.util.common.CheckingParamsUtil;
-import com.epam.util.common.CommonUtilException;
 import com.epam.util.common.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -120,8 +119,8 @@ public class ClusterFacadeImpl implements IClusterFacade {
     private ClusterNodes getClusterLiveNodes(ClusterEntity clusterEntity ) {
         try {
             return new ClusterNodes( this.clusterParamReceiverIFacadeImplResolver.resolveFacadeImpl( clusterEntity.getClusterTypeEnum().name() )
-                    .getHdfsNamenodeJson( clusterEntity.getClusterName() ).getLiveNodes(), clusterEntity.getClusterName() );
-        } catch (InvalidResponseException | ImplementationNotResolvedException | CommonUtilException e) {
+                    .getLiveNodes( clusterEntity.getClusterName() ), clusterEntity.getClusterName() );
+        } catch (InvalidResponseException | ImplementationNotResolvedException e) {
             return new ClusterNodes( Collections.emptySet(), clusterEntity.getClusterName() );
         }
     }

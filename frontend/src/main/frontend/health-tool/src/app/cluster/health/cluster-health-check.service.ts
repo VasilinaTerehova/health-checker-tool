@@ -20,11 +20,11 @@ export class ClusterHealthCheckService {
   }
 
   getYarnClusterState( clusterName: string, token: string = "empty", useSave: boolean = false ) {
-    return this.http.get<HdfsHealthReport>("http://localhost:8888/api/cluster/" + clusterName + "/status/yarn", { params: { "token": token, "useSave": useSave.toString() } });
+    return this.http.get<HealthCheckResult>("http://localhost:8888/api/cluster/" + clusterName + "/status/yarn", { params: { "token": token, "useSave": useSave.toString() } });
   }
 
   getHdfsClusterState( clusterName: string, token: string = "empty", useSave: boolean = false ) {
-    return this.http.get<HdfsHealthReport>("http://localhost:8888/api/cluster/" + clusterName + "/status/hdfs/job", { params: { "token": token, "useSave": useSave.toString() } });
+    return this.http.get<HealthCheckResult>("http://localhost:8888/api/cluster/" + clusterName + "/status/hdfs/job", { params: { "token": token, "useSave": useSave.toString() } });
   }
 
   getFsClusterState( clusterName: string, token: string = "empty", useSave: boolean = false ) {

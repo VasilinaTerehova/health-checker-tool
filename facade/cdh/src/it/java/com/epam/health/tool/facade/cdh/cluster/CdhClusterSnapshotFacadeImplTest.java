@@ -2,10 +2,10 @@ package com.epam.health.tool.facade.cdh.cluster;
 
 import com.epam.health.TestHealthCheckerToolApplication;
 import com.epam.health.tool.facade.cluster.IClusterSnapshotFacade;
-import com.epam.health.tool.facade.cluster.IRunningClusterParamReceiver;
+import com.epam.health.tool.facade.cluster.receiver.IRunningClusterParamReceiver;
 import com.epam.health.tool.facade.common.service.action.fs.GetFsStatisticsAction;
 import com.epam.health.tool.facade.common.service.action.fs.GetMemoryStatisticsAction;
-import com.epam.health.tool.facade.exception.InvalidResponseException;
+import com.epam.facade.model.exception.InvalidResponseException;
 import com.epam.util.common.CommonUtilException;
 import org.junit.Test;
 import org.junit.runner.RunWith;

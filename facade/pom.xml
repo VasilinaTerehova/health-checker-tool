@@ -18,6 +18,7 @@
         <module>cdh</module>
         <module>model</module>
         <module>hdp</module>
+        <module>context</module>
     </modules>
 
     <dependencies>

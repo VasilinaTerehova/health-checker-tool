@@ -1,13 +1,10 @@
 package com.epam.health.tool.facade.common.service.action.other;
 
-import com.epam.facade.model.ServiceStatus;
 import com.epam.facade.model.accumulator.HealthCheckResultsAccumulator;
-import com.epam.facade.model.projection.ClusterEntityProjection;
 import com.epam.facade.model.projection.ServiceStatusProjection;
-import com.epam.facade.model.projection.impl.ClusterEntityProjectionImpl;
 import com.epam.health.tool.facade.common.service.action.CommonRestHealthCheckAction;
-import com.epam.health.tool.facade.exception.ImplementationNotResolvedException;
-import com.epam.health.tool.facade.exception.InvalidResponseException;
+import com.epam.facade.model.exception.ImplementationNotResolvedException;
+import com.epam.facade.model.exception.InvalidResponseException;
 import com.epam.health.tool.facade.resolver.IFacadeImplResolver;
 import com.epam.health.tool.facade.service.log.IServiceLogSearchFacade;
 import com.epam.health.tool.facade.service.status.IServiceStatusReceiver;

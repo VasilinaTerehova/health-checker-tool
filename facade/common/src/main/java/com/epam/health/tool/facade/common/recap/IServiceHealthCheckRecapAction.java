@@ -4,6 +4,5 @@ import com.epam.facade.model.accumulator.HealthCheckResultsAccumulator;
 import com.epam.facade.model.validation.ClusterHealthValidationResult;
 
 public interface IServiceHealthCheckRecapAction {
-    void doRecapHealthCheck(HealthCheckResultsAccumulator healthCheckResultsAccumulator,
-                            ClusterHealthValidationResult clusterHealthValidationResult);
+    void doRecapHealthCheck(HealthCheckResultsAccumulator healthCheckResultsAccumulator, ClusterHealthValidationResult clusterHealthValidationResult);
 }

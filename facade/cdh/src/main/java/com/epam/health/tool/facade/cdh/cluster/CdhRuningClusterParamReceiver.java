@@ -4,15 +4,19 @@ import com.epam.facade.model.service.RoleJson;
 import com.epam.facade.model.service.YarnRoleEnum;
 import com.epam.health.tool.authentication.exception.AuthenticationRequestException;
 import com.epam.health.tool.authentication.http.HttpAuthenticationClient;
-import com.epam.health.tool.facade.common.cluster.CommonRuningClusterParamReceiver;
+import com.epam.health.tool.dao.cluster.ClusterDao;
+import com.epam.health.tool.facade.common.cluster.receiver.CommonRuningClusterParamReceiver;
 import com.epam.health.tool.facade.common.resolver.impl.ClusterSpecificComponent;
-import com.epam.health.tool.facade.exception.InvalidResponseException;
+import com.epam.health.tool.facade.context.IApplicationContext;
+import com.epam.facade.model.exception.InvalidResponseException;
 import com.epam.health.tool.model.ClusterEntity;
 import com.epam.health.tool.model.ClusterTypeEnum;
 import com.epam.util.common.CommonUtilException;
 import com.epam.util.common.file.FileCommonUtil;
 import com.epam.util.common.json.CommonJsonHandler;
 import com.epam.util.common.xml.XmlPropertyHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -27,10 +31,14 @@ import java.util.List;
 @Qualifier("CDH-cluster")
 @ClusterSpecificComponent( ClusterTypeEnum.CDH )
 public class CdhRuningClusterParamReceiver extends CommonRuningClusterParamReceiver {
-    @Autowired
-    private HttpAuthenticationClient httpAuthenticationClient;
+    private static final Logger log = LoggerFactory.getLogger( CdhRuningClusterParamReceiver.class );
 
-    public String getPropertySiteXml( ClusterEntity clusterEntity, String siteName, String propertyName ) throws InvalidResponseException {
+    @Autowired
+    public CdhRuningClusterParamReceiver(HttpAuthenticationClient httpAuthenticationClient, ClusterDao clusterDao, IApplicationContext applicationContext) {
+        super(httpAuthenticationClient, clusterDao, applicationContext);
+    }
+
+    public String getPropertySiteXml(ClusterEntity clusterEntity, String siteName, String propertyName ) throws InvalidResponseException {
         String serviceFileName = getServiceFileName( clusterEntity.getClusterName(), siteName );
 
         if ( !isFileExist( clusterEntity.getClusterName(), siteName ) ) {
@@ -43,7 +51,12 @@ public class CdhRuningClusterParamReceiver extends CommonRuningClusterParamRecei
         return XmlPropertyHandler.readXmlPropertyValue(serviceFileName, propertyName);
     }
 
-    private String findNodeManagerRole( ClusterEntity clusterEntity ) throws InvalidResponseException {
+    @Override
+    protected Logger log() {
+        return log;
+    }
+
+    private String findNodeManagerRole(ClusterEntity clusterEntity ) throws InvalidResponseException {
         try {
             String url = "http://" + clusterEntity.getHost() + ":7180/api/v10/clusters/" + clusterEntity.getClusterName() + "/services/yarn/roles";
             String answer = httpAuthenticationClient.makeAuthenticatedRequest( clusterEntity.getClusterName(), url, false);

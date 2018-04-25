@@ -8,7 +8,7 @@ import com.epam.health.tool.authentication.ssh.SshAuthenticationClient;
 import com.epam.health.tool.facade.application.IApplicationFacade;
 import com.epam.health.tool.facade.cluster.IClusterFacade;
 import com.epam.health.tool.facade.common.resolver.impl.ClusterSpecificComponent;
-import com.epam.health.tool.facade.exception.InvalidResponseException;
+import com.epam.facade.model.exception.InvalidResponseException;
 import com.epam.health.tool.model.ClusterTypeEnum;
 import com.epam.health.tool.transfer.impl.SVTransfererManager;
 import com.epam.util.common.CheckingParamsUtil;

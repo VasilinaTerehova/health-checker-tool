@@ -1,23 +1,25 @@
-package com.epam.health.tool.facade.common.cluster;
+package com.epam.health.tool.facade.common.cluster.receiver;
 
 import com.epam.facade.model.fs.HdfsNamenodeJson;
 import com.epam.facade.model.service.DownloadableFileConstants;
 import com.epam.health.tool.authentication.exception.AuthenticationRequestException;
 import com.epam.health.tool.authentication.http.HttpAuthenticationClient;
+import com.epam.health.tool.context.holder.NodesContextHolder;
+import com.epam.health.tool.context.holder.StringContextHolder;
 import com.epam.health.tool.dao.cluster.ClusterDao;
-import com.epam.health.tool.facade.cluster.IRunningClusterParamReceiver;
-import com.epam.health.tool.facade.exception.InvalidResponseException;
+import com.epam.health.tool.facade.cluster.receiver.IRunningClusterParamReceiver;
+import com.epam.health.tool.facade.context.IApplicationContext;
+import com.epam.facade.model.exception.InvalidResponseException;
 import com.epam.health.tool.model.ClusterEntity;
 import com.epam.util.common.CheckingParamsUtil;
 import com.epam.util.common.CommonUtilException;
 import com.epam.util.common.StringUtils;
 import com.epam.util.common.json.CommonJsonHandler;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
-import java.util.Date;
+import java.util.Collections;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
 
@@ -29,14 +31,21 @@ import static com.epam.facade.model.service.DownloadableFileConstants.YarnProper
  * Created by Vasilina_Terehova on 4/14/2018.
  */
 public abstract class CommonRuningClusterParamReceiver implements IRunningClusterParamReceiver {
-    private static final Logger log = LoggerFactory.getLogger( CommonRuningClusterParamReceiver.class );
+    protected HttpAuthenticationClient httpAuthenticationClient;
+    protected ClusterDao clusterDao;
+    private IApplicationContext applicationContext;
+
     private static final String HTTP = "http://";
     private static final String HTTPS = "https://";
-    @Autowired
-    protected HttpAuthenticationClient httpAuthenticationClient;
+    private static final String RM_ADDRESS_CACHE = "RM_ADDRESS_CACHE";
+    private static final String NAME_NODE_ADDRESS_CACHE = "NAME_NODE_ADDRESS_CACHE";
+    private static final String NODE_LIST_CACHE = "NODE_LIST_CACHE";
 
-    @Autowired
-    protected ClusterDao clusterDao;
+    public CommonRuningClusterParamReceiver(HttpAuthenticationClient httpAuthenticationClient, ClusterDao clusterDao, IApplicationContext applicationContext) {
+        this.httpAuthenticationClient = httpAuthenticationClient;
+        this.clusterDao = clusterDao;
+        this.applicationContext = applicationContext;
+    }
 
     @Override
     public String getPropertySiteXml(String clusterName, String siteName, String propertyName) throws InvalidResponseException {
@@ -47,20 +56,32 @@ public abstract class CommonRuningClusterParamReceiver implements IRunningCluste
     public String getLogDirectory( String clusterName ) throws InvalidResponseException {
         String logDirPropery = getPropertySiteXml( clusterName, DownloadableFileConstants.ServiceFileName.YARN, YARN_NODEMANAGER_LOG_DIRS);
 
-        System.out.println("log.dir: " + logDirPropery);
+        log().info( "Log dir for cluster - ".concat( clusterName ).concat( " dir - " ).concat( logDirPropery ) );
         return logDirPropery;
+    }
+
+    public Set<String> getLiveNodes( String clusterName ) throws InvalidResponseException {
+        Set<String> liveNodes = getNodeListFromCache( clusterName );
+
+        if ( CheckingParamsUtil.isParamListNotNullOrEmpty( liveNodes ) ) {
+            log().info( "Nodes list from cache - ".concat( liveNodes.toString() ) );
+        }
+        else {
+            liveNodes = getHdfsNamenodeJson( clusterName ).getLiveNodes();
+            addNodeListToCache( clusterName, liveNodes );
+        }
+
+        return liveNodes;
     }
 
     public HdfsNamenodeJson getHdfsNamenodeJson( String clusterName ) throws InvalidResponseException {
         try {
-            String nameNodeUrl = getNameNodeUrl( clusterName );
-            String url = nameNodeUrl + "/jmx?qry=Hadoop:service=NameNode,name=NameNodeInfo";
-
-            System.out.println(url);
+            String url = getNameNodeUrl( clusterName ) + "/jmx?qry=Hadoop:service=NameNode,name=NameNodeInfo";
             String answer = httpAuthenticationClient.makeAuthenticatedRequest( clusterName, url );
-            System.out.println(answer);
             HdfsNamenodeJson hdfsUsageJson = CommonJsonHandler.get().getTypedValueFromInnerFieldArrElement(answer, HdfsNamenodeJson.class, "beans");
-            System.out.println(hdfsUsageJson);
+
+            log().info( "Get for url - ".concat( url ).concat( " answer - \n" ).concat( answer ).concat( "\nHdfsNamenodeUsage:\n" ).concat( hdfsUsageJson.toString() ) );
+
             return hdfsUsageJson;
         }
         catch ( CommonUtilException | AuthenticationRequestException ex ) {
@@ -69,6 +90,34 @@ public abstract class CommonRuningClusterParamReceiver implements IRunningCluste
     }
 
     public String getNameNodeUrl( String clusterName ) throws InvalidResponseException {
+        String nameNodeUrl = getNodeAddressFromCache( clusterName );
+
+        if ( isAddressAvailable( nameNodeUrl, clusterName ) ) {
+            log().info( "From cache namenode url - ".concat( nameNodeUrl ) );
+        }
+        else {
+            nameNodeUrl = getRealNameNodeUrl( clusterName );
+            addNodeAddressToCache( clusterName, nameNodeUrl );
+        }
+
+        return nameNodeUrl;
+    }
+
+    public String getActiveResourceManagerAddress( String clusterName ) throws InvalidResponseException {
+        String rmAddress = getRmAddressFromCache( clusterName );
+
+        if ( isAddressAvailable( rmAddress, clusterName ) ) {
+            log().info( "From cache resource manager url - ".concat( rmAddress ) );
+        }
+        else {
+            rmAddress = getResourceManagerAddress( clusterName );
+            addRmAddressToCache( clusterName, rmAddress );
+        }
+
+        return rmAddress;
+    }
+
+    private String getRealNameNodeUrl( String clusterName ) throws InvalidResponseException {
         String nameNodeUrl = getPropertySiteXml( clusterName, DownloadableFileConstants.ServiceFileName.HDFS, DFS_NAMENODE_HTTP_ADDRESS );
 
         if (CheckingParamsUtil.isParamsNullOrEmpty(nameNodeUrl)) {
@@ -87,7 +136,7 @@ public abstract class CommonRuningClusterParamReceiver implements IRunningCluste
                 : throwAddressNotFoundException( "Namenode url not found for cluster - ".concat( clusterName ) );
     }
 
-    public String getActiveResourceManagerAddress( String clusterName ) throws InvalidResponseException {
+    private String getResourceManagerAddress( String clusterName ) throws InvalidResponseException {
         String rmAddress = getPropertySiteXml( clusterName, DownloadableFileConstants.ServiceFileName.YARN, YARN_RESOURCEMANAGER_WEBAPP_ADDRESS);
 
         if (CheckingParamsUtil.isParamsNullOrEmpty(rmAddress)) {
@@ -109,6 +158,34 @@ public abstract class CommonRuningClusterParamReceiver implements IRunningCluste
     }
 
     protected abstract String getPropertySiteXml( ClusterEntity clusterEntity, String siteName, String propertyName ) throws InvalidResponseException;
+    protected abstract Logger log();
+
+    //Cache operations
+    /*------------------------------------------------------------------------------------------------------*/
+    private String getRmAddressFromCache( String clusterName ) {
+        return applicationContext.getFromContext( clusterName, RM_ADDRESS_CACHE, StringContextHolder.class, StringUtils.EMPTY );
+    }
+
+    private String getNodeAddressFromCache( String clusterName ) {
+        return applicationContext.getFromContext( clusterName, NAME_NODE_ADDRESS_CACHE, StringContextHolder.class, StringUtils.EMPTY );
+    }
+
+    private Set<String> getNodeListFromCache(String clusterName ) {
+        return applicationContext.getFromContext( clusterName, NODE_LIST_CACHE, NodesContextHolder.class, Collections.emptySet());
+    }
+
+    private void addRmAddressToCache( String clusterName, String rmAddress ) {
+        applicationContext.addToContext( clusterName, RM_ADDRESS_CACHE, StringContextHolder.class, new StringContextHolder( rmAddress ));
+    }
+
+    private void addNodeAddressToCache( String clusterName, String nodeAddress ) {
+        applicationContext.addToContext( clusterName, NAME_NODE_ADDRESS_CACHE, StringContextHolder.class, new StringContextHolder( nodeAddress ));
+    }
+
+    private void addNodeListToCache( String clusterName, Set<String> nodeList ) {
+        applicationContext.addToContext( clusterName, NODE_LIST_CACHE, NodesContextHolder.class, new NodesContextHolder( nodeList ));
+    }
+    /*--------------------------------------------------------------------------------------------------------------------------------------*/
 
     private String getHAWebAppAddress( String[] rmIds, String clusterName, String webAppPrefix, String serviceFileName, String httpPrefix ) {
         ForkJoinPool forkJoinPool = new ForkJoinPool( rmIds.length );
@@ -132,7 +209,7 @@ public abstract class CommonRuningClusterParamReceiver implements IRunningCluste
     }
 
     private String getHAAddress( String webappPropertyName, String clusterName, String serviceFileName ) {
-        log.info( "Extract property - ".concat( webappPropertyName ).concat( " from cluster - " ).concat( clusterName )
+        log().info( "Extract property - ".concat( webappPropertyName ).concat( " from cluster - " ).concat( clusterName )
                 .concat( " from file - " ).concat( serviceFileName ) );
         try {
             return CheckingParamsUtil.isParamsNotNullOrEmpty( webappPropertyName )
@@ -143,7 +220,7 @@ public abstract class CommonRuningClusterParamReceiver implements IRunningCluste
         }
     }
 
-    private String[] getHAIds(String clusterName, String haIdPropertyName, String serviceFileName) throws InvalidResponseException {
+    private String[] getHAIds( String clusterName, String haIdPropertyName, String serviceFileName ) throws InvalidResponseException {
         String haIds = getPropertySiteXml( clusterName, serviceFileName, haIdPropertyName);
 
         return CheckingParamsUtil.isParamsNotNullOrEmpty( haIds ) ? haIds.split( "," ) : new String[]{};
@@ -158,17 +235,17 @@ public abstract class CommonRuningClusterParamReceiver implements IRunningCluste
     }
 
     private boolean isAddressAvailable( String rmAddress, String clusterName ) {
-        log.info( "Check address - ".concat( rmAddress ).concat( " from cluster - " ).concat( clusterName ) );
         try {
             if ( CheckingParamsUtil.isParamsNotNullOrEmpty( rmAddress, clusterName ) ) {
-                log.info( "Start - ".concat( new Date().toString() ) );
+                log().info( "Check address - ".concat( rmAddress ).concat( " from cluster - " ).concat( clusterName ) );
                 this.httpAuthenticationClient.makeAuthenticatedRequest( clusterName, rmAddress );
-                log.info( "Done - ".concat( new Date().toString() ) );
+            }
+            else {
+                return false;
             }
         }
         catch ( AuthenticationRequestException ex ) {
             //Catch Connection refused exception message
-            log.info( "Done - ".concat( new Date().toString() ) );
             return false;
         }
 

@@ -3,6 +3,8 @@ package com.epam.health.tool.authentication.kerberos;
 import com.epam.health.tool.authentication.exception.AuthenticationRequestException;
 import com.epam.health.tool.authentication.http.HttpAuthenticationClient;
 import com.epam.health.tool.authentication.ssh.SshAuthenticationClient;
+import com.epam.health.tool.context.holder.SubjectContextHolder;
+import com.epam.health.tool.facade.context.IApplicationContext;
 import com.epam.health.tool.model.ClusterEntity;
 import com.epam.util.common.CommonUtilException;
 import com.epam.util.common.file.DownloadedFileWrapper;
@@ -25,10 +27,12 @@ import java.util.concurrent.locks.ReentrantLock;
 public class KerberosAuthenticationClient {
     @Autowired
     private SshAuthenticationClient sshAuthenticationClient;
+
+    @Autowired
+    private IApplicationContext applicationContext;
     private ReentrantLock lock = new ReentrantLock();
-    private String lastUsedSubjectClusterName;
-    private Subject lastUsedSubject;
     private static final Logger logger = Logger.getLogger( KerberosAuthenticationClient.class );
+    private static final String KERBEROS_SUBJECT_CACHE = "KERBEROS_SUBJECT_CACHE";
 
     public <T> T makeDoAsAction( ClusterEntity clusterEntity, PrivilegedExceptionAction<T> action ) throws AuthenticationRequestException {
         lock.lock();
@@ -43,21 +47,29 @@ public class KerberosAuthenticationClient {
     }
 
     private Subject getKerberosSubject( ClusterEntity clusterEntity ) {
-        if ( lastUsedSubject != null && clusterEntity.getClusterName().equals( lastUsedSubjectClusterName ) ) {
-            logger.info( "Use subject from cache fro cluster - " + lastUsedSubjectClusterName );
-            return lastUsedSubject;
+        Subject subject = getSubjectFromCache( clusterEntity.getClusterName() );
+
+        if ( subject != null ) {
+            logger.info( "Use subject from cache for cluster - ".concat( clusterEntity.getClusterName() ) );
         }
         else {
-            Subject subject = createKerberosSubject( clusterEntity );
-            if ( subject != null ) {
-                lastUsedSubject = subject;
-                lastUsedSubjectClusterName = clusterEntity.getClusterName();
-
-                return lastUsedSubject;
+            //Remove other kerberos subjects
+            this.applicationContext.removeAllByMinorKey( KERBEROS_SUBJECT_CACHE );
+            subject = createKerberosSubject( clusterEntity );
+            if ( subject == null ) {
+                throw new RuntimeException( "Can't create kerberos subject for cluster - " + clusterEntity.getClusterName() );
+            }
+            else {
+                this.applicationContext.addToContext( clusterEntity.getClusterName(), KERBEROS_SUBJECT_CACHE,
+                        SubjectContextHolder.class, new SubjectContextHolder( subject ) );
             }
         }
 
-        throw new RuntimeException( "Can't create kerberos subject for cluster - " + clusterEntity.getClusterName() );
+        return subject;
+    }
+
+    private Subject getSubjectFromCache(String clusterName ) {
+        return this.applicationContext.getFromContext( clusterName, KERBEROS_SUBJECT_CACHE, SubjectContextHolder.class, null );
     }
 
     private Subject createKerberosSubject(ClusterEntity clusterEntity ) {

@@ -5,16 +5,15 @@ import com.epam.facade.model.accumulator.HealthCheckResultsAccumulator;
 import com.epam.facade.model.fs.NodeDiskUsage;
 import com.epam.facade.model.projection.NodeSnapshotEntityProjection;
 import com.epam.health.tool.authentication.ssh.SshAuthenticationClient;
-import com.epam.health.tool.facade.cluster.IRunningClusterParamReceiver;
+import com.epam.health.tool.facade.cluster.receiver.IRunningClusterParamReceiver;
 import com.epam.health.tool.facade.common.resolver.impl.action.HealthCheckAction;
 import com.epam.health.tool.facade.common.service.action.CommonActionNames;
 import com.epam.health.tool.facade.common.service.action.CommonRestHealthCheckAction;
-import com.epam.health.tool.facade.exception.ImplementationNotResolvedException;
-import com.epam.health.tool.facade.exception.InvalidResponseException;
+import com.epam.facade.model.exception.ImplementationNotResolvedException;
+import com.epam.facade.model.exception.InvalidResponseException;
 import com.epam.health.tool.facade.resolver.IFacadeImplResolver;
 import com.epam.health.tool.model.ClusterEntity;
 import com.epam.util.common.CheckingParamsUtil;
-import com.epam.util.common.CommonUtilException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -52,18 +51,14 @@ public class GetFsStatisticsAction extends CommonRestHealthCheckAction<List<? ex
         //Should be for all hosts
         //HostExtracter.getAllNodeNames(clusterEntity.getHost(), 3)
         //how get node count
-        try {
-            Set<String> liveNodes = runningClusterParamImplResolver.resolveFacadeImpl(clusterEntity.getClusterTypeEnum().name())
-                    .getHdfsNamenodeJson(clusterEntity.getClusterName()).getLiveNodes();
-            for (String node : liveNodes) {
-                String availableDiskDfs = getAvailableDiskDfsViaSsh(clusterEntity, node);
-                nodeDiskUsages.add(mapAvailableDiskDfsStringToNodeDiskUsage(node, availableDiskDfs));
-            }
-
-            return nodeDiskUsages;
-        } catch (CommonUtilException e) {
-            throw new InvalidResponseException(e);
+        Set<String> liveNodes = runningClusterParamImplResolver.resolveFacadeImpl(clusterEntity.getClusterTypeEnum().name())
+                .getLiveNodes( clusterName );
+        for (String node : liveNodes) {
+            String availableDiskDfs = getAvailableDiskDfsViaSsh(clusterEntity, node);
+            nodeDiskUsages.add(mapAvailableDiskDfsStringToNodeDiskUsage(node, availableDiskDfs));
         }
+
+        return nodeDiskUsages;
         //http://svqxbdcn6hdp26n1.pentahoqa.com:8080/api/v1/clusters/HDP26Unsecure/configurations?type=yarn-site&tag=version1
         // /var/run/cloudera-scm-agent/process/253-yarn-NODEMANAGER/yarn-site.xml
         //df -h . | tail -1 | awk '{print $4}'

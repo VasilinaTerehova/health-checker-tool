@@ -6,7 +6,7 @@ import com.epam.health.tool.facade.cluster.IClusterFacade;
 import com.epam.health.tool.facade.cluster.IClusterSnapshotFacade;
 import com.epam.health.tool.facade.common.cluster.CommonClusterSnapshotFacadeImpl;
 import com.epam.health.tool.facade.common.service.CommonServiceSnapshotFacadeImpl;
-import com.epam.health.tool.facade.exception.InvalidResponseException;
+import com.epam.facade.model.exception.InvalidResponseException;
 import com.epam.health.tool.facade.service.IServiceSnapshotFacade;
 import com.epam.health.tool.model.ClusterServiceSnapshotEntity;
 import org.springframework.boot.SpringApplication;

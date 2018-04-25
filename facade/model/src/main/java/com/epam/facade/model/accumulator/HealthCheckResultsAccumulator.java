@@ -1,13 +1,14 @@
 package com.epam.facade.model.accumulator;
 
 import com.epam.facade.model.accumulator.results.impl.FsHealthCheckResult;
+import com.epam.facade.model.exception.InvalidResponseException;
 import com.epam.facade.model.projection.*;
 import com.epam.health.tool.model.ServiceTypeEnum;
+import com.epam.util.common.CheckingParamsUtil;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 public class HealthCheckResultsAccumulator {
     //Separate services
@@ -30,11 +31,25 @@ public class HealthCheckResultsAccumulator {
         return clusterSnapshotAccumulator;
     }
 
-    public ServiceStatusProjection getServiceHealthCheckResult(ServiceTypeEnum serviceTypeEnum) {
-        if (serviceStatusList == null  || serviceStatusList.isEmpty()) {
+    public ServiceStatusProjection getServiceHealthCheckResult(ServiceTypeEnum serviceTypeEnum) throws InvalidResponseException {
+        if ( !CheckingParamsUtil.isParamListNotNullOrEmpty( this.serviceStatusList ) ) {
+            throw new InvalidResponseException( "Can't find service health check result for service type. Service status list is empty" );
+        }
+
+        return findServiceHealthCheckResult( serviceTypeEnum );
+    }
+
+    public ServiceStatusProjection getServiceHealthCheckResultIfExists(ServiceTypeEnum serviceTypeEnum) throws InvalidResponseException {
+        if ( !CheckingParamsUtil.isParamListNotNullOrEmpty( this.serviceStatusList ) ) {
             return null;
         }
-        return serviceStatusList.stream().filter(o -> o.getDisplayName().equals(serviceTypeEnum)).findAny().get();
+
+        return findServiceHealthCheckResult( serviceTypeEnum );
+    }
+
+    private ServiceStatusProjection findServiceHealthCheckResult(ServiceTypeEnum serviceTypeEnum) throws InvalidResponseException {
+        return serviceStatusList.stream().filter(o -> o.getDisplayName().equals(serviceTypeEnum)).findFirst()
+                .orElseThrow( () -> new InvalidResponseException( "Can't find service health check result for service type - ".concat( serviceTypeEnum.name() ) ));
     }
 
     public static class HealthCheckResultsModifier {

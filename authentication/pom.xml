@@ -28,6 +28,12 @@
             <artifactId>health-checker-tool-util-ssh</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!--Facade-->
+        <dependency>
+            <groupId>com.epam</groupId>
+            <artifactId>health-checker-tool-facade-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <!--Model-->
         <dependency>
             <groupId>com.epam</groupId>
@@ -37,6 +43,12 @@
         <dependency>
             <groupId>com.epam</groupId>
             <artifactId>health-checker-tool-repository-dao</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!--Context-->
+        <dependency>
+            <groupId>com.epam</groupId>
+            <artifactId>health-checker-tool-facade-context</artifactId>
             <version>${project.version}</version>
         </dependency>
         <!--Spring-->

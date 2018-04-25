@@ -3,7 +3,7 @@ package com.epam.health.tool.controller;
 import com.epam.facade.model.HealthCheckActionType;
 import com.epam.facade.model.accumulator.ClusterAccumulatorToken;
 import com.epam.health.tool.facade.cluster.IClusterFacade;
-import com.epam.health.tool.facade.exception.ImplementationNotResolvedException;
+import com.epam.facade.model.exception.ImplementationNotResolvedException;
 import com.epam.health.tool.facade.resolver.IFacadeImplResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 
