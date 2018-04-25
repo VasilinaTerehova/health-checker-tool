@@ -38,7 +38,7 @@ public abstract class CommonRestHealthCheckAction<T> implements IServiceHealthCh
     protected ClusterEntityProjection recreateClusterEntityProjection(ClusterSnapshotEntityProjection clusterSnapshotEntityProjection) {
         ClusterEntityProjectionImpl clusterEntityProjection = new ClusterEntityProjectionImpl();
         //Hack for now, should be changed
-        if ( clusterSnapshotEntityProjection.getClusterServiceShapshotEntityList() != null ) {
+        if ( clusterSnapshotEntityProjection.getClusterServiceSnapshotEntityList() != null ) {
             clusterEntityProjection.setId( clusterSnapshotEntityProjection.getId() );
             clusterEntityProjection.setClusterType( clusterSnapshotEntityProjection.getClusterType() );
             clusterEntityProjection.setHost( clusterSnapshotEntityProjection.getHost() );

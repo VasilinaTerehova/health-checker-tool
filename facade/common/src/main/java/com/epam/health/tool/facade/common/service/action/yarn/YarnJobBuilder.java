@@ -1,6 +1,7 @@
 package com.epam.health.tool.facade.common.service.action.yarn;
 
-import com.epam.facade.model.accumulator.results.impl.YarnHealthCheckResult;
+import com.epam.facade.model.accumulator.results.impl.JobResultImpl;
+import com.epam.facade.model.projection.JobResultProjection;
 import com.epam.util.common.CheckingParamsUtil;
 
 import java.util.ArrayList;
@@ -20,33 +21,33 @@ public class YarnJobBuilder {
         return new YarnJobBuilder();
     }
 
-    public YarnJobBuilder withName( String name ) {
+    public YarnJobBuilder withName(String name) {
         this.name = name;
 
         return this;
     }
 
-    public YarnJobBuilder withSuccess( boolean success ) {
+    public YarnJobBuilder withSuccess(boolean success) {
         this.success = success;
 
         return this;
     }
 
-    public YarnJobBuilder withErrors( String... errors ) {
-        this.errors.addAll(Arrays.asList( errors ));
+    public YarnJobBuilder withErrors(String... errors) {
+        this.errors.addAll(Arrays.asList(errors));
 
         return this;
     }
 
-    public YarnHealthCheckResult.YarnJob build() {
+    public JobResultProjection build() {
         assertParams();
 
-        return new YarnHealthCheckResult.YarnJob( name, success, errors );
+        return new JobResultImpl(name, success, errors);
     }
 
     private void assertParams() {
-        if (CheckingParamsUtil.isParamsNullOrEmpty( name )) {
-            throw new RuntimeException( "Name must be not null or empty!" );
+        if (CheckingParamsUtil.isParamsNullOrEmpty(name)) {
+            throw new RuntimeException("Name must be not null or empty!");
         }
     }
 }

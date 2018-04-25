@@ -12,13 +12,13 @@ import java.util.Set;
  * Created by Vasilina_Terehova on 3/30/2018.
  */
 public class ClusterSnapshotEntityProjectionImpl implements ClusterSnapshotEntityProjection {
-    private final List<? extends ServiceStatusProjection> serviceStatusProjectionList;
+    private final List<ServiceStatusProjection> serviceStatusProjectionList;
     private final ClusterEntityProjection clusterEntityProjection;
     private final MemoryUsageEntityProjection memoryUsageEntityProjection;
     private final HdfsUsageEntityProjection hdfsUsageEntityProjection;
     private final List<? extends NodeSnapshotEntityProjection> nodeSnapshotEntityProjectionList;
 
-    public ClusterSnapshotEntityProjectionImpl(ClusterEntityProjection clusterEntityProjection, List<? extends ServiceStatusProjection> serviceStatusProjectionList,
+    public ClusterSnapshotEntityProjectionImpl(ClusterEntityProjection clusterEntityProjection, List<ServiceStatusProjection> serviceStatusProjectionList,
                                                MemoryUsageEntityProjection memoryUsageEntityProjection, HdfsUsageEntityProjection hdfsUsageEntityProjection,
                                                List<? extends NodeSnapshotEntityProjection> nodeSnapshotEntityProjectionList) {
         this.clusterEntityProjection = clusterEntityProjection;
@@ -59,7 +59,7 @@ public class ClusterSnapshotEntityProjectionImpl implements ClusterSnapshotEntit
     }
 
     @Override
-    public List<? extends ServiceStatusProjection> getClusterServiceShapshotEntityList() {
+    public List<ServiceStatusProjection> getClusterServiceSnapshotEntityList() {
         return serviceStatusProjectionList;
     }
 

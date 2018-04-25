@@ -49,7 +49,7 @@ public class ClusterSnapshotEntity extends AbstractManagedEntity {
     private boolean full=false;
 
     @OneToMany(mappedBy = "clusterSnapshotEntity", fetch = FetchType.EAGER)
-    private Set<ClusterServiceShapshotEntity> clusterServiceShapshotEntityList;
+    private Set<ClusterServiceSnapshotEntity> clusterServiceSnapshotEntityList;
 
     @OneToMany(mappedBy = "clusterSnapshotEntity", fetch = FetchType.EAGER)
     private Set<NodeSnapshotEntity> nodeSnapshotEntities;
@@ -78,12 +78,12 @@ public class ClusterSnapshotEntity extends AbstractManagedEntity {
         this.countOfRunningApps = countOfRunningApps;
     }
 
-    public Set<ClusterServiceShapshotEntity> getClusterServiceShapshotEntityList() {
-        return clusterServiceShapshotEntityList;
+    public Set<ClusterServiceSnapshotEntity> getClusterServiceSnapshotEntityList() {
+        return clusterServiceSnapshotEntityList;
     }
 
-    public void setClusterServiceShapshotEntityList(Set<ClusterServiceShapshotEntity> clusterServiceShapshotEntityList) {
-        this.clusterServiceShapshotEntityList = clusterServiceShapshotEntityList;
+    public void setClusterServiceSnapshotEntityList(Set<ClusterServiceSnapshotEntity> clusterServiceSnapshotEntityList) {
+        this.clusterServiceSnapshotEntityList = clusterServiceSnapshotEntityList;
     }
 
     public HdfsUsageEntity getHdfsUsageEntity() {
