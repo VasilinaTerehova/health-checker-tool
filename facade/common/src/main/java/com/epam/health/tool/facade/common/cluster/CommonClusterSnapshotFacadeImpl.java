@@ -78,7 +78,7 @@ public abstract class CommonClusterSnapshotFacadeImpl implements IClusterSnapsho
 
     private void saveServiceInfo(ClusterSnapshotEntity clusterShapshotEntity, HealthCheckResultsAccumulator healthCheckResultsAccumulator, ServiceTypeEnum serviceTypeEnum) {
         try {
-            ServiceStatusProjection yarnHealthCheckResult = healthCheckResultsAccumulator.getServiceHealthCheckResult(serviceTypeEnum);
+            ServiceStatusHolder yarnHealthCheckResult = healthCheckResultsAccumulator.getServiceHealthCheckResult(serviceTypeEnum);
             //find yarn service, save job results
             ClusterServiceSnapshotEntity clusterServiceSnapshotEntity = clusterServiceSnapshotDao.findByClusterSnapshotIdServiceId(clusterShapshotEntity.getId(), serviceTypeEnum);
             if (clusterServiceSnapshotEntity == null) {
@@ -181,7 +181,7 @@ public abstract class CommonClusterSnapshotFacadeImpl implements IClusterSnapsho
         });
     }
 
-    private ClusterServiceSnapshotEntity saveClusterServiceSnapshot(ClusterSnapshotEntity clusterSnapshotEntity, ServiceStatusProjection serviceStatus) {
+    private ClusterServiceSnapshotEntity saveClusterServiceSnapshot(ClusterSnapshotEntity clusterSnapshotEntity, ServiceStatusHolder serviceStatus) {
         ClusterEntity clusterEntity = clusterSnapshotEntity.getClusterEntity();
         ClusterServiceEntity clusterServiceEntity = clusterServiceDao.findByClusterIdAndServiceType(clusterEntity.getId(), serviceStatus.getType());
         ClusterServiceSnapshotEntity clusterServiceSnapshotEntity = svTransfererManager.<ServiceStatus, ClusterServiceSnapshotEntity>getTransferer(ServiceStatus.class, ClusterServiceSnapshotEntity.class).transfer((ServiceStatus) serviceStatus, ClusterServiceSnapshotEntity.class);

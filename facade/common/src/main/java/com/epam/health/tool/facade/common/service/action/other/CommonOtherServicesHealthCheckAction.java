@@ -1,7 +1,7 @@
 package com.epam.health.tool.facade.common.service.action.other;
 
 import com.epam.facade.model.accumulator.HealthCheckResultsAccumulator;
-import com.epam.facade.model.projection.ServiceStatusProjection;
+import com.epam.facade.model.projection.ServiceStatusHolder;
 import com.epam.health.tool.facade.common.service.action.CommonRestHealthCheckAction;
 import com.epam.facade.model.exception.ImplementationNotResolvedException;
 import com.epam.facade.model.exception.InvalidResponseException;
@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-public abstract class CommonOtherServicesHealthCheckAction extends CommonRestHealthCheckAction<List<ServiceStatusProjection>> {
+public abstract class CommonOtherServicesHealthCheckAction extends CommonRestHealthCheckAction<List<ServiceStatusHolder>> {
     private final static Logger logger = Logger.getLogger( CommonOtherServicesHealthCheckAction.class );
     @Autowired
     protected SVTransfererManager svTransfererManager;
@@ -24,7 +24,7 @@ public abstract class CommonOtherServicesHealthCheckAction extends CommonRestHea
     @Autowired
     private IFacadeImplResolver<IServiceLogSearchFacade> serviceLogSearchManagerImplResolver;
 
-    protected List<ServiceStatusProjection> performHealthCheck(ClusterEntity clusterEntity) throws InvalidResponseException {
+    protected List<ServiceStatusHolder> performHealthCheck(ClusterEntity clusterEntity) throws InvalidResponseException {
         try {
             return serviceStatusReceiverIFacadeImplResolver.resolveFacadeImpl(clusterEntity.getClusterTypeEnum()).getServiceStatusList(clusterEntity);
         } catch (ImplementationNotResolvedException e) {
@@ -33,29 +33,29 @@ public abstract class CommonOtherServicesHealthCheckAction extends CommonRestHea
     }
 
     @Override
-    protected List<ServiceStatusProjection> performRestHealthCheck(ClusterEntity clusterEntity) throws InvalidResponseException {
+    protected List<ServiceStatusHolder> performRestHealthCheck(ClusterEntity clusterEntity) throws InvalidResponseException {
         return getServiceStatuses( clusterEntity );
     }
 
     //Don't clear existing data
     protected void saveClusterHealthSummaryToAccumulator( HealthCheckResultsAccumulator healthCheckResultsAccumulator,
-                                                          List<ServiceStatusProjection> healthCheckResult ) {
+                                                          List<ServiceStatusHolder> healthCheckResult ) {
         HealthCheckResultsAccumulator.HealthCheckResultsModifier.get( healthCheckResultsAccumulator )
                 .setServiceStatusList( healthCheckResult ).modify();
     }
 
-    private List<ServiceStatusProjection> getServiceStatuses(ClusterEntity clusterEntity) throws InvalidResponseException {
-        List<ServiceStatusProjection> serviceStatusList = performHealthCheck(clusterEntity);
+    private List<ServiceStatusHolder> getServiceStatuses(ClusterEntity clusterEntity) throws InvalidResponseException {
+        List<ServiceStatusHolder> serviceStatusList = performHealthCheck(clusterEntity);
         return addLogsPathToService(serviceStatusList, clusterEntity);
     }
 
-    private List<ServiceStatusProjection> addLogsPathToService(List<ServiceStatusProjection> serviceStatuses, ClusterEntity clusterEntity) {
+    private List<ServiceStatusHolder> addLogsPathToService(List<ServiceStatusHolder> serviceStatuses, ClusterEntity clusterEntity) {
         serviceStatuses.forEach(serviceStatus -> addLogsPathToService(serviceStatus, clusterEntity));
 
         return serviceStatuses;
     }
 
-    private void addLogsPathToService(ServiceStatusProjection serviceStatus, ClusterEntity clusterEntity) {
+    private void addLogsPathToService(ServiceStatusHolder serviceStatus, ClusterEntity clusterEntity) {
         try {
             logger.info("Logs for service " + serviceStatus.getDisplayName() + serviceLogSearchManagerImplResolver.resolveFacadeImpl(clusterEntity.getClusterTypeEnum().name())
                     .searchLogs(clusterEntity.getClusterName(), serviceStatus.getType()));

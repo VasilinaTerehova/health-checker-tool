@@ -14,7 +14,7 @@
             <li class="list-group-item" *ngFor="let alert of getAlerts()">Alert - {{alert}}</li>
         </ul>
       </li>
-      <li class="list-group-item">Health summary - <span service-health-label [healthSummary]="hdfsHealthReport.status">{{hdfsHealthReport?.status}}</span></li>
+      <li class="list-group-item">Health summary - <span service-health-label [healthSummary]="hdfsHealthReport.healthSummary">{{hdfsHealthReport?.healthSummary}}</span></li>
       <li class="list-group-item">Logs locations - {{hdfsHealthReport?.logsLocation}}</li>
   </ul>
 </div>

@@ -1,8 +1,7 @@
 package com.epam.health.tool.facade.common.recap.impl;
 
-import com.epam.facade.model.ClusterHealthSummary;
 import com.epam.facade.model.accumulator.HealthCheckResultsAccumulator;
-import com.epam.facade.model.projection.ServiceStatusProjection;
+import com.epam.facade.model.projection.ServiceStatusHolder;
 import com.epam.facade.model.validation.ClusterHealthValidationResult;
 import com.epam.health.tool.facade.common.recap.IServiceHealthCheckRecapAction;
 import com.epam.health.tool.model.ServiceStatusEnum;
@@ -21,13 +20,13 @@ public class ClusterHealthCheckRecapAction implements IServiceHealthCheckRecapAc
         }
     }
 
-    private boolean isClusterServicesUnHealthy( List<? extends ServiceStatusProjection> serviceStatusProjections ) {
-        return serviceStatusProjections.stream().map(ServiceStatusProjection::getHealthSummary).anyMatch( this::isServiceBad );
+    private boolean isClusterServicesUnHealthy( List<? extends ServiceStatusHolder> serviceStatusProjections ) {
+        return serviceStatusProjections.stream().map(ServiceStatusHolder::getHealthSummary).anyMatch( this::isServiceBad );
     }
 
-    private String getServiceBadList( List<? extends ServiceStatusProjection> serviceStatusProjections ) {
+    private String getServiceBadList( List<? extends ServiceStatusHolder> serviceStatusProjections ) {
         return serviceStatusProjections.stream().filter( this::isServiceBad )
-                .map( ServiceStatusProjection::getDisplayName ).map( this::createServiceBadString )
+                .map( ServiceStatusHolder::getDisplayName ).map( this::createServiceBadString )
                 .collect( Collectors.joining( " " ) );
     }
 
@@ -35,8 +34,8 @@ public class ClusterHealthCheckRecapAction implements IServiceHealthCheckRecapAc
         return serviceStatus.equals( ServiceStatusEnum.BAD );
     }
 
-    private boolean isServiceBad(ServiceStatusProjection serviceStatusProjection) {
-        return serviceStatusProjection.getHealthSummary() != null && serviceStatusProjection.getHealthSummary().equals( ServiceStatusEnum.BAD );
+    private boolean isServiceBad(ServiceStatusHolder serviceStatusHolder) {
+        return serviceStatusHolder.getHealthSummary() != null && serviceStatusHolder.getHealthSummary().equals( ServiceStatusEnum.BAD );
     }
 
     private String createServiceBadString(ServiceTypeEnum serviceType) {

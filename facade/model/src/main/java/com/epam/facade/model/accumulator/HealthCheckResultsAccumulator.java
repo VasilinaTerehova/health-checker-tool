@@ -9,17 +9,18 @@ import com.epam.util.common.CheckingParamsUtil;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 public class HealthCheckResultsAccumulator {
     //Separate services
     //Other services
-    private List<ServiceStatusProjection> serviceStatusList = new ArrayList<>();
+    private List<ServiceStatusHolder> serviceStatusList = new ArrayList<>();
     //Fs check result
     private FsHealthCheckResult fsHealthCheckResult;
     //Snapshot info
     private ClusterSnapshotAccumulator clusterSnapshotAccumulator;
 
-    public List<ServiceStatusProjection> getServiceStatusList() {
+    public List<ServiceStatusHolder> getServiceStatusList() {
         return serviceStatusList;
     }
 
@@ -31,25 +32,33 @@ public class HealthCheckResultsAccumulator {
         return clusterSnapshotAccumulator;
     }
 
-    public ServiceStatusProjection getServiceHealthCheckResult(ServiceTypeEnum serviceTypeEnum) throws InvalidResponseException {
-        if ( !CheckingParamsUtil.isParamListNotNullOrEmpty( this.serviceStatusList ) ) {
-            throw new InvalidResponseException( "Can't find service health check result for service type. Service status list is empty" );
+    public ServiceStatusHolder getServiceHealthCheckResult(ServiceTypeEnum serviceTypeEnum) throws InvalidResponseException {
+        if (!CheckingParamsUtil.isParamListNotNullOrEmpty(this.serviceStatusList)) {
+            throw new InvalidResponseException("Can't find service health check result for service type. Service status list is empty");
         }
 
-        return findServiceHealthCheckResult( serviceTypeEnum );
+        return findServiceHealthCheckResult(serviceTypeEnum);
     }
 
-    public ServiceStatusProjection getServiceHealthCheckResultIfExists(ServiceTypeEnum serviceTypeEnum) throws InvalidResponseException {
-        if ( !CheckingParamsUtil.isParamListNotNullOrEmpty( this.serviceStatusList ) ) {
-            return null;
+    public Optional<ServiceStatusHolder> getServiceHealthCheckResultIfExists(ServiceTypeEnum serviceTypeEnum) throws InvalidResponseException {
+        if (!CheckingParamsUtil.isParamListNotNullOrEmpty(this.serviceStatusList)) {
+            return Optional.empty();
         }
 
-        return findServiceHealthCheckResult( serviceTypeEnum );
+        return serviceStatusList.stream().anyMatch(serviceStatusHolder -> serviceStatusHolder.getType().equals(serviceTypeEnum)) ?
+                Optional.of(findServiceHealthCheckResult(serviceTypeEnum)) : Optional.empty();
     }
 
-    private ServiceStatusProjection findServiceHealthCheckResult(ServiceTypeEnum serviceTypeEnum) throws InvalidResponseException {
+    private ServiceStatusHolder findServiceHealthCheckResult(ServiceTypeEnum serviceTypeEnum) throws InvalidResponseException {
         return serviceStatusList.stream().filter(o -> o.getDisplayName().equals(serviceTypeEnum)).findFirst()
                 .orElseThrow( () -> new InvalidResponseException( "Can't find service health check result for service type - ".concat( serviceTypeEnum.name() ) ));
+    }
+
+    public void addServiceStatus(ServiceStatusHolder serviceStatus) throws InvalidResponseException {
+        if (serviceStatusList.stream().noneMatch(serviceStatusHolder -> serviceStatusHolder == serviceStatus)) {
+            getServiceHealthCheckResultIfExists(serviceStatus.getType()).ifPresent(serviceStatusHolder -> serviceStatusList.remove(serviceStatusHolder));
+            serviceStatusList.add(serviceStatus);
+        }
     }
 
     public static class HealthCheckResultsModifier {
@@ -67,7 +76,7 @@ public class HealthCheckResultsAccumulator {
             return get(new HealthCheckResultsAccumulator());
         }
 
-        public HealthCheckResultsModifier setServiceStatusList(List<ServiceStatusProjection> serviceStatusList) {
+        public HealthCheckResultsModifier setServiceStatusList(List<ServiceStatusHolder> serviceStatusList) {
             this.healthCheckResultsAccumulator.serviceStatusList = serviceStatusList;
 
             return this;
@@ -132,6 +141,10 @@ public class HealthCheckResultsAccumulator {
 
             return this;
         }
+
+//        public HealthCheckResultsModifier setServiceCheck() {
+//
+//        }
 
         public HealthCheckResultsAccumulator modify() {
             return healthCheckResultsAccumulator;

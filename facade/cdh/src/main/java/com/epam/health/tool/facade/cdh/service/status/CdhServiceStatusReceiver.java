@@ -1,7 +1,7 @@
 package com.epam.health.tool.facade.cdh.service.status;
 
 import com.epam.facade.model.ServiceStatus;
-import com.epam.facade.model.projection.ServiceStatusProjection;
+import com.epam.facade.model.projection.ServiceStatusHolder;
 import com.epam.health.tool.authentication.exception.AuthenticationRequestException;
 import com.epam.health.tool.facade.common.resolver.impl.ClusterSpecificComponent;
 import com.epam.health.tool.facade.common.service.status.CommonServiceStatusReceiver;
@@ -26,7 +26,7 @@ public class CdhServiceStatusReceiver extends CommonServiceStatusReceiver {
     public static final String SERVICES = "/services";
 
     @Override
-    public List<ServiceStatusProjection> getServiceStatusList(ClusterEntity clusterEntity) throws InvalidResponseException {
+    public List<ServiceStatusHolder> getServiceStatusList(ClusterEntity clusterEntity) throws InvalidResponseException {
         try {
             String url = "http://" + clusterEntity.getHost() + API_V10_CLUSTERS + clusterEntity.getClusterName() + SERVICES;
 
@@ -39,7 +39,7 @@ public class CdhServiceStatusReceiver extends CommonServiceStatusReceiver {
     }
 
     @Override
-    public ServiceStatusProjection getServiceStatus(ClusterEntity clusterEntity, ServiceTypeEnum serviceTypeEnum) throws InvalidResponseException {
+    public ServiceStatusHolder getServiceStatus(ClusterEntity clusterEntity, ServiceTypeEnum serviceTypeEnum) throws InvalidResponseException {
         try {
             String url = "http://" + clusterEntity.getHost() + API_V10_CLUSTERS + clusterEntity.getClusterName() + SERVICES + "/" + serviceTypeEnum.name().toLowerCase();
 
@@ -51,7 +51,7 @@ public class CdhServiceStatusReceiver extends CommonServiceStatusReceiver {
         }
     }
 
-    private List<ServiceStatusProjection> extractFromJsonString(String jsonString) throws InvalidResponseException {
+    private List<ServiceStatusHolder> extractFromJsonString(String jsonString) throws InvalidResponseException {
         try {
             return new ArrayList<>(CommonJsonHandler.get().getListTypedValueFromInnerField(jsonString, ServiceStatus.class, "items"));
         } catch (CommonUtilException e) {

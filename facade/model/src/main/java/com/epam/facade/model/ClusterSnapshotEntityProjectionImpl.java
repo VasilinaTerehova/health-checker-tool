@@ -4,25 +4,23 @@ import com.epam.facade.model.projection.*;
 import com.epam.health.tool.model.ClusterTypeEnum;
 
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by Vasilina_Terehova on 3/30/2018.
  */
 public class ClusterSnapshotEntityProjectionImpl implements ClusterSnapshotEntityProjection {
-    private final List<ServiceStatusProjection> serviceStatusProjectionList;
+    private final List<ServiceStatusHolder> serviceStatusHolderList;
     private final ClusterEntityProjection clusterEntityProjection;
     private final MemoryUsageEntityProjection memoryUsageEntityProjection;
     private final HdfsUsageEntityProjection hdfsUsageEntityProjection;
     private final List<? extends NodeSnapshotEntityProjection> nodeSnapshotEntityProjectionList;
 
-    public ClusterSnapshotEntityProjectionImpl(ClusterEntityProjection clusterEntityProjection, List<ServiceStatusProjection> serviceStatusProjectionList,
+    public ClusterSnapshotEntityProjectionImpl(ClusterEntityProjection clusterEntityProjection, List<ServiceStatusHolder> serviceStatusHolderList,
                                                MemoryUsageEntityProjection memoryUsageEntityProjection, HdfsUsageEntityProjection hdfsUsageEntityProjection,
                                                List<? extends NodeSnapshotEntityProjection> nodeSnapshotEntityProjectionList) {
         this.clusterEntityProjection = clusterEntityProjection;
-        this.serviceStatusProjectionList = serviceStatusProjectionList;
+        this.serviceStatusHolderList = serviceStatusHolderList;
         this.memoryUsageEntityProjection = memoryUsageEntityProjection;
         this.hdfsUsageEntityProjection = hdfsUsageEntityProjection;
         this.nodeSnapshotEntityProjectionList = nodeSnapshotEntityProjectionList;
@@ -59,8 +57,8 @@ public class ClusterSnapshotEntityProjectionImpl implements ClusterSnapshotEntit
     }
 
     @Override
-    public List<ServiceStatusProjection> getClusterServiceSnapshotEntityList() {
-        return serviceStatusProjectionList;
+    public List<ServiceStatusHolder> getClusterServiceSnapshotEntityList() {
+        return serviceStatusHolderList;
     }
 
     @Override

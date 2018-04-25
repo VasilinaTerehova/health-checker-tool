@@ -3,7 +3,7 @@ package com.epam.health.tool.facade.common.recap.impl;
 import com.epam.facade.model.accumulator.HealthCheckResultsAccumulator;
 import com.epam.facade.model.exception.InvalidResponseException;
 import com.epam.facade.model.projection.JobResultProjection;
-import com.epam.facade.model.projection.ServiceStatusProjection;
+import com.epam.facade.model.projection.ServiceStatusHolder;
 import com.epam.facade.model.validation.ClusterHealthValidationResult;
 import com.epam.health.tool.facade.common.recap.IServiceHealthCheckRecapAction;
 import com.epam.health.tool.model.ServiceTypeEnum;
@@ -16,7 +16,7 @@ public class HdfsServiceHealthCheckRecapAction implements IServiceHealthCheckRec
     @Override
     public void doRecapHealthCheck(HealthCheckResultsAccumulator healthCheckResultsAccumulator, ClusterHealthValidationResult clusterHealthValidationResult) {
         try {
-            ServiceStatusProjection serviceHealthCheckResult = healthCheckResultsAccumulator.getServiceHealthCheckResult(ServiceTypeEnum.HDFS);
+            ServiceStatusHolder serviceHealthCheckResult = healthCheckResultsAccumulator.getServiceHealthCheckResult(ServiceTypeEnum.HDFS);
             if (!isHdfsCheckSuccess(serviceHealthCheckResult)) {
                 clusterHealthValidationResult.setClusterHealthy(false);
                 clusterHealthValidationResult.appendErrorSummary(getHdfsCheckErrorsAsString(serviceHealthCheckResult));
@@ -27,11 +27,11 @@ public class HdfsServiceHealthCheckRecapAction implements IServiceHealthCheckRec
         }
     }
 
-    private boolean isHdfsCheckSuccess(ServiceStatusProjection hdfsHealthCheckResult) {
+    private boolean isHdfsCheckSuccess(ServiceStatusHolder hdfsHealthCheckResult) {
         return hdfsHealthCheckResult.getJobResults().stream().anyMatch(JobResultProjection::isSuccess);
     }
 
-    private String getHdfsCheckErrorsAsString(ServiceStatusProjection hdfsHealthCheckResult) {
+    private String getHdfsCheckErrorsAsString(ServiceStatusHolder hdfsHealthCheckResult) {
         return hdfsHealthCheckResult.getJobResults().stream().filter(hdfsOperationResult -> !hdfsOperationResult.isSuccess())
                 .map(this::getHdfsAlertString).collect(Collectors.joining("\n"));
     }

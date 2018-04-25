@@ -6,7 +6,7 @@ import com.epam.facade.model.accumulator.HealthCheckResultsAccumulator;
 import com.epam.facade.model.projection.HdfsUsageEntityProjection;
 import com.epam.facade.model.projection.MemoryUsageEntityProjection;
 import com.epam.facade.model.projection.NodeSnapshotEntityProjection;
-import com.epam.facade.model.projection.ServiceStatusProjection;
+import com.epam.facade.model.projection.ServiceStatusHolder;
 import com.epam.health.tool.controller.BaseFacadeResolvingController;
 import com.epam.health.tool.exception.RetrievingObjectException;
 import com.epam.health.tool.facade.cluster.IClusterSnapshotFacade;
@@ -64,9 +64,9 @@ public class ClusterHealthCheckController extends BaseFacadeResolvingController 
 
     @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/api/cluster/{name}/status/yarn")
-    public ResponseEntity<ServiceStatusProjection> getYarnClusterStatus(@PathVariable("name") String clusterName,
-                                                                                             @RequestParam(value = "token", defaultValue = "none") String token,
-                                                                                             @RequestParam(value = "useSave", defaultValue = "false") boolean useSave) {
+    public ResponseEntity<ServiceStatusHolder> getYarnClusterStatus(@PathVariable("name") String clusterName,
+                                                                    @RequestParam(value = "token", defaultValue = "none") String token,
+                                                                    @RequestParam(value = "useSave", defaultValue = "false") boolean useSave) {
         try {
             return ResponseEntity.ok(askForClusterState(clusterName, HealthCheckActionType.YARN_SERVICE, token, useSave).getServiceHealthCheckResult( ServiceTypeEnum.YARN ));
         } catch (ImplementationNotResolvedException | InvalidResponseException e) {
@@ -76,9 +76,9 @@ public class ClusterHealthCheckController extends BaseFacadeResolvingController 
 
     @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/api/cluster/{name}/status/hdfs/job")
-    public ResponseEntity<ServiceStatusProjection> getHdfsClusterStatus(@PathVariable("name") String clusterName,
-                                                                        @RequestParam(value = "token", defaultValue = "none") String token,
-                                                                        @RequestParam(value = "useSave", defaultValue = "false") boolean useSave) {
+    public ResponseEntity<ServiceStatusHolder> getHdfsClusterStatus(@PathVariable("name") String clusterName,
+                                                                    @RequestParam(value = "token", defaultValue = "none") String token,
+                                                                    @RequestParam(value = "useSave", defaultValue = "false") boolean useSave) {
         try {
             return ResponseEntity.ok(askForClusterState(clusterName, HealthCheckActionType.HDFS_SERVICE, token, useSave).getServiceHealthCheckResult( ServiceTypeEnum.HDFS ));
         } catch (ImplementationNotResolvedException | InvalidResponseException e) {
