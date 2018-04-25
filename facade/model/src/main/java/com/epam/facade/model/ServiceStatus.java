@@ -1,10 +1,13 @@
 package com.epam.facade.model;
 
 import com.epam.facade.model.accumulator.results.BaseActionResult;
+import com.epam.facade.model.projection.JobResultProjection;
 import com.epam.facade.model.projection.ServiceStatusProjection;
 import com.epam.health.tool.model.ServiceStatusEnum;
 import com.epam.health.tool.model.ServiceTypeEnum;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import java.util.List;
 
 /**
  * this class is common for showing on ui, implements project from database layer,
@@ -14,6 +17,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class ServiceStatus implements ServiceStatusProjection, BaseActionResult {
     private ServiceTypeEnum type;
     private ServiceStatusEnum healthSummary;
+    private List<JobResultProjection> jobResults;
 
     public ServiceStatusEnum getHealthStatus() {
         return healthSummary;
@@ -44,6 +48,15 @@ public class ServiceStatus implements ServiceStatusProjection, BaseActionResult 
     @Override
     public ServiceTypeEnum getDisplayName() {
         return type;
+    }
+
+    @Override
+    public List<JobResultProjection> getJobResults() {
+        return jobResults;
+    }
+
+    public void setJobResults(List<JobResultProjection> jobResults) {
+        this.jobResults = jobResults;
     }
 
     @Override

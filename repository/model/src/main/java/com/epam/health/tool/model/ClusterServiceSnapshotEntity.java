@@ -4,13 +4,14 @@ import com.epam.health.tool.common.AbstractManagedEntity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * Created by Vasilina_Terehova on 3/19/2018.
  */
 @Entity
-@Table(name = ClusterServiceShapshotEntity.TABLE_NAME)
-public class ClusterServiceShapshotEntity extends AbstractManagedEntity {
+@Table(name = ClusterServiceSnapshotEntity.TABLE_NAME)
+public class ClusterServiceSnapshotEntity extends AbstractManagedEntity {
     public static final String TABLE_NAME = "cluster_service_snapshot";
     public static final String COLUMN_SERVICE_STATUS = "service_status_";
     public static final String COLUMN_FK_CLUSTER_SERVICE = ClusterServiceEntity.TABLE_NAME;
@@ -30,6 +31,9 @@ public class ClusterServiceShapshotEntity extends AbstractManagedEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = TABLE_NAME + DELIMITER_INDEX + COLUMN_FK_CLUSTER_SNAPSHOT)
     private ClusterSnapshotEntity clusterSnapshotEntity;
+
+    @OneToMany(mappedBy = "clusterServiceSnapshotEntity")
+    private List<JobResultEntity> jobResults;
 
     public ClusterServiceEntity getClusterServiceEntity() {
         return clusterServiceEntity;
@@ -53,5 +57,9 @@ public class ClusterServiceShapshotEntity extends AbstractManagedEntity {
 
     public void setClusterSnapshotEntity(ClusterSnapshotEntity clusterSnapshotEntity) {
         this.clusterSnapshotEntity = clusterSnapshotEntity;
+    }
+
+    public List<JobResultEntity> getJobResults() {
+        return jobResults;
     }
 }

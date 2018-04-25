@@ -26,8 +26,8 @@ public interface ClusterSnapshotEntityProjection {
     @Value("#{target.dateOfSnapshot}")
     Date getDateOfSnapshot();
 
-    @Value("#{target.clusterServiceShapshotEntityList}")
-    List<? extends ServiceStatusProjection> getClusterServiceShapshotEntityList();
+    @Value("#{target.clusterServiceSnapshotEntityList}")
+    List<ServiceStatusProjection> getClusterServiceSnapshotEntityList();
 
     @Value("#{target.memoryUsageEntity}")
     MemoryUsageEntityProjection getMemoryUsage();

@@ -1,18 +1,14 @@
 package com.epam.health;
 
 import com.epam.facade.model.ApplicationInfo;
-import com.epam.facade.model.ServiceStatus;
 import com.epam.health.tool.facade.application.IApplicationFacade;
 import com.epam.health.tool.facade.cluster.IClusterFacade;
 import com.epam.health.tool.facade.cluster.IClusterSnapshotFacade;
-import com.epam.health.tool.facade.cluster.IRunningClusterParamReceiver;
 import com.epam.health.tool.facade.common.cluster.CommonClusterSnapshotFacadeImpl;
-import com.epam.health.tool.facade.common.cluster.CommonRuningClusterParamReceiver;
 import com.epam.health.tool.facade.common.service.CommonServiceSnapshotFacadeImpl;
 import com.epam.health.tool.facade.exception.InvalidResponseException;
 import com.epam.health.tool.facade.service.IServiceSnapshotFacade;
-import com.epam.health.tool.model.ClusterEntity;
-import com.epam.health.tool.model.ClusterServiceShapshotEntity;
+import com.epam.health.tool.model.ClusterServiceSnapshotEntity;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -123,7 +119,7 @@ public class TestHealthCheckerToolApplication {
 
 
             @Override
-            public ClusterServiceShapshotEntity askForCurrentServiceSnapshot(String clusterName, String serviceName) {
+            public ClusterServiceSnapshotEntity askForCurrentServiceSnapshot(String clusterName, String serviceName) {
                 return null;
             }
 

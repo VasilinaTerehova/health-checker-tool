@@ -3,14 +3,12 @@ package com.epam.facade.model;
 import com.epam.facade.model.projection.ClusterSnapshotEntityProjection;
 import com.epam.facade.model.projection.ServiceStatusProjection;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class ClusterHealthSummary {
     //todo: rename cluster - also on ui - to cluster snapshot, cluster name is not valid
     private ClusterSnapshotEntityProjection cluster;
-    private List<? extends ServiceStatusProjection> serviceStatusList;
+    private List<ServiceStatusProjection> serviceStatusList;
 
     public ClusterHealthSummary(ClusterSnapshotEntityProjection cluster, List<ServiceStatusProjection> serviceProjectionsBy) {
         setCluster(cluster);
@@ -20,7 +18,7 @@ public class ClusterHealthSummary {
 
     public ClusterHealthSummary(ClusterSnapshotEntityProjection cluster) {
         setCluster(cluster);
-        setServiceStatusList(cluster.getClusterServiceShapshotEntityList());
+        setServiceStatusList(cluster.getClusterServiceSnapshotEntityList());
     }
 
     public ClusterSnapshotEntityProjection getCluster() {
@@ -31,11 +29,11 @@ public class ClusterHealthSummary {
         this.cluster = cluster;
     }
 
-    public List<? extends ServiceStatusProjection> getServiceStatusList() {
+    public List<ServiceStatusProjection> getServiceStatusList() {
         return serviceStatusList;
     }
 
-    public void setServiceStatusList(List<? extends ServiceStatusProjection> serviceStatusList) {
+    public void setServiceStatusList(List<ServiceStatusProjection> serviceStatusList) {
         this.serviceStatusList = serviceStatusList;
     }
 
