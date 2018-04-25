@@ -98,11 +98,7 @@ export class ClusterComponent implements OnInit, OnDestroy {
   private ascForHdfsReports() {
     this._hdfsHealthReport = null;
     this.clusterHealthCheckService.getHdfsClusterState( this._checkHealthToken.clusterName, this._checkHealthToken.token ).subscribe(
-      data => {
-        if ( data ) {
-          this._hdfsHealthReport = data.serviceStatusList.filter( status => status.displayName == "YARN" )[0];
-        }
-      },
+      data => this._hdfsHealthReport = data,
       error => this.errorReportingService.reportHttpError( error )
     );
   }
@@ -110,11 +106,7 @@ export class ClusterComponent implements OnInit, OnDestroy {
   private ascForYarnReports() {
     this._yarnHealthReport = null;
     this.clusterHealthCheckService.getYarnClusterState( this._checkHealthToken.clusterName, this._checkHealthToken.token ).subscribe(
-      data => {
-        if ( data ) {
-          this._hdfsHealthReport = data.serviceStatusList.filter( status => status.displayName == "HDFS" )[0];
-        }
-      },
+      data => this._yarnHealthReport = data,
       error => this.errorReportingService.reportHttpError( error )
     )
   }

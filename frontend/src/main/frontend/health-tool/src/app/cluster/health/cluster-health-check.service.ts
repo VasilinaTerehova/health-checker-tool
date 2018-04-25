@@ -5,7 +5,7 @@ import { Cluster } from '../../shared/cluster/cluster.model';
 import { ClusterState } from '../cluster-state.model';
 import {ClusterStateHistory} from "../cluster-history-state.model";
 import { HealthCheckResult } from "../health/health-check-result.model";
-import { HdfsHealthReport } from './hdfs/hdfs-health-report.model';
+import { ServiceStatus } from "../../service/service-status.model";
 //Fs checks
 import { HdfsUsage } from './common/hdfs.model';
 import { Memory } from './common/memory.model';
@@ -20,11 +20,11 @@ export class ClusterHealthCheckService {
   }
 
   getYarnClusterState( clusterName: string, token: string = "empty", useSave: boolean = false ) {
-    return this.http.get<HealthCheckResult>("http://localhost:8888/api/cluster/" + clusterName + "/status/yarn", { params: { "token": token, "useSave": useSave.toString() } });
+    return this.http.get<ServiceStatus>("http://localhost:8888/api/cluster/" + clusterName + "/status/yarn", { params: { "token": token, "useSave": useSave.toString() } });
   }
 
   getHdfsClusterState( clusterName: string, token: string = "empty", useSave: boolean = false ) {
-    return this.http.get<HealthCheckResult>("http://localhost:8888/api/cluster/" + clusterName + "/status/hdfs/job", { params: { "token": token, "useSave": useSave.toString() } });
+    return this.http.get<ServiceStatus>("http://localhost:8888/api/cluster/" + clusterName + "/status/hdfs/job", { params: { "token": token, "useSave": useSave.toString() } });
   }
 
   getFsClusterState( clusterName: string, token: string = "empty", useSave: boolean = false ) {
