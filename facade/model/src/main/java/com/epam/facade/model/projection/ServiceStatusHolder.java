@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by Vasilina_Terehova on 3/27/2018.
  */
-public interface ServiceStatusProjection {
+public interface ServiceStatusHolder {
     @Value("#{target.clusterServiceEntity.serviceType}")
     ServiceTypeEnum getType();
 
@@ -21,4 +21,10 @@ public interface ServiceStatusProjection {
 
     @Value("#{target.jobResults}")
     List<JobResultProjection> getJobResults();
+
+    void setType(ServiceTypeEnum serviceTypeEnum);
+
+    void setHealthSummary(ServiceStatusEnum healthSummary);
+
+    void setJobResults(List<JobResultProjection> jobResults);
 }

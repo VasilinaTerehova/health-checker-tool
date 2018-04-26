@@ -1,13 +1,13 @@
 package com.epam.health.tool.facade.hdp.service.status;
 
 import com.epam.facade.model.ServiceStatus;
-import com.epam.facade.model.projection.ServiceStatusProjection;
+import com.epam.facade.model.projection.ServiceStatusHolder;
 import com.epam.health.tool.authentication.exception.AuthenticationRequestException;
 import com.epam.health.tool.facade.common.resolver.impl.ClusterSpecificComponent;
 import com.epam.health.tool.facade.common.service.status.CommonServiceStatusReceiver;
 import com.epam.facade.model.exception.InvalidResponseException;
 import com.epam.health.tool.facade.hdp.cluster.ServiceStateEnumMapper;
-import com.epam.health.tool.facade.hdp.cluster.ServiceStatusDTO;
+import com.epam.health.tool.facade.hdp.cluster.HdpServiceStatusDTO;
 import com.epam.health.tool.model.ClusterEntity;
 import com.epam.health.tool.model.ClusterTypeEnum;
 import com.epam.health.tool.model.ServiceTypeEnum;
@@ -27,15 +27,11 @@ import java.util.stream.Collectors;
 @ClusterSpecificComponent(ClusterTypeEnum.HDP)
 public class HdpServiceStatusReceiver extends CommonServiceStatusReceiver {
     @Override
-    public List<ServiceStatusProjection> getServiceStatusList(ClusterEntity clusterEntity) throws InvalidResponseException {
+    public List<ServiceStatusHolder> getServiceStatusList(ClusterEntity clusterEntity) throws InvalidResponseException {
         try {
             return Arrays.stream(ServiceTypeEnum.values())
-                    .map(serviceTypeEnum -> "http://" + clusterEntity.getHost() + ":8080/api/v1/clusters/" + clusterEntity.getClusterName() + "/services/" + serviceTypeEnum.toString())
-                    .map(url -> makeHttpRequest(clusterEntity.getClusterName(), url, false))
-                    .map(this::extractFromJsonString)
+                    .map(serviceTypeEnum -> getServiceStatus(clusterEntity, serviceTypeEnum))
                     .filter(Objects::nonNull)
-                    .map(this::mapHealthStateToServiceStatusEnum)
-                    .map(this::mapDTOStatusToServiceStatus)
                     .collect(Collectors.toList());
         } catch (RuntimeException ex) {
             throw new InvalidResponseException(ex);
@@ -50,26 +46,20 @@ public class HdpServiceStatusReceiver extends CommonServiceStatusReceiver {
         }
     }
 
-    private ServiceStatusDTO extractFromJsonString(String jsonString) {
+    @Override
+    public ServiceStatusHolder getServiceStatus(ClusterEntity clusterEntity, ServiceTypeEnum serviceTypeEnum) throws RuntimeException {
+        String url = "http://" + clusterEntity.getHost() + ":8080/api/v1/clusters/" + clusterEntity.getClusterName() + "/services/" + serviceTypeEnum.toString();
         try {
-            return CommonJsonHandler.get().getTypedValueFromInnerField(jsonString, ServiceStatusDTO.class, "ServiceInfo");
+            return readFromJson(makeHttpRequest(clusterEntity.getClusterName(), url, false));
         } catch (CommonUtilException e) {
-            throw new RuntimeException("Can't extract application list from answer - " + jsonString, e);
+            throw new RuntimeException(e);
         }
     }
 
-    private ServiceStatusDTO mapHealthStateToServiceStatusEnum(ServiceStatusDTO serviceStatusDTO) {
-        serviceStatusDTO.setHealthStatus(ServiceStateEnumMapper.get().mapStringStateToEnum(serviceStatusDTO.getHealthStatus()).toString());
-        return serviceStatusDTO;
-    }
-
-    private ServiceStatus mapDTOStatusToServiceStatus(ServiceStatusDTO serviceStatusDTO) {
-        return svTransfererManager.<ServiceStatusDTO, ServiceStatus>getTransferer(ServiceStatusDTO.class, ServiceStatus.class)
-                .transfer(serviceStatusDTO, ServiceStatus.class);
-    }
-
-    @Override
-    public ServiceStatus getServiceStatus(ClusterEntity clusterEntity, ServiceTypeEnum serviceTypeEnum) throws InvalidResponseException {
-        return null;
+    private ServiceStatusHolder readFromJson(String json) throws CommonUtilException {
+        HdpServiceStatusDTO hdpServiceStatusDTO = CommonJsonHandler.get().getTypedValueFromInnerField(json, HdpServiceStatusDTO.class, "ServiceInfo");
+        hdpServiceStatusDTO.setHealthStatus(ServiceStateEnumMapper.get().mapStringStateToEnum(hdpServiceStatusDTO.getHealthStatus()).toString());
+        return svTransfererManager.<HdpServiceStatusDTO, ServiceStatus>getTransferer(HdpServiceStatusDTO.class, ServiceStatus.class)
+                .transfer(hdpServiceStatusDTO, ServiceStatus.class);
     }
 }

@@ -92,7 +92,7 @@ export class ClusterComponent implements OnInit, OnDestroy {
 
   private ascForHdfsAndYarnReports() {
     this.ascForHdfsReports();
-    // this.ascForYarnReports();
+    this.ascForYarnReports();
   }
 
   private ascForHdfsReports() {

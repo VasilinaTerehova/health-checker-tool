@@ -1,6 +1,6 @@
 package com.epam.health.tool.dao.cluster;
 
-import com.epam.facade.model.projection.ServiceStatusProjection;
+import com.epam.facade.model.projection.ServiceStatusHolder;
 import com.epam.health.tool.model.ClusterEntity;
 import com.epam.health.tool.model.ClusterServiceSnapshotEntity;
 import com.epam.health.tool.model.ServiceTypeEnum;
@@ -21,7 +21,7 @@ public interface ClusterServiceSnapshotDao extends CrudRepository<ClusterService
     List<ClusterEntity> findClustersForSnapshot(Date lastHourCheck);
 
     @Query("select csse from ClusterServiceSnapshotEntity csse left join csse.clusterSnapshotEntity cse left join csse.clusterServiceEntity csere where cse.id=?1")
-    List<ServiceStatusProjection> findServiceProjectionsBy(Long clusterSnapshotId);
+    List<ServiceStatusHolder> findServiceProjectionsBy(Long clusterSnapshotId);
 
     @Query("select csse from ClusterServiceSnapshotEntity csse left join csse.clusterSnapshotEntity cse left join csse.clusterServiceEntity csere where cse.id=?1 and csere.serviceType=?2")
     ClusterServiceSnapshotEntity findByClusterSnapshotIdServiceId(Long clusterSnapshotId, ServiceTypeEnum serviceType);

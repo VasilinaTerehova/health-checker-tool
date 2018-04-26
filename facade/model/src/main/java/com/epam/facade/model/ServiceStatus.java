@@ -2,7 +2,7 @@ package com.epam.facade.model;
 
 import com.epam.facade.model.accumulator.results.BaseActionResult;
 import com.epam.facade.model.projection.JobResultProjection;
-import com.epam.facade.model.projection.ServiceStatusProjection;
+import com.epam.facade.model.projection.ServiceStatusHolder;
 import com.epam.health.tool.model.ServiceStatusEnum;
 import com.epam.health.tool.model.ServiceTypeEnum;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -14,11 +14,12 @@ import java.util.List;
  * do not update this class for vendor specific transferring, names are used for ui
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ServiceStatus implements ServiceStatusProjection, BaseActionResult {
+public class ServiceStatus implements ServiceStatusHolder, BaseActionResult {
     private ServiceTypeEnum type;
     private ServiceStatusEnum healthSummary;
     private List<JobResultProjection> jobResults;
 
+    //todo: delete health status
     public ServiceStatusEnum getHealthStatus() {
         return healthSummary;
     }
