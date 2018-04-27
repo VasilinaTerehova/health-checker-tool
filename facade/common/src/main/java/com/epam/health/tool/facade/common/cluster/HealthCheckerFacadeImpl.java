@@ -23,12 +23,12 @@ public class HealthCheckerFacadeImpl implements IHealthCheckFacade {
     @Autowired
     private HealthCheckActionImplResolver healthCheckActionImplResolver;
 
-    public HealthCheckResultsAccumulator performHealthChecks(String clusterName, HealthCheckActionType healthCheckType) {
+    public HealthCheckResultsAccumulator performHealthChecks(String clusterName, ClusterAccumulatorToken clusterAccumulatorToken) {
         ClusterEntity clusterEntity = clusterDao.findByClusterName( clusterName );
         HealthCheckResultsAccumulator healthCheckResultsAccumulator = HealthCheckResultsAccumulator.HealthCheckResultsModifier.get()
-                .setClusterName( clusterName ).modify();
+                .setClusterName( clusterName ).setToken(clusterAccumulatorToken.getToken()).modify();
 
-        Flux.fromStream( healthCheckActionImplResolver.resolveActionImplementations( clusterEntity.getClusterTypeEnum().name(), healthCheckType ).stream() )
+        Flux.fromStream( healthCheckActionImplResolver.resolveActionImplementations( clusterEntity.getClusterTypeEnum().name(), clusterAccumulatorToken.getHealthCheckActionType() ).stream() )
                 .parallel().doOnNext( serviceHealthCheckAction -> {
             try {
                 serviceHealthCheckAction.performHealthCheck(clusterEntity.getClusterName(), healthCheckResultsAccumulator);
@@ -43,6 +43,6 @@ public class HealthCheckerFacadeImpl implements IHealthCheckFacade {
 
     @Override
     public HealthCheckResultsAccumulator askForClusterSnapshot(ClusterAccumulatorToken clusterAccumulatorToken) throws InvalidResponseException {
-        return performHealthChecks( clusterAccumulatorToken.getClusterName(), clusterAccumulatorToken.getHealthCheckActionType() );
+        return performHealthChecks( clusterAccumulatorToken.getClusterName(), clusterAccumulatorToken );
     }
 }

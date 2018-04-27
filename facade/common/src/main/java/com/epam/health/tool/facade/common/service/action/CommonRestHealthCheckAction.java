@@ -22,14 +22,14 @@ public abstract class CommonRestHealthCheckAction<T> implements IServiceHealthCh
     @Override
     public void performHealthCheck(String clusterName, HealthCheckResultsAccumulator healthCheckResultsAccumulator) throws InvalidResponseException {
         try {
-            saveClusterHealthSummaryToAccumulator( healthCheckResultsAccumulator, performRestHealthCheck( clusterDao.findByClusterName(clusterName) ) );
+            saveClusterHealthSummaryToAccumulator( healthCheckResultsAccumulator, performRestHealthCheck( healthCheckResultsAccumulator, clusterDao.findByClusterName(clusterName) ) );
         } catch (ImplementationNotResolvedException | RuntimeException ex) {
             throw new InvalidResponseException(ex);
         }
     }
 
     //Use for FS actions
-    protected abstract T performRestHealthCheck( ClusterEntity clusterEntity ) throws InvalidResponseException, ImplementationNotResolvedException;
+    protected abstract T performRestHealthCheck(HealthCheckResultsAccumulator healthCheckResultsAccumulator, ClusterEntity clusterEntity) throws InvalidResponseException, ImplementationNotResolvedException;
 
     protected abstract void saveClusterHealthSummaryToAccumulator( HealthCheckResultsAccumulator healthCheckResultsAccumulator,
                                                                    T healthCheckResult );

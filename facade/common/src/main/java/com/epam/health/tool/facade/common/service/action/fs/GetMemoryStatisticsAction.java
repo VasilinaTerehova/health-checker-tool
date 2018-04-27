@@ -28,7 +28,7 @@ public class GetMemoryStatisticsAction extends CommonRestHealthCheckAction<Memor
     private IFacadeImplResolver<IRunningClusterParamReceiver> iRunningClusterParamReceiver;
 
     @Override
-    protected MemoryUsageEntityProjection performRestHealthCheck(ClusterEntity clusterEntity) throws InvalidResponseException {
+    protected MemoryUsageEntityProjection performRestHealthCheck(HealthCheckResultsAccumulator healthCheckResultsAccumulator, ClusterEntity clusterEntity) throws InvalidResponseException {
         return getMemoryTotal(clusterEntity.getClusterName());
     }
 

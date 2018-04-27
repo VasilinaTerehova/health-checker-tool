@@ -25,7 +25,7 @@ public class GetHdfsStatisticsAction extends CommonRestHealthCheckAction<HdfsUsa
     private IFacadeImplResolver<IRunningClusterParamReceiver> runningClusterParamImplResolver;
 
     @Override
-    protected HdfsUsageEntityProjection performRestHealthCheck(ClusterEntity clusterEntity) throws InvalidResponseException {
+    protected HdfsUsageEntityProjection performRestHealthCheck(HealthCheckResultsAccumulator healthCheckResultsAccumulator, ClusterEntity clusterEntity) throws InvalidResponseException {
         return getAvailableDiskHdfs(clusterEntity.getClusterName());
     }
 

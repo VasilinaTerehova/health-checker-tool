@@ -40,7 +40,8 @@ export class ServiceListComponent {
   }
 
   isShowLogsLocationAllow(state: string) {
-    return state && (state.toUpperCase() == "BAD" || state.toUpperCase() == "DISABLED");
+    return true;
+    //return state && (state.toUpperCase() == "BAD" || state.toUpperCase() == "DISABLED");
   }
 
   restartService( serviceName: string ) {

@@ -19,6 +19,12 @@ public interface ServiceStatusHolder {
     @Value("#{target.clusterServiceEntity.serviceType}")
     ServiceTypeEnum getDisplayName();
 
+    @Value("#{target.clusterServiceEntity.logPath}")
+    String getLogDirectory();
+
+    @Value("#{target.clusterServiceEntity.clusterNode}")
+    String getClusterNode();
+
     @Value("#{target.jobResults}")
     List<JobResultProjection> getJobResults();
 
@@ -27,4 +33,8 @@ public interface ServiceStatusHolder {
     void setHealthSummary(ServiceStatusEnum healthSummary);
 
     void setJobResults(List<JobResultProjection> jobResults);
+
+    void setLogDirectory(String logDirectory);
+
+    void setClusterNode(String clusterNode);
 }

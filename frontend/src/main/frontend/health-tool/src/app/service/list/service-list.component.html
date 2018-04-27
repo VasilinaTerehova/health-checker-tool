@@ -26,7 +26,7 @@
           <td>{{x.displayName}}</td>
           <td service-table-row serviceState="{{x.healthSummary}}">{{x.healthSummary}}</td>
           <td service-table-row serviceState="{{x.healthSummary}}" *ngIf="isShowLogsLocationAllow(x.healthSummary)">
-            {{ 'home.label.cluster.host' | translate }}:  /yarn/containers-logs
+            {{x.logDirectory}} on {{x.clusterNode}}
           </td>
           <td *ngIf="isShowServiceActionAllow(x.displayName)" align="center">
               <button type="button" style="text-decoration: underline" class="btn btn-primary" (click)="restartService(x.displayName)">{{ 'home.button.cluster.restart' | translate }}</button>
