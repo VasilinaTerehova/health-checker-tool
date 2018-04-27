@@ -33,7 +33,7 @@ public class GetFsStatisticsAction extends CommonRestHealthCheckAction<List<? ex
     private IFacadeImplResolver<IRunningClusterParamReceiver> runningClusterParamImplResolver;
 
     @Override
-    protected List<? extends NodeSnapshotEntityProjection> performRestHealthCheck(ClusterEntity clusterEntity) throws InvalidResponseException, ImplementationNotResolvedException {
+    protected List<? extends NodeSnapshotEntityProjection> performRestHealthCheck(HealthCheckResultsAccumulator healthCheckResultsAccumulator, ClusterEntity clusterEntity) throws InvalidResponseException, ImplementationNotResolvedException {
         return getAvailableDiskDfs(clusterEntity.getClusterName());
     }
 

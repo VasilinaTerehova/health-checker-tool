@@ -13,7 +13,7 @@ import java.util.Set;
 @Entity
 @Table(name = ClusterSnapshotEntity.TABLE_NAME, uniqueConstraints =
         {
-                @UniqueConstraint(columnNames = ClusterSnapshotEntity.COLUMN_TOKEN)
+                @UniqueConstraint(columnNames = {ClusterSnapshotEntity.COLUMN_TOKEN, ClusterSnapshotEntity.CLUSTER_FK_COLUMN})
         })
 
 public class ClusterSnapshotEntity extends AbstractManagedEntity {
@@ -22,6 +22,7 @@ public class ClusterSnapshotEntity extends AbstractManagedEntity {
     public static final String COLUMN_COUNT_OF_RUNNING_APPS = "count_of_runnings_apps_";
     public static final String COLUMN_USED_MEMORY = "used_memory_";
     public static final String COLUMN_FK_CLUSTER = ClusterEntity.TABLE_NAME;
+    public static final String CLUSTER_FK_COLUMN = TABLE_NAME + DELIMITER_INDEX + COLUMN_FK_CLUSTER;
     public static final String COLUMN_TOKEN = "token_";
     public static final String COLUMN_FULL = "full_";
 
@@ -30,7 +31,7 @@ public class ClusterSnapshotEntity extends AbstractManagedEntity {
 
     @NotNull
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = TABLE_NAME + DELIMITER_INDEX + COLUMN_FK_CLUSTER)
+    @JoinColumn(name = CLUSTER_FK_COLUMN)
     private ClusterEntity clusterEntity;
 
     @Column(name = COLUMN_TOKEN)

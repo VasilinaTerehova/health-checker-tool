@@ -61,6 +61,10 @@ public class HealthCheckResultsAccumulator {
         }
     }
 
+    public boolean isFullCheck() {
+        return clusterSnapshotAccumulator.getToken() != null && !clusterSnapshotAccumulator.getToken().isEmpty();
+    }
+
     public static class HealthCheckResultsModifier {
         private HealthCheckResultsAccumulator healthCheckResultsAccumulator;
 

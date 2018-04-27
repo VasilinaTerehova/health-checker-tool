@@ -18,6 +18,8 @@ public class ServiceStatus implements ServiceStatusHolder, BaseActionResult {
     private ServiceTypeEnum type;
     private ServiceStatusEnum healthSummary;
     private List<JobResultProjection> jobResults;
+    private String logDirectory;
+    private String clusterNode;
 
     //todo: delete health status
     public ServiceStatusEnum getHealthStatus() {
@@ -52,12 +54,32 @@ public class ServiceStatus implements ServiceStatusHolder, BaseActionResult {
     }
 
     @Override
+    public String getLogDirectory() {
+        return logDirectory;
+    }
+
+    @Override
+    public String getClusterNode() {
+        return clusterNode;
+    }
+
+    @Override
     public List<JobResultProjection> getJobResults() {
         return jobResults;
     }
 
     public void setJobResults(List<JobResultProjection> jobResults) {
         this.jobResults = jobResults;
+    }
+
+    @Override
+    public void setLogDirectory(String logDirectory) {
+        this.logDirectory = logDirectory;
+    }
+
+    @Override
+    public void setClusterNode(String clusterNode) {
+        this.clusterNode = clusterNode;
     }
 
     @Override

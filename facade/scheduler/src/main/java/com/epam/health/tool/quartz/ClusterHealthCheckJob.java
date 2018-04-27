@@ -44,7 +44,7 @@ public class ClusterHealthCheckJob {
 
             try {
                 clusterSnapshotFacadeIFacadeImplResolver.resolveFacadeImpl(clusterEntity.getClusterTypeEnum().name()).makeClusterSnapshot(
-                        ClusterAccumulatorToken.buildAllCheck(clusterEntity.getClusterName()));
+                        ClusterAccumulatorToken.buildScheduleAllCheck(clusterEntity.getClusterName()));
             } catch (ImplementationNotResolvedException | InvalidResponseException e) {
                 log.error("Can't find facade implementation for this vendor ", e);
             }

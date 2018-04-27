@@ -1,7 +1,8 @@
 package com.epam.health.tool.facade.service.log;
 
+import com.epam.facade.model.accumulator.LogLocation;
 import com.epam.health.tool.model.ServiceTypeEnum;
 
 public interface IServiceLogSearchFacade {
-    String searchLogs(String clusterName, ServiceTypeEnum serviceType);
+    LogLocation searchLogs(String clusterName, ServiceTypeEnum serviceType);
 }

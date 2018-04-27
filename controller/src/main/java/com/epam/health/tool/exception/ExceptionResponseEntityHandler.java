@@ -3,6 +3,8 @@ package com.epam.health.tool.exception;
 import com.epam.health.tool.exception.model.ErrorDetails;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageConversionException;
+import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,4 +26,5 @@ public class ExceptionResponseEntityHandler extends ResponseEntityExceptionHandl
         ErrorDetails errorDetails = new ErrorDetails( ex.getMessage() );
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
+
 }

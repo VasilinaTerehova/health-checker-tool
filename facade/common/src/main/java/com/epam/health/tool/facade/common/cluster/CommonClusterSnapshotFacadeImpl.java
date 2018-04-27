@@ -14,6 +14,7 @@ import com.epam.facade.model.exception.InvalidResponseException;
 import com.epam.health.tool.model.*;
 import com.epam.health.tool.transfer.impl.SVTransfererManager;
 import com.epam.util.common.CheckingParamsUtil;
+import com.epam.util.common.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -187,11 +188,17 @@ public abstract class CommonClusterSnapshotFacadeImpl implements IClusterSnapsho
         ClusterServiceSnapshotEntity clusterServiceSnapshotEntity = svTransfererManager.<ServiceStatus, ClusterServiceSnapshotEntity>getTransferer(ServiceStatus.class, ClusterServiceSnapshotEntity.class).transfer((ServiceStatus) serviceStatus, ClusterServiceSnapshotEntity.class);
         clusterServiceSnapshotEntity.setClusterSnapshotEntity(clusterSnapshotEntity);
         if (clusterServiceEntity == null) {
-            ClusterServiceEntity clusterServiceEntity1 = clusterServiceSnapshotEntity.getClusterServiceEntity();
-            clusterServiceEntity1.setClusterEntity(clusterEntity);
-            clusterServiceDao.save(clusterServiceEntity1);
+            //todo: revisit here, recreate from null, not receiving from snapshot
+            clusterServiceEntity = clusterServiceSnapshotEntity.getClusterServiceEntity();
+            clusterServiceEntity.setClusterEntity(clusterEntity);
+            clusterServiceDao.save(clusterServiceEntity);
         } else {
             clusterServiceSnapshotEntity.setClusterServiceEntity(clusterServiceEntity);
+        }
+        if (!StringUtils.isEmpty(serviceStatus.getLogDirectory())) {
+            clusterServiceEntity.setLogPath(serviceStatus.getLogDirectory());
+            clusterServiceEntity.setClusterNode(serviceStatus.getClusterNode());
+            clusterServiceDao.save(clusterServiceEntity);
         }
         clusterServiceSnapshotDao.save(clusterServiceSnapshotEntity);
         return clusterServiceSnapshotEntity;
