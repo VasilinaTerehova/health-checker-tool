@@ -4,7 +4,7 @@ import com.epam.health.tool.authentication.exception.AuthenticationRequestExcept
 import com.epam.health.tool.authentication.http.HttpAuthenticationClient;
 import com.epam.health.tool.dao.cluster.ClusterDao;
 import com.epam.health.tool.facade.common.cluster.receiver.CommonRuningClusterParamReceiver;
-import com.epam.health.tool.facade.common.resolver.impl.ClusterSpecificComponent;
+import com.epam.health.tool.facade.resolver.ClusterSpecificComponent;
 import com.epam.health.tool.facade.context.IApplicationContext;
 import com.epam.facade.model.exception.InvalidResponseException;
 import com.epam.health.tool.model.ClusterEntity;

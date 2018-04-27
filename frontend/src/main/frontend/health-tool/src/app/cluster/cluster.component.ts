@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs/Subscription';
 //Models
 import { Cluster } from '../shared/cluster/cluster.model';
 import { JobExample } from './health/job-example.model';
-import { ServiceStatus } from "../service/service-status.model";
+import { ServiceStatus } from '../service/service-status.model';
 import { ClusterSnapshot } from './cluster-snapshot.model';
 import { CheckHealthToken } from './health/check-health-token.model';
 //Services

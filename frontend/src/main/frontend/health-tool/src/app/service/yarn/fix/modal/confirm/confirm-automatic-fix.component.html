@@ -1,0 +1,28 @@
+<div class="modal-header alert alert-danger">
+  <button type="button" class="close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
+    <span aria-hidden="true">&times;</span>
+  </button>
+  <h3 class="modal-title"><i class="glyphicon glyphicon-alert"></i> {{ 'home.label.shared.confirm.message.operation' | translate:{value: operationName} }}</h3>
+</div>
+<div class="modal-body">
+  <!--Ssh credentials-->
+  <div class="form-group row">
+    <div class="col-xs-12" style="margin-bottom: 1%">
+      <label class="label label-success" style="font-size: 15px">{{ 'home.label.cluster.credentials.ssh' | translate}}</label>
+    </div>
+    <div class="col-xs-6" [ngClass]="{ 'has-error': !sshUsername.valid }">
+        <label for="sshUsername">{{ 'home.label.cluster.username' | translate}}</label>
+        <input type="text" class="form-control" id="sshUsername" name="sshUsername" required [(ngModel)]="ssh.username" #sshUsername="ngModel" placeholder="{{ 'home.placeholder.cluster.username' | translate }}">
+        <span class="help-block" *ngIf="!sshUsername.valid">{{ 'home.error.cluster.username' | translate }}</span>
+    </div>
+    <div class="col-xs-6" [ngClass]="{ 'has-error': !sshPassword.valid }">
+        <label for="sshPassword">{{ 'home.label.cluster.password' | translate}}</label>
+        <input type="password" class="form-control" id="sshPassword" name="sshPassword" required [(ngModel)]="ssh.password" #sshPassword="ngModel" placeholder="{{ 'home.placeholder.cluster.password' | translate }}">
+        <span class="help-block" *ngIf="!sshPassword.valid">{{ 'home.error.cluster.password' | translate }}</span>
+    </div>
+  </div>
+</div>
+<div class="modal-footer" style="display: flex; justify-content: center">
+  <button type="button" class="btn btn-danger" (click)="confirm()" [disabled]="!sshPassword.valid || !sshUsername.valid">Perform</button>
+  <button type="button" class="btn btn-primary" (click)="decline()" >{{ 'home.label.shared.confirm.no' | translate }}</button>
+</div>

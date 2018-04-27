@@ -53,6 +53,14 @@ public abstract class CommonRuningClusterParamReceiver implements IRunningCluste
     }
 
     @Override
+    public String getYarnLocalDirectory(String clusterName) throws InvalidResponseException {
+        String logDirPropery = getPropertySiteXml( clusterName, DownloadableFileConstants.ServiceFileName.YARN, YARN_NODEMANAGER_LOCAL_DIRS);
+
+        log().info( "Local dir for cluster - ".concat( clusterName ).concat( " dir - " ).concat( logDirPropery ) );
+        return logDirPropery;
+    }
+
+    @Override
     public String getLogDirectory( String clusterName ) throws InvalidResponseException {
         String logDirPropery = getPropertySiteXml( clusterName, DownloadableFileConstants.ServiceFileName.YARN, YARN_NODEMANAGER_LOG_DIRS);
 
@@ -117,6 +125,9 @@ public abstract class CommonRuningClusterParamReceiver implements IRunningCluste
         return rmAddress;
     }
 
+    protected abstract String getPropertySiteXml( ClusterEntity clusterEntity, String siteName, String propertyName ) throws InvalidResponseException;
+    protected abstract Logger log();
+
     private String getRealNameNodeUrl( String clusterName ) throws InvalidResponseException {
         String nameNodeUrl = getPropertySiteXml( clusterName, DownloadableFileConstants.ServiceFileName.HDFS, DFS_NAMENODE_HTTP_ADDRESS );
 
@@ -156,9 +167,6 @@ public abstract class CommonRuningClusterParamReceiver implements IRunningCluste
         return isAddressAvailable( rmAddress, clusterName ) ? rmAddress
                 : throwAddressNotFoundException( "RM address url not found for cluster - ".concat( clusterName ) );
     }
-
-    protected abstract String getPropertySiteXml( ClusterEntity clusterEntity, String siteName, String propertyName ) throws InvalidResponseException;
-    protected abstract Logger log();
 
     //Cache operations
     /*------------------------------------------------------------------------------------------------------*/
@@ -200,7 +208,8 @@ public abstract class CommonRuningClusterParamReceiver implements IRunningCluste
             e.printStackTrace();
         }
         finally {
-            if ( forkJoinPool.isShutdown() ) {
+            //Is it necessary?
+            if ( !forkJoinPool.isShutdown() ) {
                 forkJoinPool.shutdownNow();
             }
         }

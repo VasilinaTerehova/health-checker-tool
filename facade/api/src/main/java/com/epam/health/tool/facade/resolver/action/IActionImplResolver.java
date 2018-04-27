@@ -1,4 +1,4 @@
-package com.epam.health.tool.facade.resolver;
+package com.epam.health.tool.facade.resolver.action;
 
 import com.epam.facade.model.HealthCheckActionType;
 import com.epam.health.tool.facade.service.action.IServiceHealthCheckAction;

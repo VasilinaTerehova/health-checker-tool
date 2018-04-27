@@ -3,7 +3,7 @@ package com.epam.health.tool.facade.cdh.service.status;
 import com.epam.facade.model.ServiceStatus;
 import com.epam.facade.model.projection.ServiceStatusHolder;
 import com.epam.health.tool.authentication.exception.AuthenticationRequestException;
-import com.epam.health.tool.facade.common.resolver.impl.ClusterSpecificComponent;
+import com.epam.health.tool.facade.resolver.ClusterSpecificComponent;
 import com.epam.health.tool.facade.common.service.status.CommonServiceStatusReceiver;
 import com.epam.facade.model.exception.InvalidResponseException;
 import com.epam.health.tool.model.ClusterEntity;

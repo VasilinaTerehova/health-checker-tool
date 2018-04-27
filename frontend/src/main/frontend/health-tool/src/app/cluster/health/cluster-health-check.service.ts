@@ -3,9 +3,9 @@ import { HttpClient } from '@angular/common/http';
 
 import { Cluster } from '../../shared/cluster/cluster.model';
 import { ClusterState } from '../cluster-state.model';
-import {ClusterStateHistory} from "../cluster-history-state.model";
-import { HealthCheckResult } from "../health/health-check-result.model";
-import { ServiceStatus } from "../../service/service-status.model";
+import {ClusterStateHistory} from '../cluster-history-state.model';
+import { HealthCheckResult } from '../health/health-check-result.model';
+import { ServiceStatus } from '../../service/service-status.model';
 //Fs checks
 import { HdfsUsage } from './common/hdfs.model';
 import { Memory } from './common/memory.model';

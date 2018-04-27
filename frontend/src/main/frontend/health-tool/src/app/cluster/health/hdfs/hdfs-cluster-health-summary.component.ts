@@ -3,7 +3,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 //Models
 import { Cluster } from '../../../shared/cluster/cluster.model';
 import { JobExample } from '../job-example.model';
-import { ServiceStatus } from "../../../service/service-status.model";
+import { ServiceStatus } from '../../../service/service-status.model';
 
 @Component({
   selector: 'hdfs-cluster-health-summary',

@@ -27,6 +27,7 @@ public class DownloadableFileConstants {
     public static final String YARN_RESOURCEMANAGER_HTTPS_WEBAPP_ADDRESS = "yarn.resourcemanager.webapp.https.address";
     public static final String YARN_RESOURCEMANAGER_HA_RM_IDS = "yarn.resourcemanager.ha.rm-ids";
     public static final String YARN_NODEMANAGER_LOG_DIRS = "yarn.nodemanager.log-dirs";
+    public static final String YARN_NODEMANAGER_LOCAL_DIRS = "yarn.nodemanager.local-dirs";
   }
 
   public static class HdfsProperties {

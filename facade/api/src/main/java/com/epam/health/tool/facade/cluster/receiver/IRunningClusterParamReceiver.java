@@ -10,6 +10,7 @@ import java.util.Set;
  */
 public interface IRunningClusterParamReceiver {
     String getLogDirectory(String clusterName) throws InvalidResponseException;
+    String getYarnLocalDirectory(String clusterName) throws InvalidResponseException;
     String getPropertySiteXml( String clusterName, String siteName, String propertyName ) throws InvalidResponseException;
     Set<String> getLiveNodes(String clusterName ) throws InvalidResponseException;
     HdfsNamenodeJson getHdfsNamenodeJson( String clusterName ) throws InvalidResponseException;

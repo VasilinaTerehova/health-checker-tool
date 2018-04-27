@@ -1,6 +1,6 @@
 package com.epam.health.tool.facade.cdh.service;
 
-import com.epam.health.tool.facade.common.resolver.impl.ClusterSpecificComponent;
+import com.epam.health.tool.facade.resolver.ClusterSpecificComponent;
 import com.epam.health.tool.facade.common.service.CommonServiceSnapshotFacadeImpl;
 import com.epam.health.tool.model.ClusterServiceSnapshotEntity;
 import com.epam.health.tool.model.ClusterTypeEnum;

@@ -1,6 +1,6 @@
-package com.epam.health.tool.facade.common.resolver.impl.action;
+package com.epam.health.tool.facade.resolver;
 
-import com.epam.facade.model.HealthCheckActionType;
+import com.epam.health.tool.model.ClusterTypeEnum;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -9,6 +9,6 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface HealthCheckAction {
-    HealthCheckActionType value() default HealthCheckActionType.NONE;
+public @interface ClusterSpecificComponent {
+    ClusterTypeEnum value() default ClusterTypeEnum.NONE;
 }

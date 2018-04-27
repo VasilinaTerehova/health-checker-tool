@@ -27,6 +27,12 @@
             <tab heading="{{ 'home.label.cluster.snapshots' | translate }}">
               <service-status-history [clusterName]="clusterName"></service-status-history>
             </tab>
+            <tab>
+              <ng-template tabHeading>
+                <i class="glyphicon glyphicon-wrench"></i> {{ 'home.label.cluster.action.fix.name' | translate }}
+              </ng-template>
+              <cluster-fix-issues [clusterName]="clusterName"></cluster-fix-issues>
+            </tab>
           </tabset>
         </div>
     </div>

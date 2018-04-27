@@ -44,5 +44,15 @@
       </includes>
       <filtered>true</filtered>
     </fileSet>
+    <!-- Properties Files -->
+    <fileSet>
+      <directory>src/main/scripts</directory>
+      <outputDirectory></outputDirectory>
+      <includes>
+        <include>health-tool-start.sh</include>
+        <include>health-tool-start.bat</include>
+      </includes>
+      <filtered>true</filtered>
+    </fileSet>
   </fileSets>
 </assembly>

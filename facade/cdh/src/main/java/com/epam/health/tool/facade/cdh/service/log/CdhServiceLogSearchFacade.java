@@ -1,6 +1,6 @@
 package com.epam.health.tool.facade.cdh.service.log;
 
-import com.epam.health.tool.facade.common.resolver.impl.ClusterSpecificComponent;
+import com.epam.health.tool.facade.resolver.ClusterSpecificComponent;
 import com.epam.health.tool.facade.common.service.log.CommonServiceLogSearchFacade;
 import com.epam.health.tool.facade.service.log.IServiceLogsSearcher;
 import com.epam.health.tool.model.ClusterTypeEnum;

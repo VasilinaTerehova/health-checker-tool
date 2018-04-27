@@ -2,6 +2,7 @@ package com.epam.health.tool.facade.common.service.log;
 
 import com.epam.facade.model.ClusterNodes;
 import com.epam.facade.model.accumulator.LogLocation;
+import com.epam.health.tool.authentication.exception.AuthenticationRequestException;
 import com.epam.health.tool.authentication.ssh.SshAuthenticationClient;
 import com.epam.health.tool.dao.cluster.ClusterDao;
 import com.epam.health.tool.facade.cluster.receiver.IRunningClusterParamReceiver;
@@ -12,6 +13,7 @@ import com.epam.health.tool.facade.service.log.IServiceLogsSearcher;
 import com.epam.health.tool.model.ClusterEntity;
 import com.epam.health.tool.transfer.Tuple2;
 import com.epam.util.common.CheckingParamsUtil;
+import com.epam.util.common.StringUtils;
 import com.epam.util.ssh.delegating.SshExecResult;
 
 import java.util.Arrays;
@@ -36,7 +38,7 @@ public abstract class CommonServiceLogSearcher implements IServiceLogsSearcher {
         ClusterEntity byClusterName = clusterDao.findByClusterName(clusterName);
         return getClusterLiveNodes(byClusterName)
                 .getLiveNodes().parallelStream()
-                .map( node -> new Tuple2<>(node, parseCommandResult(sshAuthenticationClient.executeCommand( byClusterName, createPsAuxCommand(), node)) ) )
+                .map( node -> new Tuple2<>(node, runSshCommand( clusterName, createPsAuxCommand(), node ) ) )
                 .filter( objects -> CheckingParamsUtil.isParamsNotNullOrEmpty(objects.getT2()) )
                 .findFirst()
                 .map(objects -> new LogLocation(objects.getT1(), objects.getT2()))
@@ -58,6 +60,14 @@ public abstract class CommonServiceLogSearcher implements IServiceLogsSearcher {
 
     private String createPsAuxCommand() {
         return PS_AUX_CLI.concat( " " ).concat( getLogPropertyName() );
+    }
+
+    private String runSshCommand( String clusterName, String command, String node ) {
+        try {
+            return parseCommandResult( sshAuthenticationClient.executeCommand( clusterName, command, node) );
+        } catch (AuthenticationRequestException e) {
+            return StringUtils.EMPTY;
+        }
     }
 
     private String parseCommandResult( SshExecResult sshExecResult ) {

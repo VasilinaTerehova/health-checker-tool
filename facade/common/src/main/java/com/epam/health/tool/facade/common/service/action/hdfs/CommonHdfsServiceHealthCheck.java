@@ -7,11 +7,11 @@ import com.epam.facade.model.exception.InvalidResponseException;
 import com.epam.facade.model.projection.JobResultProjection;
 import com.epam.facade.model.projection.ServiceStatusHolder;
 import com.epam.health.tool.dao.cluster.ClusterDao;
-import com.epam.health.tool.facade.common.resolver.impl.action.HealthCheckAction;
 import com.epam.health.tool.facade.common.service.action.CommonActionNames;
 import com.epam.health.tool.facade.common.service.action.CommonSshHealthCheckAction;
 import com.epam.health.tool.facade.common.service.action.yarn.CommonYarnServiceHealthCheckActionImpl;
 import com.epam.health.tool.facade.resolver.IFacadeImplResolver;
+import com.epam.health.tool.facade.resolver.action.HealthCheckAction;
 import com.epam.health.tool.facade.service.status.IServiceStatusReceiver;
 import com.epam.health.tool.model.ClusterEntity;
 import com.epam.health.tool.model.ServiceStatusEnum;
@@ -51,7 +51,7 @@ public class CommonHdfsServiceHealthCheck extends CommonSshHealthCheckAction {
         return serviceHealthCheckResultIfExists.orElse(serviceStatusReceiverIFacadeImplResolver.resolveFacadeImpl(clusterEntity.getClusterTypeEnum()).getServiceStatus(clusterEntity, ServiceTypeEnum.HDFS));
     }
 
-    private List<JobResultProjection> performHdfsOperations(ClusterEntity clusterEntity) {
+    private List<JobResultProjection> performHdfsOperations(ClusterEntity clusterEntity) throws InvalidResponseException {
         kinitOnClusterIfNecessary(clusterEntity);
 
         return hdfsOperations.stream().map(hdfsOperation -> hdfsOperation.perform(clusterEntity)).collect(Collectors.toList());

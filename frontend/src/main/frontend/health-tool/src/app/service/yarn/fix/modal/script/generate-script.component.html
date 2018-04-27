@@ -1,0 +1,15 @@
+<div class="modal-header alert alert-info">
+  <h3 class="modal-title"><i class="glyphicon glyphicon-cd"></i> Creat bash script for {{operationName}}</h3>
+</div>
+<div class="modal-body">
+  <div *ngIf="isGenerating">
+    Script is creating. Please wait...
+    <loading-label [show]="isGenerating"></loading-label>
+  </div>
+  <div *ngIf="!isGenerating">
+    Bash script is created. Link for download -  <a href="http://localhost:8888/{{bashScriptLink}}" download>bash script</a>
+  </div>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-success" (click)="close()" [disabled]="isGenerating">OK</button>
+</div>

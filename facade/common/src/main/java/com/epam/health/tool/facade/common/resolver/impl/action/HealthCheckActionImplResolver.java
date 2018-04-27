@@ -1,9 +1,10 @@
 package com.epam.health.tool.facade.common.resolver.impl.action;
 
 import com.epam.facade.model.HealthCheckActionType;
-import com.epam.health.tool.facade.common.resolver.impl.ClusterSpecificComponent;
+import com.epam.health.tool.facade.resolver.ClusterSpecificComponent;
 import com.epam.health.tool.facade.common.service.action.CommonActionNames;
-import com.epam.health.tool.facade.resolver.IActionImplResolver;
+import com.epam.health.tool.facade.resolver.action.IActionImplResolver;
+import com.epam.health.tool.facade.resolver.action.HealthCheckAction;
 import com.epam.health.tool.facade.service.action.IServiceHealthCheckAction;
 import com.epam.health.tool.model.ClusterTypeEnum;
 import org.springframework.beans.factory.annotation.Autowired;

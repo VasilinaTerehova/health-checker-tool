@@ -1,5 +1,6 @@
 package com.epam.util.ssh.delegating;
 
+import com.epam.util.common.CheckingParamsUtil;
 import com.epam.util.common.StringUtils;
 import com.epam.util.common.copier.ByteCopierUtil;
 import com.jcraft.jsch.*;
@@ -74,11 +75,12 @@ public class DelegatingSshSession implements Closeable {
   }
 
   public SshExecResult executeCommand( String command ) {
-    SshExecResult sshExecResult = new SshExecResult();
+    SshExecResult.SshExecResultBuilder sshExecResultBuilder = SshExecResult.SshExecResultBuilder.get();
     Channel channel = null;
 
     try {
       channel = session.openChannel( "exec" );
+      setPtyIfSudo( channel, command );
       ( (ChannelExec) channel ).setCommand( command.trim() );
 
       channel.setInputStream( null );
@@ -93,14 +95,14 @@ public class DelegatingSshSession implements Closeable {
           if ( i < 0 ) {
             break;
           }
-          sshExecResult.appendToOut( new String( tmp, 0, i ) );
+          sshExecResultBuilder.appendToOut( new String( tmp, 0, i ) );
         }
         while ( err.available() > 0 ) {
           int i = err.read( tmp, 0, 5024 );
           if ( i < 0 ) {
             break;
           }
-          sshExecResult.appendToErr( new String( tmp, 0, i ) );
+          sshExecResultBuilder.appendToErr( new String( tmp, 0, i ) );
         }
         if ( channel.isClosed() ) {
           if ( in.available() > 0 || err.available() > 0 ) {
@@ -122,7 +124,7 @@ public class DelegatingSshSession implements Closeable {
       }
     }
 
-    return sshExecResult;
+    return sshExecResultBuilder.build();
   }
 
   @Override
@@ -153,5 +155,12 @@ public class DelegatingSshSession implements Closeable {
     } catch ( JSchException ex ) {
       throw new IOException( ex );
     }
+  }
+
+  private void setPtyIfSudo( Channel channel, String command ) {
+    if (CheckingParamsUtil.isParamsNotNullOrEmpty( command ) && command.contains( "sudo" )) {
+      ( (ChannelExec) channel ).setPty( true );
+    }
+
   }
 }

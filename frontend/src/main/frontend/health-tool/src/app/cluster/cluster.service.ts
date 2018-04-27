@@ -3,8 +3,8 @@ import { HttpClient } from '@angular/common/http';
 
 import { Cluster } from '../shared/cluster/cluster.model';
 import { ClusterState } from './cluster-state.model';
-import {ClusterStateHistory} from "./cluster-history-state.model";
-import { HealthCheckResult } from "./health/health-check-result.model";
+import {ClusterStateHistory} from './cluster-history-state.model';
+import { HealthCheckResult } from './health/health-check-result.model';
 
 @Injectable()
 export class ClusterService {

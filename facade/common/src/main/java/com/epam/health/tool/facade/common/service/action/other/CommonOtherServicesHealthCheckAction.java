@@ -22,9 +22,7 @@ import java.util.List;
 public abstract class CommonOtherServicesHealthCheckAction extends CommonRestHealthCheckAction<List<ServiceStatusHolder>> {
     private final static Logger logger = Logger.getLogger( CommonOtherServicesHealthCheckAction.class );
     @Autowired
-    protected SVTransfererManager svTransfererManager;
-    @Autowired
-    protected IFacadeImplResolver<IServiceStatusReceiver> serviceStatusReceiverIFacadeImplResolver;
+    private IFacadeImplResolver<IServiceStatusReceiver> serviceStatusReceiverIFacadeImplResolver;
     @Autowired
     private IFacadeImplResolver<IServiceLogSearchFacade> serviceLogSearchManagerImplResolver;
     @Autowired
@@ -82,5 +80,4 @@ public abstract class CommonOtherServicesHealthCheckAction extends CommonRestHea
             logger.error(e.getMessage());
         }
     }
-
 }

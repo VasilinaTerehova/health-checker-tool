@@ -1,0 +1,27 @@
+<div class="row">
+  <div class="col-sm-6 text-center">
+    <label class="btn btn-primary" (click)="generateScript()"
+           btnCheckbox tabindex="0" role="button" style="width: 300px">
+           <i class="glyphicon glyphicon-education"></i> Generate script for manual fix
+    </label>
+  </div>
+  <div class="col-sm-6" style="display: flex; justify-content: center">
+    <label class="btn btn-danger" (click)="performAutomaticFix()"
+           btnCheckbox tabindex="0" role="button" style="width: 300px">
+           <i class="glyphicon glyphicon-flash"></i> Automatic fix
+    </label>
+  </div>
+</div>
+<hr>
+<div class="" *ngIf="isPerforming">
+  Automatic fix is running. Please wait...
+  <loading-label [show]="isPerforming"></loading-label>
+</div>
+<accordion *ngIf="!isPerforming">
+  <accordion-group heading="Manual fix tutorial">
+    Run next commands one-by-one as sudo user
+    <ul class="list-group">
+     <li class="list-group-item" *ngFor="let step of yarnServiceFixSteps; let i = index">{{ i + 1 }}. {{step}}</li>
+    </ul>
+  </accordion-group>
+</accordion>

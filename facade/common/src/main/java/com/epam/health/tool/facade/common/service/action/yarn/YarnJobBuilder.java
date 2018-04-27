@@ -1,6 +1,7 @@
 package com.epam.health.tool.facade.common.service.action.yarn;
 
 import com.epam.facade.model.accumulator.results.impl.JobResultImpl;
+import com.epam.facade.model.cluster.receiver.InvalidBuildParamsException;
 import com.epam.facade.model.projection.JobResultProjection;
 import com.epam.util.common.CheckingParamsUtil;
 
@@ -39,15 +40,15 @@ public class YarnJobBuilder {
         return this;
     }
 
-    public JobResultProjection build() {
+    public JobResultProjection build() throws InvalidBuildParamsException {
         assertParams();
 
         return new JobResultImpl(name, success, errors);
     }
 
-    private void assertParams() {
+    private void assertParams() throws InvalidBuildParamsException {
         if (CheckingParamsUtil.isParamsNullOrEmpty(name)) {
-            throw new RuntimeException("Name must be not null or empty!");
+            throw new InvalidBuildParamsException("Name must be not null or empty!");
         }
     }
 }

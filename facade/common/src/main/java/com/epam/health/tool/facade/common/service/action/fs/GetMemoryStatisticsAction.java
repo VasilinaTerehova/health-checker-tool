@@ -6,7 +6,7 @@ import com.epam.facade.model.fs.MemoryMetricsJson;
 import com.epam.facade.model.projection.MemoryUsageEntityProjection;
 import com.epam.health.tool.authentication.exception.AuthenticationRequestException;
 import com.epam.health.tool.facade.cluster.receiver.IRunningClusterParamReceiver;
-import com.epam.health.tool.facade.common.resolver.impl.action.HealthCheckAction;
+import com.epam.health.tool.facade.resolver.action.HealthCheckAction;
 import com.epam.health.tool.facade.common.service.action.CommonActionNames;
 import com.epam.health.tool.facade.common.service.action.CommonRestHealthCheckAction;
 import com.epam.facade.model.exception.ImplementationNotResolvedException;

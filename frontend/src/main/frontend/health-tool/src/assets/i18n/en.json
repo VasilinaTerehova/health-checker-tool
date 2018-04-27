@@ -14,7 +14,8 @@
           "message": {
             "confirm":  "Do you want to confirm?",
             "delete": "Are you sure you want to delete",
-            "question": "?"
+            "question": "?",
+            "operation": "The operation \"{{value}}\" will run from sudo user, there is risk of harming some data! If you are ok with it please provide ssh credentials for sudo user!"
           },
           "yes": "Confirm",
           "no": "Decline",
@@ -33,7 +34,6 @@
         "username": "Username",
         "result": "Health cluster result",
         "number": "Number",
-        "action": "Action",
         "state": "State",
         "service": "Service",
         "edit": "Edit cluster",
@@ -54,7 +54,13 @@
             "secure": "Is kerberos secure"
           }
         },
-        "type": "Cluster type"
+        "type": "Cluster type",
+        "action": {
+          "name": "Action",
+          "fix": {
+            "name": "Fix cluster issues"
+          }
+        }
       },
       "service": {
         "yarn": {

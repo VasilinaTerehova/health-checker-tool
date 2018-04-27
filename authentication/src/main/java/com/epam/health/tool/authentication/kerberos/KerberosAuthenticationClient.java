@@ -46,7 +46,7 @@ public class KerberosAuthenticationClient {
         }
     }
 
-    private Subject getKerberosSubject( ClusterEntity clusterEntity ) {
+    private Subject getKerberosSubject( ClusterEntity clusterEntity ) throws AuthenticationRequestException {
         Subject subject = getSubjectFromCache( clusterEntity.getClusterName() );
 
         if ( subject != null ) {
@@ -57,7 +57,7 @@ public class KerberosAuthenticationClient {
             this.applicationContext.removeAllByMinorKey( KERBEROS_SUBJECT_CACHE );
             subject = createKerberosSubject( clusterEntity );
             if ( subject == null ) {
-                throw new RuntimeException( "Can't create kerberos subject for cluster - " + clusterEntity.getClusterName() );
+                throw new AuthenticationRequestException( "Can't create kerberos subject for cluster - " + clusterEntity.getClusterName() );
             }
             else {
                 this.applicationContext.addToContext( clusterEntity.getClusterName(), KERBEROS_SUBJECT_CACHE,
@@ -72,16 +72,16 @@ public class KerberosAuthenticationClient {
         return this.applicationContext.getFromContext( clusterName, KERBEROS_SUBJECT_CACHE, SubjectContextHolder.class, null );
     }
 
-    private Subject createKerberosSubject(ClusterEntity clusterEntity ) {
+    private Subject createKerberosSubject(ClusterEntity clusterEntity ) throws AuthenticationRequestException {
         try {
             System.setProperty( "java.security.krb5.conf", downloadAndSaveKrb5FileIfNotExists( clusterEntity ) );
             return HadoopKerberosUtil.doLoginWithPrincipalAndPassword(clusterEntity.getKerberos().getUsername(), clusterEntity.getKerberos().getPassword()).getSubject();
         } catch (CommonUtilException e) {
-            throw new RuntimeException( e );
+            throw new AuthenticationRequestException( e );
         }
     }
 
-    private String downloadAndSaveKrb5FileIfNotExists( ClusterEntity clusterEntity ) {
+    private String downloadAndSaveKrb5FileIfNotExists( ClusterEntity clusterEntity ) throws AuthenticationRequestException {
         DownloadedFileWrapper downloadedFileWrapper = sshAuthenticationClient.downloadFile( clusterEntity, "/etc/krb5.conf" );
 
         if ( downloadedFileWrapper.isEmpty() ) {
@@ -97,22 +97,22 @@ public class KerberosAuthenticationClient {
             }
         }
         catch ( CommonUtilException e ) {
-            throw new RuntimeException( e );
+            throw new AuthenticationRequestException( e );
         }
 
         return createPathToSaveKrb5( clusterEntity.getClusterName() );
     }
 
-    private String createPathToSaveKrb5( String clusterName ) {
+    private String createPathToSaveKrb5( String clusterName ) throws AuthenticationRequestException {
         return getRootUtilityFolder() + File.separator + "clusters" + File.separator + clusterName + File.separator + clusterName + "_krb5.conf";
     }
 
-    private String getRootUtilityFolder() {
+    private String getRootUtilityFolder() throws AuthenticationRequestException {
         try {
             return Paths.get( HttpAuthenticationClient.class.getProtectionDomain().getCodeSource().getLocation().toURI() )
                     .getParent().toAbsolutePath().normalize().toString();
         } catch ( Exception e ) {
-            throw new RuntimeException( e );
+            throw new AuthenticationRequestException( e );
         }
     }
 }

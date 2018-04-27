@@ -6,11 +6,12 @@ import com.epam.health.tool.authentication.exception.AuthenticationRequestExcept
 import com.epam.health.tool.authentication.http.HttpAuthenticationClient;
 import com.epam.health.tool.dao.cluster.ClusterDao;
 import com.epam.health.tool.facade.common.cluster.receiver.CommonRuningClusterParamReceiver;
-import com.epam.health.tool.facade.common.resolver.impl.ClusterSpecificComponent;
+import com.epam.health.tool.facade.resolver.ClusterSpecificComponent;
 import com.epam.health.tool.facade.context.IApplicationContext;
 import com.epam.facade.model.exception.InvalidResponseException;
 import com.epam.health.tool.model.ClusterEntity;
 import com.epam.health.tool.model.ClusterTypeEnum;
+import com.epam.util.common.CheckingParamsUtil;
 import com.epam.util.common.CommonUtilException;
 import com.epam.util.common.file.FileCommonUtil;
 import com.epam.util.common.json.CommonJsonHandler;
@@ -32,10 +33,26 @@ import java.util.List;
 @ClusterSpecificComponent( ClusterTypeEnum.CDH )
 public class CdhRuningClusterParamReceiver extends CommonRuningClusterParamReceiver {
     private static final Logger log = LoggerFactory.getLogger( CdhRuningClusterParamReceiver.class );
+    private static final String DEFAULT_YARN_LOG_DIR = "/yarn/containers-log";
+    private static final String DEFAULT_YARN_LOCAL_DIR = "/yarn/nm";
 
     @Autowired
     public CdhRuningClusterParamReceiver(HttpAuthenticationClient httpAuthenticationClient, ClusterDao clusterDao, IApplicationContext applicationContext) {
         super(httpAuthenticationClient, clusterDao, applicationContext);
+    }
+
+    @Override
+    public String getYarnLocalDirectory(String clusterName) throws InvalidResponseException {
+        String localDir = super.getYarnLocalDirectory( clusterName );
+
+        return CheckingParamsUtil.isParamsNotNullOrEmpty( localDir ) ? localDir : DEFAULT_YARN_LOCAL_DIR;
+    }
+
+    @Override
+    public String getLogDirectory(String clusterName) throws InvalidResponseException {
+        String logDir = super.getLogDirectory(clusterName);
+
+        return CheckingParamsUtil.isParamsNotNullOrEmpty( logDir ) ? logDir : DEFAULT_YARN_LOG_DIR;
     }
 
     public String getPropertySiteXml(ClusterEntity clusterEntity, String siteName, String propertyName ) throws InvalidResponseException {

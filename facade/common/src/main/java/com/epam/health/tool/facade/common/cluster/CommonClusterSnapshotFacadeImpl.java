@@ -90,7 +90,8 @@ public abstract class CommonClusterSnapshotFacadeImpl implements IClusterSnapsho
             List<JobResultProjection> jobResults = yarnHealthCheckResult.getJobResults();
             ClusterServiceSnapshotEntity finalClusterServiceSnapshotEntity = clusterServiceSnapshotEntity;
             if (jobResults != null) {
-                jobResults.forEach(yarnJob -> jobResultDao.save(new JobResultEntity(yarnJob.getName(), new Date(), yarnJob.isSuccess(), finalClusterServiceSnapshotEntity, yarnJob.getAlerts())));
+                jobResults.forEach(yarnJob -> jobResultDao.save(new JobResultEntity(yarnJob.getName(), new Date(), yarnJob.isSuccess(),
+                        finalClusterServiceSnapshotEntity, yarnJob.getAlerts())));
             }
         }
         catch ( InvalidResponseException ex ) {
@@ -103,7 +104,8 @@ public abstract class CommonClusterSnapshotFacadeImpl implements IClusterSnapsho
         Pageable top30 = new PageRequest(0, count);
         List<ClusterSnapshotEntityProjection> top30ClusterName = clusterSnapshotDao.findTop10ClusterName(clusterName, top30);
         ArrayList<ClusterHealthSummary> clusterHealthSummaries = new ArrayList<>();
-        top30ClusterName.forEach(clusterSnapshotEntityProjection -> clusterHealthSummaries.add(new ClusterHealthSummary(clusterSnapshotEntityProjection, clusterServiceSnapshotDao.findServiceProjectionsBy(clusterSnapshotEntityProjection.getId()))));
+        top30ClusterName.forEach(clusterSnapshotEntityProjection -> clusterHealthSummaries.add(new ClusterHealthSummary(clusterSnapshotEntityProjection,
+                clusterServiceSnapshotDao.findServiceProjectionsBy(clusterSnapshotEntityProjection.getId()))));
         return clusterHealthSummaries;
     }
 
@@ -176,7 +178,6 @@ public abstract class CommonClusterSnapshotFacadeImpl implements IClusterSnapsho
     }
 
     private void saveCommonServicesSnapshots(HealthCheckResultsAccumulator healthCheckResultsAccumulator, ClusterSnapshotEntity clusterSnapshotEntity) {
-        ClusterEntity clusterEntity = clusterSnapshotEntity.getClusterEntity();
         healthCheckResultsAccumulator.getServiceStatusList().forEach(serviceStatus -> {
             saveClusterServiceSnapshot(clusterSnapshotEntity, serviceStatus);
         });
@@ -185,7 +186,8 @@ public abstract class CommonClusterSnapshotFacadeImpl implements IClusterSnapsho
     private ClusterServiceSnapshotEntity saveClusterServiceSnapshot(ClusterSnapshotEntity clusterSnapshotEntity, ServiceStatusHolder serviceStatus) {
         ClusterEntity clusterEntity = clusterSnapshotEntity.getClusterEntity();
         ClusterServiceEntity clusterServiceEntity = clusterServiceDao.findByClusterIdAndServiceType(clusterEntity.getId(), serviceStatus.getType());
-        ClusterServiceSnapshotEntity clusterServiceSnapshotEntity = svTransfererManager.<ServiceStatus, ClusterServiceSnapshotEntity>getTransferer(ServiceStatus.class, ClusterServiceSnapshotEntity.class).transfer((ServiceStatus) serviceStatus, ClusterServiceSnapshotEntity.class);
+        ClusterServiceSnapshotEntity clusterServiceSnapshotEntity = svTransfererManager.<ServiceStatus, ClusterServiceSnapshotEntity>getTransferer(ServiceStatus.class, ClusterServiceSnapshotEntity.class)
+                .transfer((ServiceStatus) serviceStatus, ClusterServiceSnapshotEntity.class);
         clusterServiceSnapshotEntity.setClusterSnapshotEntity(clusterSnapshotEntity);
         if (clusterServiceEntity == null) {
             //todo: revisit here, recreate from null, not receiving from snapshot

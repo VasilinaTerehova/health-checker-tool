@@ -1,9 +1,6 @@
 package com.epam.health.tool.facade.common.service.action;
 
 import com.epam.facade.model.accumulator.HealthCheckResultsAccumulator;
-import com.epam.facade.model.projection.ClusterEntityProjection;
-import com.epam.facade.model.projection.ClusterSnapshotEntityProjection;
-import com.epam.facade.model.projection.impl.ClusterEntityProjectionImpl;
 import com.epam.health.tool.authentication.http.HttpAuthenticationClient;
 import com.epam.health.tool.dao.cluster.ClusterDao;
 import com.epam.facade.model.exception.ImplementationNotResolvedException;
@@ -33,19 +30,4 @@ public abstract class CommonRestHealthCheckAction<T> implements IServiceHealthCh
 
     protected abstract void saveClusterHealthSummaryToAccumulator( HealthCheckResultsAccumulator healthCheckResultsAccumulator,
                                                                    T healthCheckResult );
-
-    //Mb with Transferer
-    protected ClusterEntityProjection recreateClusterEntityProjection(ClusterSnapshotEntityProjection clusterSnapshotEntityProjection) {
-        ClusterEntityProjectionImpl clusterEntityProjection = new ClusterEntityProjectionImpl();
-        //Hack for now, should be changed
-        if ( clusterSnapshotEntityProjection.getClusterServiceSnapshotEntityList() != null ) {
-            clusterEntityProjection.setId( clusterSnapshotEntityProjection.getId() );
-            clusterEntityProjection.setClusterType( clusterSnapshotEntityProjection.getClusterType() );
-            clusterEntityProjection.setHost( clusterSnapshotEntityProjection.getHost() );
-            clusterEntityProjection.setName( clusterSnapshotEntityProjection.getName() );
-            clusterEntityProjection.setSecured( clusterEntityProjection.isSecured() );
-        }
-
-        return clusterEntityProjection;
-    }
 }

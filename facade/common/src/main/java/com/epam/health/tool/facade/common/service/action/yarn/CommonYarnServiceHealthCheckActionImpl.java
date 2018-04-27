@@ -2,18 +2,22 @@ package com.epam.health.tool.facade.common.service.action.yarn;
 
 import com.epam.facade.model.HealthCheckActionType;
 import com.epam.facade.model.accumulator.HealthCheckResultsAccumulator;
+import com.epam.facade.model.accumulator.results.impl.JobResultImpl;
+import com.epam.facade.model.cluster.receiver.InvalidBuildParamsException;
 import com.epam.facade.model.projection.JobResultProjection;
 import com.epam.facade.model.projection.ServiceStatusHolder;
-import com.epam.health.tool.facade.common.resolver.impl.action.HealthCheckAction;
+import com.epam.health.tool.authentication.exception.AuthenticationRequestException;
 import com.epam.health.tool.facade.common.service.action.CommonActionNames;
 import com.epam.health.tool.facade.common.service.action.CommonSshHealthCheckAction;
 import com.epam.facade.model.exception.ImplementationNotResolvedException;
 import com.epam.facade.model.exception.InvalidResponseException;
 import com.epam.health.tool.facade.resolver.IFacadeImplResolver;
+import com.epam.health.tool.facade.resolver.action.HealthCheckAction;
 import com.epam.health.tool.facade.service.status.IServiceStatusReceiver;
 import com.epam.health.tool.model.ClusterEntity;
 import com.epam.health.tool.model.ServiceStatusEnum;
 import com.epam.health.tool.model.ServiceTypeEnum;
+import com.epam.util.common.CheckingParamsUtil;
 import com.epam.util.ssh.delegating.SshExecResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -51,13 +55,18 @@ public class CommonYarnServiceHealthCheckActionImpl extends CommonSshHealthCheck
         return serviceHealthCheckResultIfExists.orElse(serviceStatusReceiverIFacadeImplResolver.resolveFacadeImpl(clusterEntity.getClusterTypeEnum()).getServiceStatus(clusterEntity, ServiceTypeEnum.YARN));
     }
 
-    private JobResultProjection runExamplesJob(ClusterEntity clusterEntity, String jobName, String... jobParams) {
+    private JobResultProjection runExamplesJob(ClusterEntity clusterEntity, String jobName, String... jobParams) throws InvalidResponseException {
         kinitOnClusterIfNecessary(clusterEntity);
         String pathToExamplesJar = HadoopClasspathJarSearcher.get().withSshCredentials(clusterEntity.getSsh())
                 .withHost(clusterEntity.getHost()).findJobJarOnCluster(EXAMPLES_HADOOP_JAR_MASK);
 
-        return representResultStringAsYarnJobObject(jobName, sshAuthenticationClient
-                .executeCommand(clusterEntity, "yarn jar " + pathToExamplesJar + " " + jobName + " " + createJobParamsString(jobParams)));
+        try {
+            return CheckingParamsUtil.isParamsNotNullOrEmpty( pathToExamplesJar ) ? representResultStringAsYarnJobObject(jobName, sshAuthenticationClient
+                    .executeCommand(clusterEntity, "yarn jar " + pathToExamplesJar + " " + jobName + " " + createJobParamsString(jobParams)))
+                    : createFailedJob( jobName, "Can't find job jar on cluster!" );
+        } catch (AuthenticationRequestException e) {
+            throw new InvalidResponseException( e );
+        }
     }
 
     private String createJobParamsString(String... params) {
@@ -65,12 +74,17 @@ public class CommonYarnServiceHealthCheckActionImpl extends CommonSshHealthCheck
     }
 
     private JobResultProjection representResultStringAsYarnJobObject(String jobName, SshExecResult result) {
-        YarnJobBuilder yarnJobBuilder = YarnJobBuilder.get().withName(jobName);
-        Arrays.stream(result.getOutMessage().concat(result.getErrMessage()).split("\n")).forEach(line -> {
-            this.setToYarnJob(yarnJobBuilder, line.trim());
-        });
+        try {
+            YarnJobBuilder yarnJobBuilder = YarnJobBuilder.get().withName(jobName);
+            Arrays.stream(result.getOutMessage().concat(result.getErrMessage()).split("\n")).forEach(line -> {
+                this.setToYarnJob(yarnJobBuilder, line.trim());
+            });
 
-        return yarnJobBuilder.build();
+            return yarnJobBuilder.build();
+        }
+        catch ( InvalidBuildParamsException ex ) {
+            return createFailedJob( jobName, ex.getMessage() );
+        }
     }
 
     private void setToYarnJob(YarnJobBuilder yarnJobBuilder, String line) {
@@ -104,5 +118,9 @@ public class CommonYarnServiceHealthCheckActionImpl extends CommonSshHealthCheck
         return isAllYarnCheckSuccess(yarnHealthCheckResult) ? ServiceStatusEnum.GOOD
                 : isNoneYarnCheckSuccess(yarnHealthCheckResult) ? ServiceStatusEnum.BAD
                 : ServiceStatusEnum.CONCERNING;
+    }
+
+    private JobResultProjection createFailedJob( String jobName, String alertMessage ) {
+        return new JobResultImpl( jobName, false, Collections.singletonList( alertMessage ) );
     }
 }

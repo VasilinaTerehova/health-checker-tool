@@ -1,29 +1,12 @@
 package com.epam.health.tool.context.holder;
 
-import com.epam.health.tool.facade.context.ISingleContextHolder;
+import com.epam.health.tool.context.BaseContextHolder;
 
 import javax.security.auth.Subject;
 
-public class SubjectContextHolder implements ISingleContextHolder<Subject> {
-    private Subject subject;
-
-    public SubjectContextHolder(Subject subject) {
-        this.subject = subject;
-    }
-
-    @Override
-    public void save(Subject object) {
-        this.subject = object;
-    }
-
-    @Override
-    public Subject get() {
-        return subject;
-    }
-
-    @Override
-    public Subject merge(Subject object) {
-        return subject;
+public class SubjectContextHolder extends BaseContextHolder<Subject> {
+    public SubjectContextHolder(Subject saved) {
+        super(saved);
     }
 
     @Override
