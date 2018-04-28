@@ -28,6 +28,11 @@ public class CommonApplicationContext implements IApplicationContext {
     }
 
     @Override
+    public void putHolderIfAbsent(ContextKey holderKey, ISingleContextHolder holder) {
+        singleContextHolderMap.putIfAbsent( holderKey, holder );
+    }
+
+    @Override
     public ISingleContextHolder removeHolder( ContextKey holderKey ) {
         return singleContextHolderMap.remove( holderKey );
     }
@@ -39,7 +44,7 @@ public class CommonApplicationContext implements IApplicationContext {
 
     public <T> T getFromContext( String clusterName, String minorKey, Class<?> holderClass, T defaultValue ) {
         try {
-            return this.<T>getHolder( buildContextKey( clusterName, minorKey, holderClass ) ).get();
+            return this.<T>getHolder( buildContextKey( clusterName, minorKey, holderClass ) ).orElse( defaultValue );
         } catch (InvalidBuildParamsException e) {
 //            logger.error( e.getMessage() );
             return defaultValue;
@@ -54,7 +59,16 @@ public class CommonApplicationContext implements IApplicationContext {
         }
     }
 
-    public void removeAllByMinorKey( String minorKey ) {
+    @Override
+    public void addToContextIfAbsent(String clusterName, String minorKey, Class<?> holderClass, ISingleContextHolder value) {
+        try {
+            this.putHolderIfAbsent( buildContextKey( clusterName, minorKey, holderClass ), value );
+        } catch (InvalidBuildParamsException e) {
+//            logger.error( e.getMessage() );
+        }
+    }
+
+    public void removeAllByMinorKey(String minorKey ) {
         List<ContextKey> keys = singleContextHolderMap.entrySet().stream().map(Map.Entry::getKey).filter(key -> isKeysEquals( key.getMinorKey(), minorKey ) )
                 .collect(Collectors.toList());
 

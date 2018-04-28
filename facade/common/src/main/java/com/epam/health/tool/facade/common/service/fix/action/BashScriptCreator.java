@@ -38,6 +38,7 @@ public class BashScriptCreator {
         return BASH_HEADER.concat( "\n" ).concat( commands );
     }
 
+    //Save under ${java.io.tmpdir}/upload/$path_to_save$
     public String generateAndSaveScript() {
         try {
             String pathToLoad = generatePathToLoad();
@@ -49,10 +50,13 @@ public class BashScriptCreator {
         }
     }
 
+    //Generate file path in format scripts/$Cluster_Name$/$Cluster_Name$_$Service_Name$_$Current_Time$.sh
     private String generatePathToLoad() {
-        return "scripts".concat( File.separator ).concat( this.clusterName )
-                .concat( File.separator ).concat( this.serviceName ).concat( "_" )
-                .concat( String.valueOf( new Date().getTime() ) ).concat( ".sh" );
+        return "scripts".concat( File.separator ) //Add /scripts parent folder
+                .concat( this.clusterName ).concat( File.separator ) //Add /$Cluster_Name$ parent folder
+                .concat( this.clusterName ).concat( "_" ) //Add $Cluster_Name$ as prefix
+                .concat( this.serviceName ).concat( "_" ) //Add $Service_Name$ as prefix
+                .concat( String.valueOf( new Date().getTime() ) ).concat( ".sh" ); //Add $Current_Time$ as file postfix
     }
 
     private BashScriptCreator verifyAndAddStringParam( String param, INoArgConsumer noArgConsumer ) {

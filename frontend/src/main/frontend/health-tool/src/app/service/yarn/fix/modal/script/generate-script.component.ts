@@ -35,6 +35,10 @@ export class GenerateScriptComponent implements OnInit {
     return this._bashScriptLink;
   }
 
+  get scriptName(): string {
+    return this._bashScriptLink ? this._bashScriptLink.replace( new RegExp("\\\\", 'g'), "/" ).split( "/" ).filter( line => line.endsWith( "sh" ) )[0] : "NO_SCRIPT_DEF.sh";
+  }
+
   close() {
     this.bsModalRef.hide();
   }

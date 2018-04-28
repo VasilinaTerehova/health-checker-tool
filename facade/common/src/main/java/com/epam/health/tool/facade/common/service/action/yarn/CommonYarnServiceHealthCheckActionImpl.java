@@ -7,10 +7,13 @@ import com.epam.facade.model.cluster.receiver.InvalidBuildParamsException;
 import com.epam.facade.model.projection.JobResultProjection;
 import com.epam.facade.model.projection.ServiceStatusHolder;
 import com.epam.health.tool.authentication.exception.AuthenticationRequestException;
+import com.epam.health.tool.context.holder.StringContextHolder;
 import com.epam.health.tool.facade.common.service.action.CommonActionNames;
 import com.epam.health.tool.facade.common.service.action.CommonSshHealthCheckAction;
 import com.epam.facade.model.exception.ImplementationNotResolvedException;
 import com.epam.facade.model.exception.InvalidResponseException;
+import com.epam.health.tool.facade.common.service.action.yarn.searcher.JarSearchingManager;
+import com.epam.health.tool.facade.context.IApplicationContext;
 import com.epam.health.tool.facade.resolver.IFacadeImplResolver;
 import com.epam.health.tool.facade.resolver.action.HealthCheckAction;
 import com.epam.health.tool.facade.service.status.IServiceStatusReceiver;
@@ -18,6 +21,7 @@ import com.epam.health.tool.model.ClusterEntity;
 import com.epam.health.tool.model.ServiceStatusEnum;
 import com.epam.health.tool.model.ServiceTypeEnum;
 import com.epam.util.common.CheckingParamsUtil;
+import com.epam.util.common.StringUtils;
 import com.epam.util.ssh.delegating.SshExecResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -33,8 +37,13 @@ public class CommonYarnServiceHealthCheckActionImpl extends CommonSshHealthCheck
     private final static String EXAMPLES_HADOOP_JAR_MASK = "hadoop-mapreduce-examples";
     private final static String ERROR_REGEXP = "Exception";
     private final static String IS_SUCCESS_REGEXP = ".*Job .* completed.*";
+    private final static String EXAMPLES_JAR_PATH_CACHE = "EXAMPLES_JAR_PATH_CACHE";
     @Autowired
     private IFacadeImplResolver<IServiceStatusReceiver> serviceStatusReceiverIFacadeImplResolver;
+    @Autowired
+    private IApplicationContext applicationContext;
+    @Autowired
+    private JarSearchingManager jarSearchingManager;
 
     @Override
     public void performHealthCheck(String clusterName, HealthCheckResultsAccumulator healthCheckResultsAccumulator) throws InvalidResponseException {
@@ -57,8 +66,9 @@ public class CommonYarnServiceHealthCheckActionImpl extends CommonSshHealthCheck
 
     private JobResultProjection runExamplesJob(ClusterEntity clusterEntity, String jobName, String... jobParams) throws InvalidResponseException {
         kinitOnClusterIfNecessary(clusterEntity);
-        String pathToExamplesJar = HadoopClasspathJarSearcher.get().withSshCredentials(clusterEntity.getSsh())
-                .withHost(clusterEntity.getHost()).findJobJarOnCluster(EXAMPLES_HADOOP_JAR_MASK);
+        String pathToExamplesJar = jarSearchingManager.findJobJarOnCluster(EXAMPLES_HADOOP_JAR_MASK,
+                clusterEntity.getClusterName(), clusterEntity.getClusterTypeEnum(), getJarPathFromContext( clusterEntity.getClusterName() ));
+        saveJarPathToContextIfNotExists( clusterEntity.getClusterName(), pathToExamplesJar );
 
         try {
             return CheckingParamsUtil.isParamsNotNullOrEmpty( pathToExamplesJar ) ? representResultStringAsYarnJobObject(jobName, sshAuthenticationClient
@@ -66,6 +76,17 @@ public class CommonYarnServiceHealthCheckActionImpl extends CommonSshHealthCheck
                     : createFailedJob( jobName, "Can't find job jar on cluster!" );
         } catch (AuthenticationRequestException e) {
             throw new InvalidResponseException( e );
+        }
+    }
+
+    private String getJarPathFromContext( String clusterName ) {
+        return applicationContext.getFromContext( clusterName, EXAMPLES_JAR_PATH_CACHE, StringContextHolder.class, StringUtils.EMPTY );
+    }
+
+    private void saveJarPathToContextIfNotExists( String clusterName, String jarPath ) {
+        if ( CheckingParamsUtil.isParamsNotNullOrEmpty( jarPath ) ) {
+
+            applicationContext.addToContextIfAbsent( clusterName, EXAMPLES_JAR_PATH_CACHE, StringContextHolder.class, new StringContextHolder( jarPath ) );
         }
     }
 

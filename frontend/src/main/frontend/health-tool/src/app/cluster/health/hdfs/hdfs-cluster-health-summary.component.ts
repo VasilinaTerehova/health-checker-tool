@@ -46,7 +46,8 @@ export class HdfsClusterHealthSummaryComponent {
   }
 
   getAlerts(): string[] {
-    return this.hdfsHealthReport.jobResults.filter( jobResult => !jobResult.success ).map( jobResult => jobResult.alert );
+    return this.hdfsHealthReport.jobResults.filter( jobResult => !jobResult.success )
+      .filter( jobResult => jobResult.alerts ).map( jobResult => jobResult.alerts.join( "\n" ) );
   }
 
   checkClusterHealth() {

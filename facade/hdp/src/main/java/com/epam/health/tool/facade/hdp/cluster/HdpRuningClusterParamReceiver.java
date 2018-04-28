@@ -17,6 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
 /**
  * Created by Vasilina_Terehova on 4/14/2018.
  */
@@ -47,7 +50,16 @@ public class HdpRuningClusterParamReceiver extends CommonRuningClusterParamRecei
     }
 
     @Override
+    public Set<String> getLiveNodes(String clusterName) throws InvalidResponseException {
+        return super.getLiveNodes(clusterName).stream().map( this::removePort ).collect( Collectors.toSet() );
+    }
+
+    @Override
     protected Logger log() {
         return log;
+    }
+
+    private String removePort( String node ) {
+        return  node.split( ":" )[0];
     }
 }

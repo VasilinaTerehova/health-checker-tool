@@ -8,6 +8,13 @@
   </div>
   <div *ngIf="!isGenerating">
     Bash script is created. Link for download -  <a href="http://localhost:8888/{{bashScriptLink}}" download>bash script</a>
+    <hr>
+    <label class="label label-info" style="font-size: 12px">Manual for using script:</label>
+    <ul class="list-group" style="margin-top: 2%">
+     <li class="list-group-item">1. Upload script on node that you want to clean <span style="text-decoration: bold">(ex: /tmp/{{scriptName}})</span></li>
+     <li class="list-group-item">2. Set 777 permissions for script <span style="text-decoration: bold">(ex: sudo chmod 777 /tmp/{{scriptName}})</span></li>
+     <li class="list-group-item">3. Finally run script <span style="text-decoration: bold">(ex: ./tmp/{{scriptName}})</span></li>
+    </ul>
   </div>
 </div>
 <div class="modal-footer">
