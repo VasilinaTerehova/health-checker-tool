@@ -59,9 +59,11 @@ public class CommonYarnServiceHealthCheckActionImpl extends CommonSshHealthCheck
         }
     }
 
-    private ServiceStatusHolder getServiceStatus(ClusterEntity clusterEntity, HealthCheckResultsAccumulator healthCheckResultsAccumulator) throws InvalidResponseException, ImplementationNotResolvedException {
+    private ServiceStatusHolder getServiceStatus(ClusterEntity clusterEntity, HealthCheckResultsAccumulator healthCheckResultsAccumulator)
+            throws InvalidResponseException, ImplementationNotResolvedException {
         Optional<ServiceStatusHolder> serviceHealthCheckResultIfExists = healthCheckResultsAccumulator.getServiceHealthCheckResultIfExists(ServiceTypeEnum.YARN);
-        return serviceHealthCheckResultIfExists.orElse(serviceStatusReceiverIFacadeImplResolver.resolveFacadeImpl(clusterEntity.getClusterTypeEnum()).getServiceStatus(clusterEntity, ServiceTypeEnum.YARN));
+        return serviceHealthCheckResultIfExists.orElse(serviceStatusReceiverIFacadeImplResolver
+                .resolveFacadeImpl(clusterEntity.getClusterTypeEnum()).getServiceStatus(clusterEntity, ServiceTypeEnum.YARN));
     }
 
     private JobResultProjection runExamplesJob(ClusterEntity clusterEntity, String jobName, String... jobParams) throws InvalidResponseException {

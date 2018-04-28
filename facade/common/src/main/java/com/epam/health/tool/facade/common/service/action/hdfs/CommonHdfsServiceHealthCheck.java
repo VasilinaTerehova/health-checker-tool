@@ -46,9 +46,11 @@ public class CommonHdfsServiceHealthCheck extends CommonSshHealthCheckAction {
         }
     }
 
-    private ServiceStatusHolder getServiceStatus(ClusterEntity clusterEntity, HealthCheckResultsAccumulator healthCheckResultsAccumulator) throws InvalidResponseException, ImplementationNotResolvedException {
+    private ServiceStatusHolder getServiceStatus(ClusterEntity clusterEntity, HealthCheckResultsAccumulator healthCheckResultsAccumulator)
+            throws InvalidResponseException, ImplementationNotResolvedException {
         Optional<ServiceStatusHolder> serviceHealthCheckResultIfExists = healthCheckResultsAccumulator.getServiceHealthCheckResultIfExists(ServiceTypeEnum.HDFS);
-        return serviceHealthCheckResultIfExists.orElse(serviceStatusReceiverIFacadeImplResolver.resolveFacadeImpl(clusterEntity.getClusterTypeEnum()).getServiceStatus(clusterEntity, ServiceTypeEnum.HDFS));
+        return serviceHealthCheckResultIfExists.orElse(serviceStatusReceiverIFacadeImplResolver
+                .resolveFacadeImpl(clusterEntity.getClusterTypeEnum()).getServiceStatus(clusterEntity, ServiceTypeEnum.HDFS));
     }
 
     private List<JobResultProjection> performHdfsOperations(ClusterEntity clusterEntity) throws InvalidResponseException {

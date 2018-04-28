@@ -29,6 +29,7 @@ public abstract class CommonHdfsOperation implements IHdfsOperation {
 
             removeBashRCWarnings(sshExecResult);
             hdfsOperationResult.setSuccess(isRunSuccessfully( sshExecResult ));
+            //Don't set alerts if job was successfully
             if ( !hdfsOperationResult.isSuccess() ) {
                 hdfsOperationResult.setAlerts(getAlerts( sshExecResult ));
             }
