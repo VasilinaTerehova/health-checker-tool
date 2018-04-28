@@ -6,7 +6,6 @@ import { Directive, Input, ElementRef, OnInit, HostBinding, Renderer2 } from '@a
 export class ServiceTableRowDirective implements OnInit {
   @Input() serviceState: string;
   private elementClasses: string[] = [];
-  private elementColspan: number;
 
   constructor( private el: ElementRef, private renderer: Renderer2 ) {}
 
@@ -14,7 +13,6 @@ export class ServiceTableRowDirective implements OnInit {
     switch ( this.serviceState )   {
       case "GOOD" : {
         this.elementClasses = ["bg-success"];
-        this.setColspan( "2" );
         break;
       }
       case "BAD" : {
@@ -23,7 +21,6 @@ export class ServiceTableRowDirective implements OnInit {
       }
       case "CONCERNING" : {
         this.elementClasses = ["bg-primary"];
-        this.setColspan( "2" );
         break;
       }
       default : {
@@ -36,9 +33,5 @@ export class ServiceTableRowDirective implements OnInit {
   @HostBinding('class')
   get getElementClass(): string {
     return this.elementClasses.join( ' ' );
-  }
-
-  private setColspan( colspan: string ) {
-    this.renderer.setAttribute( this.el.nativeElement, "colspan", colspan );
   }
 }

@@ -33,11 +33,13 @@ import { ServiceFixComponent } from './service/yarn/fix/service-fix.component';
 import { ClusterFixIssuesComponent } from './cluster/fix/cluster-fix-issues.component';
 import { ConfirmAutomaticFixComponent } from './service/yarn/fix/modal/confirm/confirm-automatic-fix.component';
 import { GenerateScriptComponent } from './service/yarn/fix/modal/script/generate-script.component';
-//Directives and pipes
+//Pipes
 import { ClusterListSearchByNamePipe } from './shared/menu/side/cluster-list.pipe';
-import { ServiceTableRowDirective } from './service/list/table/service-table-row.directive';
 import { ServiceListSortPipe } from './service/list/service-sort-list.pipe';
+//Direcrives
+import { ServiceTableRowDirective } from './service/list/table/service-table-row.directive';
 import { ServiceHealthLabelDirective } from './cluster/health/hdfs/service-health-label.directive';
+import { ServiceLogRowDirective } from './service/list/table/service-log-row.directive';
 //Services
 import { ClusterService } from './cluster/cluster.service';
 import { YarnApplicationService } from './service/yarn/yarn-application.service';
@@ -60,7 +62,7 @@ export function createTranslateLoader(http: HttpClient) {
     AppComponent, TopMenuComponent, SideBarComponent, HomeComponent, ClusterListSearchByNamePipe, ClusterComponent, ErrorReportingComponent, YarnApplicationListComponent,
     ServiceListComponent, ServiceListStaticComponent, ServiceListHistoryComponent, ClusterEditComponent, ConfirmModalComponent, ServiceTableRowDirective, ServiceListSortPipe,
     CommonClusterHealthSummaryComponent, HdfsClusterHealthSummaryComponent, ServiceHealthLabelDirective, CommonStaticClusterHealthSummaryComponent, LoadingLabelComponent,
-    CommonClusterHealthComponent, ServiceFixComponent, ClusterFixIssuesComponent, ConfirmAutomaticFixComponent, GenerateScriptComponent
+    CommonClusterHealthComponent, ServiceFixComponent, ClusterFixIssuesComponent, ConfirmAutomaticFixComponent, GenerateScriptComponent, ServiceLogRowDirective
   ],
   entryComponents: [ClusterEditComponent, ConfirmModalComponent, ConfirmAutomaticFixComponent, GenerateScriptComponent],
   imports: [

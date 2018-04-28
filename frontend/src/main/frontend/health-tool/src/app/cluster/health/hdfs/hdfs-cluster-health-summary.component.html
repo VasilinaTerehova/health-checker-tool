@@ -15,6 +15,6 @@
         </ul>
       </li>
       <li class="list-group-item">Health summary - <span service-health-label [healthSummary]="hdfsHealthReport.healthSummary">{{hdfsHealthReport?.healthSummary}}</span></li>
-      <li class="list-group-item">Logs locations - {{hdfsHealthReport?.logsLocation}}</li>
+      <li class="list-group-item">Logs locations - <span service-log-row log-dir="{{hdfsHealthReport?.logDirectory}}" log-host="{{hdfsHealthReport?.clusterNode}}"></span></li>
   </ul>
 </div>

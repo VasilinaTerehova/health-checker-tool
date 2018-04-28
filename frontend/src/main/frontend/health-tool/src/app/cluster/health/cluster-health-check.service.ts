@@ -16,7 +16,7 @@ export class ClusterHealthCheckService {
   constructor(private http: HttpClient) {  }
 
   getServicesClusterState( clusterName: string, token: string = "empty", useSave: boolean = false ) {
-    return this.http.get<HealthCheckResult>("http://localhost:8888/api/cluster/" + clusterName + "/status/services", { params: { "token": token, "useSave": useSave.toString() } });
+    return this.http.get<ServiceStatus[]>("http://localhost:8888/api/cluster/" + clusterName + "/status/services", { params: { "token": token, "useSave": useSave.toString() } });
   }
 
   getYarnClusterState( clusterName: string, token: string = "empty", useSave: boolean = false ) {

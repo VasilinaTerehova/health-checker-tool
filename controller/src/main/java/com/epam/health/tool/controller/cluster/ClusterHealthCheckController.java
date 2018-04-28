@@ -27,11 +27,11 @@ public class ClusterHealthCheckController extends BaseFacadeResolvingController 
 
     @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/api/cluster/{name}/status/services")
-    public ResponseEntity<HealthCheckResultsAccumulator> getRestClusterStatus(@PathVariable("name") String clusterName,
+    public ResponseEntity<List<ServiceStatusHolder>> getRestClusterStatus(@PathVariable("name") String clusterName,
                                                                               @RequestParam(value = "token", defaultValue = "none") String token,
                                                                               @RequestParam(value = "useSave", defaultValue = "false") boolean useSave) {
         try {
-            return ResponseEntity.ok(askForClusterState(clusterName, HealthCheckActionType.OTHER_SERVICES, token, useSave));
+            return ResponseEntity.ok(askForClusterState(clusterName, HealthCheckActionType.OTHER_SERVICES, token, useSave).getServiceStatusList());
         } catch (ImplementationNotResolvedException | InvalidResponseException e) {
             throw new RetrievingObjectException(e);
         }

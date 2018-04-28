@@ -12,8 +12,6 @@ import com.epam.health.tool.facade.service.log.IServiceLogSearchFacade;
 import com.epam.health.tool.facade.service.status.IServiceStatusReceiver;
 import com.epam.health.tool.model.ClusterEntity;
 import com.epam.health.tool.model.ClusterServiceEntity;
-import com.epam.health.tool.transfer.impl.SVTransfererManager;
-import com.epam.util.common.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -37,7 +35,8 @@ public abstract class CommonOtherServicesHealthCheckAction extends CommonRestHea
     }
 
     @Override
-    protected List<ServiceStatusHolder> performRestHealthCheck(HealthCheckResultsAccumulator healthCheckResultsAccumulator, ClusterEntity clusterEntity) throws InvalidResponseException {
+    protected List<ServiceStatusHolder> performRestHealthCheck(HealthCheckResultsAccumulator healthCheckResultsAccumulator,
+                                                               ClusterEntity clusterEntity) throws InvalidResponseException {
         return getServiceStatuses( healthCheckResultsAccumulator, clusterEntity );
     }
 
@@ -53,7 +52,8 @@ public abstract class CommonOtherServicesHealthCheckAction extends CommonRestHea
         return addLogsPathToService(healthCheckResultsAccumulator, serviceStatusList, clusterEntity);
     }
 
-    private List<ServiceStatusHolder> addLogsPathToService(HealthCheckResultsAccumulator healthCheckResultsAccumulator, List<ServiceStatusHolder> serviceStatuses, ClusterEntity clusterEntity) {
+    private List<ServiceStatusHolder> addLogsPathToService(HealthCheckResultsAccumulator healthCheckResultsAccumulator, List<ServiceStatusHolder> serviceStatuses,
+                                                           ClusterEntity clusterEntity) {
         serviceStatuses.forEach(serviceStatus -> addLogsPathToService(healthCheckResultsAccumulator, serviceStatus, clusterEntity));
 
         return serviceStatuses;

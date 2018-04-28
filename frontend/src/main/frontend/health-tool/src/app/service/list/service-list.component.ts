@@ -39,11 +39,6 @@ export class ServiceListComponent {
     return name && (name.toUpperCase() == "HBASE" || name.toUpperCase() == "HIVE");
   }
 
-  isShowLogsLocationAllow(state: string) {
-    return true;
-    //return state && (state.toUpperCase() == "BAD" || state.toUpperCase() == "DISABLED");
-  }
-
   restartService( serviceName: string ) {
 
   }
@@ -61,11 +56,15 @@ export class ServiceListComponent {
     this.clusterHealthCheckService.getServicesClusterState( this._checkHealthToken.clusterName, this._checkHealthToken.token ).subscribe(
       data => {
         if ( data ) {
-          this.serviceStatusList = data.serviceStatusList;
+          this.serviceStatusList = data.filter( status => this.isNotYarnOrHDFS( status ) );
           this.isLoading = false;
         }
       },
       error => this.errorReportingService.reportHttpError( error )
     );
+  }
+
+  private isNotYarnOrHDFS( serviceStatus: ServiceStatus ): boolean {
+    return serviceStatus && serviceStatus.displayName.toUpperCase().search("HDFS") == -1 && serviceStatus.displayName.toUpperCase().search("YARN") == -1;
   }
 }

@@ -29,7 +29,9 @@ public abstract class CommonHdfsOperation implements IHdfsOperation {
 
             removeBashRCWarnings(sshExecResult);
             hdfsOperationResult.setSuccess(isRunSuccessfully( sshExecResult ));
-            hdfsOperationResult.setAlerts(getAlerts( sshExecResult ));
+            if ( !hdfsOperationResult.isSuccess() ) {
+                hdfsOperationResult.setAlerts(getAlerts( sshExecResult ));
+            }
 
             return hdfsOperationResult;
         } catch (InvalidResponseException e) {
@@ -59,7 +61,7 @@ public abstract class CommonHdfsOperation implements IHdfsOperation {
     }
 
     protected String getError( SshExecResult sshExecResult ) {
-        return sshExecResult.getErrMessage().concat( " " ).concat( sshExecResult.getOutMessage() );
+        return sshExecResult.getErrMessage().concat( " " ).concat( sshExecResult.getOutMessage() ).trim();
     }
 
     private void removeBashRCWarnings( SshExecResult sshExecResult ) {

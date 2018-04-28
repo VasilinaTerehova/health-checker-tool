@@ -22,10 +22,9 @@ export class GenerateScriptComponent implements OnInit {
     this.isGenerating = true;
     this._serviceFixService.generateFixBashScript( this.clusterName.toString(), this.serviceName.toString() ).subscribe(
       data => this.bashScriptLink = data.value,
-      error => this._errorReportingService.reportHttpError( error )
+      error => this.reportError( error )
     )
   }
-
 
   set bashScriptLink( bashScriptLink: String ) {
     this.isGenerating = false;
@@ -37,6 +36,11 @@ export class GenerateScriptComponent implements OnInit {
   }
 
   close() {
+    this.bsModalRef.hide();
+  }
+
+  private reportError( error: any ) {
+    this._errorReportingService.reportHttpError( error );
     this.bsModalRef.hide();
   }
 }

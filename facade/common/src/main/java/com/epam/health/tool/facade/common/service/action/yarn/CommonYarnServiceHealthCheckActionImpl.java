@@ -76,9 +76,8 @@ public class CommonYarnServiceHealthCheckActionImpl extends CommonSshHealthCheck
     private JobResultProjection representResultStringAsYarnJobObject(String jobName, SshExecResult result) {
         try {
             YarnJobBuilder yarnJobBuilder = YarnJobBuilder.get().withName(jobName);
-            Arrays.stream(result.getOutMessage().concat(result.getErrMessage()).split("\n")).forEach(line -> {
-                this.setToYarnJob(yarnJobBuilder, line.trim());
-            });
+            Arrays.stream(result.getOutMessage().concat(result.getErrMessage().trim()).split("\n"))
+                    .filter(CheckingParamsUtil::isParamsNotNullOrEmpty).forEach(line -> this.setToYarnJob(yarnJobBuilder, line.trim()));
 
             return yarnJobBuilder.build();
         }
