@@ -69,7 +69,7 @@ public class SshExecResult {
         }
 
         public SshExecResultBuilder setErrMessage(String errMessage ) {
-            return verifyAndAddParam( errMessage, ( param ) -> clearOut().appendToOut( errMessage ));
+            return verifyAndAddParam( errMessage, ( param ) -> clearErr().appendToErr( errMessage ));
         }
 
         public SshExecResult build() {
@@ -77,7 +77,7 @@ public class SshExecResult {
         }
 
         private SshExecResultBuilder verifyAndAddParam(String param, Consumer<String> addParamConsumer) {
-            if (CheckingParamsUtil.isParamsNotNullOrEmpty( param )) {
+            if (CheckingParamsUtil.isParamNotNull( param )) {
                 addParamConsumer.accept( param );
             }
 

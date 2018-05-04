@@ -21,6 +21,10 @@ public class CheckingParamsUtil {
     return Objects.nonNull( param ) && !param.isEmpty();
   }
 
+  public static boolean isParamNotNull( String param ) {
+    return Objects.nonNull( param );
+  }
+
   public static boolean isParamListNotNullOrEmpty( Collection<?> collection ) {
     return collection != null && !collection.isEmpty();
   }
