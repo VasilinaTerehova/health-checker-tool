@@ -39,7 +39,7 @@ public class ClusterAccumulatorToken {
 
     public static ClusterAccumulatorToken buildScheduleAllCheck(String clusterName) {
         return ClusterAccumulatorToken.Builder.get()
-                .withClusterName(clusterName).withType(HealthCheckActionType.ALL.name()).withToken("scheduler_"+new Date().getTime()).buildClusterAccumulatorToken();
+                .withClusterName(clusterName).withType(HealthCheckActionType.ALL.name()).withToken("scheduler_"+new Date().getTime() + "_" + clusterName).buildClusterAccumulatorToken();
     }
 
     public List<HealthCheckActionType> getPassedActionTypes() {

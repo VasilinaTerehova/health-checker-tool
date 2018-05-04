@@ -130,6 +130,7 @@ public abstract class CommonClusterSnapshotFacadeImpl implements IClusterSnapsho
 
         if (HealthCheckActionType.containAllActionTypes(passedActionTypes)) {
             clusterSnapshotEntity.setFull(true);
+            clusterSnapshotDao.save(clusterSnapshotEntity);
             //here - clean previous for last hour
             //clusterSnapshotDao.clearForLastHour();
         }
