@@ -28,6 +28,9 @@ import { ServiceListHistoryComponent } from './service/service-status-history/se
 import { ServiceListStaticComponent } from './service/list/static/service-list-static.component';
 import { CommonStaticClusterHealthSummaryComponent } from './cluster/health/common/static/common-static-cluster-health-summary.component';
 import { LoadingLabelComponent } from './shared/loading/loading-label.component';
+
+import { LoadingLabelSmallComponent } from './shared/loading/loading-label-small.component';
+
 import { CommonClusterHealthComponent } from './cluster/health/common/common-cluster-health.component';
 import { ServiceFixComponent } from './service/yarn/fix/service-fix.component';
 import { ClusterFixIssuesComponent } from './cluster/fix/cluster-fix-issues.component';
@@ -62,7 +65,8 @@ export function createTranslateLoader(http: HttpClient) {
     AppComponent, TopMenuComponent, SideBarComponent, HomeComponent, ClusterListSearchByNamePipe, ClusterComponent, ErrorReportingComponent, YarnApplicationListComponent,
     ServiceListComponent, ServiceListStaticComponent, ServiceListHistoryComponent, ClusterEditComponent, ConfirmModalComponent, ServiceTableRowDirective, ServiceListSortPipe,
     CommonClusterHealthSummaryComponent, HdfsClusterHealthSummaryComponent, ServiceHealthLabelDirective, CommonStaticClusterHealthSummaryComponent, LoadingLabelComponent,
-    CommonClusterHealthComponent, ServiceFixComponent, ClusterFixIssuesComponent, ConfirmAutomaticFixComponent, GenerateScriptComponent, ServiceLogRowDirective
+    CommonClusterHealthComponent, ServiceFixComponent, ClusterFixIssuesComponent, ConfirmAutomaticFixComponent, GenerateScriptComponent, ServiceLogRowDirective,
+    LoadingLabelSmallComponent
   ],
   entryComponents: [ClusterEditComponent, ConfirmModalComponent, ConfirmAutomaticFixComponent, GenerateScriptComponent],
   imports: [

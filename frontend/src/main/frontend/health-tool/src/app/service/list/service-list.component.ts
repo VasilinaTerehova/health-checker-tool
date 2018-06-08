@@ -40,7 +40,7 @@ export class ServiceListComponent {
   }
 
   restartService( serviceName: string ) {
-
+    alert("Will be implemented using ssh strategy");
   }
 
   changeSort() {

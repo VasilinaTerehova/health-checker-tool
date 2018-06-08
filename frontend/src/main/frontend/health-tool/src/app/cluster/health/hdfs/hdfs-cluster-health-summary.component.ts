@@ -13,13 +13,36 @@ export class HdfsClusterHealthSummaryComponent {
   @Input() serviceName: string;
   //Trigger refresh action to parent
   @Output() onHealthCheckRefresh = new EventEmitter<boolean>();
+  private _hdfsHealthReportList: ServiceStatus[];
   private _hdfsHealthReport: ServiceStatus;
   isCollapsed: boolean;
   isLoading: Boolean;
 
   @Input()
-  set hdfsHealthReport( hdfsHealthReport: ServiceStatus ) {
-    if ( hdfsHealthReport ) {
+  set hdfsHealthReportList(hdfsHealthReportList: ServiceStatus[]) {
+    if (hdfsHealthReportList) {
+      this._hdfsHealthReportList = hdfsHealthReportList;
+      this.isLoading = false;
+      this.findAppropriateServiceByName();
+    }
+  }
+
+  get hdfsHealthReportList(): ServiceStatus[] {
+    return this._hdfsHealthReportList;
+  }
+
+  private findAppropriateServiceByName() {
+    for (var i = 0; i < this._hdfsHealthReportList.length; i++) {
+      if (this._hdfsHealthReportList[i].displayName === this.serviceName) {
+        this._hdfsHealthReport = this._hdfsHealthReportList[i];
+        break;
+      }
+    }
+  }
+
+  @Input()
+  set hdfsHealthReport(hdfsHealthReport: ServiceStatus) {
+    if (hdfsHealthReport) {
       this._hdfsHealthReport = hdfsHealthReport;
       this.isLoading = false;
     }
@@ -34,11 +57,11 @@ export class HdfsClusterHealthSummaryComponent {
   }
 
   isJobRunSuccessfully(): boolean {
-    return this.hdfsHealthReport.jobResults.map( jobResult => jobResult.success ).filter( jobResult => !jobResult ).pop() == null;
+    return this.hdfsHealthReport.jobResults.map(jobResult => jobResult.success).filter(jobResult => !jobResult).pop() == null;
   }
 
   getSuccessfullyRunJobsCount(): number {
-    return this.hdfsHealthReport.jobResults.filter( jobResult => jobResult.success ).length;
+    return this.hdfsHealthReport.jobResults.filter(jobResult => jobResult.success).length;
   }
 
   getAlertsCount(): number {
@@ -46,11 +69,11 @@ export class HdfsClusterHealthSummaryComponent {
   }
 
   getAlerts(): string[] {
-    return this.hdfsHealthReport.jobResults.filter( jobResult => !jobResult.success )
-      .filter( jobResult => jobResult.alerts ).map( jobResult => jobResult.alerts.join( "\n" ) );
+    return this.hdfsHealthReport.jobResults.filter(jobResult => !jobResult.success)
+      .filter(jobResult => jobResult.alerts).map(jobResult => jobResult.alerts.join("\n"));
   }
 
   checkClusterHealth() {
-    this.onHealthCheckRefresh.next( true );
+    this.onHealthCheckRefresh.next(true);
   }
 }

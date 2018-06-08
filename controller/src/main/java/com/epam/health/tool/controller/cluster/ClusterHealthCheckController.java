@@ -1,3 +1,27 @@
+/*
+ * ******************************************************************************
+ *  *
+ *  * Pentaho Big Data
+ *  *
+ *  * Copyright (C) 2002-2018 by Hitachi Vantara : http://www.pentaho.com
+ *  *
+ *  *******************************************************************************
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  * you may not use this file except in compliance with
+ *  * the License. You may obtain a copy of the License at
+ *  *
+ *  *    http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
+ *  *
+ *  *****************************************************************************
+ */
+
 package com.epam.health.tool.controller.cluster;
 
 import com.epam.facade.model.ClusterHealthSummary;
@@ -25,7 +49,7 @@ public class ClusterHealthCheckController extends BaseFacadeResolvingController 
     @Autowired
     private IFacadeImplResolver<IClusterSnapshotFacade> clusterSnapshotFacadeIFacadeImplResolver;
 
-    @CrossOrigin(origins = "http://localhost:4200")
+    @CrossOrigin(origins = {"http://localhost:4200", "*"})
     @GetMapping("/api/cluster/{name}/status/services")
     public ResponseEntity<List<ServiceStatusHolder>> getRestClusterStatus(@PathVariable("name") String clusterName,
                                                                               @RequestParam(value = "token", defaultValue = "none") String token,
@@ -49,7 +73,7 @@ public class ClusterHealthCheckController extends BaseFacadeResolvingController 
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:4200")
+    @CrossOrigin(origins = {"http://localhost:4200", "*"})
     @GetMapping("/api/cluster/{name}/status/fs")
     public ResponseEntity<List<? extends NodeSnapshotEntityProjection>> getFsClusterStatus(@PathVariable("name") String clusterName,
                                                                                            @RequestParam(value = "token", defaultValue = "none") String token,
@@ -62,7 +86,7 @@ public class ClusterHealthCheckController extends BaseFacadeResolvingController 
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:4200")
+    @CrossOrigin(origins = {"http://localhost:4200", "*"})
     @GetMapping("/api/cluster/{name}/status/yarn")
     public ResponseEntity<ServiceStatusHolder> getYarnClusterStatus(@PathVariable("name") String clusterName,
                                                                     @RequestParam(value = "token", defaultValue = "none") String token,
@@ -74,7 +98,7 @@ public class ClusterHealthCheckController extends BaseFacadeResolvingController 
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:4200")
+    @CrossOrigin(origins = {"http://localhost:4200", "*"})
     @GetMapping("/api/cluster/{name}/status/hdfs/job")
     public ResponseEntity<ServiceStatusHolder> getHdfsClusterStatus(@PathVariable("name") String clusterName,
                                                                     @RequestParam(value = "token", defaultValue = "none") String token,
@@ -86,7 +110,7 @@ public class ClusterHealthCheckController extends BaseFacadeResolvingController 
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:4200")
+    @CrossOrigin(origins = {"http://localhost:4200", "*"})
     @GetMapping("/api/cluster/{name}/status/hdfs/memory")
     public ResponseEntity<HdfsUsageEntityProjection> getHdfsMemoryClusterStatus(@PathVariable("name") String clusterName,
                                                                                 @RequestParam(value = "token", defaultValue = "none") String token,
@@ -99,7 +123,7 @@ public class ClusterHealthCheckController extends BaseFacadeResolvingController 
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:4200")
+    @CrossOrigin(origins = {"http://localhost:4200", "*"})
     @GetMapping("/api/cluster/{name}/status/memory")
     public ResponseEntity<MemoryUsageEntityProjection> getMemoryClusterStatus(@PathVariable("name") String clusterName,
                                                                               @RequestParam(value = "token", defaultValue = "none") String token,
@@ -113,7 +137,7 @@ public class ClusterHealthCheckController extends BaseFacadeResolvingController 
     }
 
     //Should be changed to /cluster/{name}/status/history
-    @CrossOrigin(origins = "http://localhost:4200")
+    @CrossOrigin(origins = {"http://localhost:4200", "*"})
     @RequestMapping("/getClusterStatusHistory")
     public ResponseEntity<List<ClusterHealthSummary>> getClusterStatusHistory(@RequestParam("clusterName") String clusterName) {
         try {

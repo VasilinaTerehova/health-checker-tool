@@ -23,6 +23,7 @@
         }
       },
       "cluster": {
+        "killAction": "Action",
         "clusters": "Cluster list",
         "check": "Check health",
         "list": "Cluster list",
@@ -118,7 +119,10 @@
       "service": {
         "yarn": {
           "app": {
-            "kill": "Kill"
+            "kill": "Kill",
+            "selectApps": "Select Apps to kill",
+            "killSelected": "Kill selected",
+            "cancel": "Cancel"
           }
         }
       }

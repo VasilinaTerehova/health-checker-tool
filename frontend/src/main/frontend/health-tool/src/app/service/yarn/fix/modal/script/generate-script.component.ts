@@ -4,6 +4,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 //Services
 import { ServiceFixService } from '../../../../../service/service-fix.service';
 import { ErrorReportingService } from '../../../../../shared/error/error-reporting.service';
+import { environment } from '../../../../../../environments/environment';
 
 @Component({
   selector: 'generate-script',
@@ -14,12 +15,14 @@ export class GenerateScriptComponent implements OnInit {
   clusterName: String;
   serviceName: String;
   isGenerating: boolean;
+  _hostAndPort: String;
   private _bashScriptLink: String;
 
   constructor( public bsModalRef: BsModalRef, private _serviceFixService: ServiceFixService, private _errorReportingService: ErrorReportingService ) {  }
 
   ngOnInit() {
     this.isGenerating = true;
+    this._hostAndPort = environment.htServerHost + ":" + environment.htServerPort;
     this._serviceFixService.generateFixBashScript( this.clusterName.toString(), this.serviceName.toString() ).subscribe(
       data => this.bashScriptLink = data.value,
       error => this.reportError( error )
@@ -37,6 +40,10 @@ export class GenerateScriptComponent implements OnInit {
 
   get scriptName(): string {
     return this._bashScriptLink ? this._bashScriptLink.replace( new RegExp("\\\\", 'g'), "/" ).split( "/" ).filter( line => line.endsWith( "sh" ) )[0] : "NO_SCRIPT_DEF.sh";
+  }
+
+  get hostAndPort(): String {
+    return this._hostAndPort;
   }
 
   close() {

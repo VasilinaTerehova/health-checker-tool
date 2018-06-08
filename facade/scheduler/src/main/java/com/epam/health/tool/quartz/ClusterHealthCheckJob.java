@@ -1,3 +1,27 @@
+/*
+ * ******************************************************************************
+ *  *
+ *  * Pentaho Big Data
+ *  *
+ *  * Copyright (C) 2002-2018 by Hitachi Vantara : http://www.pentaho.com
+ *  *
+ *  *******************************************************************************
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  * you may not use this file except in compliance with
+ *  * the License. You may obtain a copy of the License at
+ *  *
+ *  *    http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
+ *  *
+ *  *****************************************************************************
+ */
+
 package com.epam.health.tool.quartz;
 
 import com.epam.facade.model.accumulator.ClusterAccumulatorToken;
@@ -25,39 +49,45 @@ import java.util.concurrent.ForkJoinPool;
 @Component
 public class ClusterHealthCheckJob {
 
-    private static final Logger log = LoggerFactory.getLogger(ClusterHealthCheckJob.class);
+  private static final Logger log = LoggerFactory.getLogger( ClusterHealthCheckJob.class );
 
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+  private static final SimpleDateFormat dateFormat = new SimpleDateFormat( "HH:mm:ss" );
 
-    @Autowired
-    ClusterServiceSnapshotDao clusterServiceSnapshotDao;
+  @Autowired
+  ClusterServiceSnapshotDao clusterServiceSnapshotDao;
 
-    @Autowired
-    private IFacadeImplResolver<IClusterSnapshotFacade> clusterSnapshotFacadeIFacadeImplResolver;
+  @Autowired
+  private IFacadeImplResolver<IClusterSnapshotFacade> clusterSnapshotFacadeIFacadeImplResolver;
 
-    @Scheduled(fixedDelay = 60 * 60 * 1000)
+    @Scheduled( fixedDelay = 60 * 60 * 1000 )
     public void checkClustersHealth() {
         log.info("The time is now {}", dateFormat.format(new Date()));
-        Date hourAgo = DateUtil.dateHourPlus(new Date());
+        Date hourAgo = DateUtil.dateHourAgo();
 
-        List<ClusterEntity> clusterEntities = clusterServiceSnapshotDao.findClustersForSnapshot(hourAgo);
-        long start = System.currentTimeMillis();
-        ForkJoinPool forkJoinPool = new ForkJoinPool(clusterEntities.size());
-        forkJoinPool.submit(() -> clusterEntities.stream().parallel().forEach(clusterEntity -> {
+    List<ClusterEntity> clusterEntities = clusterServiceSnapshotDao.findClustersForSnapshot( hourAgo );
+    long start = System.currentTimeMillis();
+    int size = clusterEntities.size();
+    if (size > 0) {
+      ForkJoinPool forkJoinPool = new ForkJoinPool(size);
+      forkJoinPool.submit(() -> clusterEntities.stream().parallel().forEach(clusterEntity -> {
 
-            try {
-                clusterSnapshotFacadeIFacadeImplResolver.resolveFacadeImpl(clusterEntity.getClusterTypeEnum().name()).makeClusterSnapshot(
-                        ClusterAccumulatorToken.buildScheduleAllCheck(clusterEntity.getClusterName()));
-            } catch (ImplementationNotResolvedException | InvalidResponseException e) {
-                log.error("Can't find facade implementation for this vendor ", e);
-            }
+        try {
+          clusterSnapshotFacadeIFacadeImplResolver.resolveFacadeImpl(clusterEntity.getClusterTypeEnum().name())
+                  .makeClusterSnapshot(
+                          ClusterAccumulatorToken.buildScheduleAllCheck(clusterEntity.getClusterName()));
+        } catch (ImplementationNotResolvedException | InvalidResponseException e) {
+          log.error("Can't find facade implementation for this vendor ", e);
+        }
 
-        })).join();
-        long end = System.currentTimeMillis();
-        long total = (end - start);
-        long minutes = total / 60 / 1000;
-        long seconds = total / 1000 - minutes * 60;
-        System.out.println("spent on full check: " + total + " minutes: " + minutes + " seconds: " + seconds);
+      })).join();
+    } else {
+      log.info("no clusters will be checked now");
     }
+    long end = System.currentTimeMillis();
+    long total = ( end - start );
+    long minutes = total / 60 / 1000;
+    long seconds = total / 1000 - minutes * 60;
+    log.info( "spent on full check: " + total + " minutes: " + minutes + " seconds: " + seconds );
+  }
 
 }

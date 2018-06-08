@@ -1,24 +1,63 @@
-<div style="margin-top: 2%">
+<!--
+  ~ /*******************************************************************************
+  ~  *
+  ~  * Pentaho Big Data
+  ~  *
+  ~  * Copyright (C) 2002-2018 by Hitachi Vantara : http://www.pentaho.com
+  ~  *
+  ~  *******************************************************************************
+  ~  *
+  ~  * Licensed under the Apache License, Version 2.0 (the "License");
+  ~  * you may not use this file except in compliance with
+  ~  * the License. You may obtain a copy of the License at
+  ~  *
+  ~  *    http://www.apache.org/licenses/LICENSE-2.0
+  ~  *
+  ~  * Unless required by applicable law or agreed to in writing, software
+  ~  * distributed under the License is distributed on an "AS IS" BASIS,
+  ~  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  * See the License for the specific language governing permissions and
+  ~  * limitations under the License.
+  ~  *
+  ~  ******************************************************************************/
+  -->
+<loading-label [show]="isLoading"></loading-label>
+<div style="margin-top: 2%" *ngIf="!isLoading">
+
+  <div class="input-group-btn">
+  <div *ngIf="killJob">
+    <button type="button" class="btn btn-link pull-left" (click)="killSelectedApps()">{{ 'home.button.service.yarn.app.killSelected' | translate }}</button>
+    <loading-label-small [show]="hideCancel"></loading-label-small>
+    <button type="button" class="btn btn-link pull-left" *ngIf="!hideCancel" (click)="cancelKillApps()">{{ 'home.button.service.yarn.app.cancel' | translate }}</button>
+  </div>
+    <button type="button" class="btn btn-link pull-left" style="color: #d9534f" *ngIf="!killJob" (click)="killJob=true">{{ 'home.button.service.yarn.app.selectApps' | translate }}</button>
+    <button class="btn btn-default pull-right" style="border: none" (click)="getYarnAppList()" type="button">
+        <i class="glyphicon glyphicon-repeat"></i>
+    </button>
+  </div>
+
     <div class="table-responsive">
         <table class="table table-hover">
             <thead>
             <tr>
+                <th></th>
                 <th>{{ 'home.label.service.yarn.app.id' | translate }}</th>
                 <th>{{ 'home.label.service.yarn.app.name' | translate }}</th>
                 <th>{{ 'home.label.service.yarn.app.startTime' | translate }}</th>
                 <th>{{ 'home.label.service.yarn.app.state' | translate }}</th>
-                <th>{{ 'home.label.cluster.action' | translate }}</th>
+                <th>{{ 'home.label.cluster.killAction' | translate }}</th>
             </tr>
             </thead>
             <tbody>
-            <tr *ngFor="let x of yarnApps">
+            <tr *ngFor="let x of yarnApps; let i = index;">
+                <td><div *ngIf="checkAppAvailableToKill(x.state)"><input class="checkbox" *ngIf="killJob" type="checkbox" (change)="fillArrWithCheckedAppsByIndex(i, $event)"></div></td>
                 <td>{{x.applicationId}}</td>
                 <td>{{x.name}}</td>
                 <td>{{x.startTime | date: "MM/dd/yyyy hh:mm:ss"}}</td>
                 <td class="bg-success" *ngIf="x.state=='SUCCEEDED'">{{x.state}}</td>
                 <td class="bg-danger" *ngIf="x.state=='FAILED'">{{x.state}}</td>
                 <td class="bg-info" *ngIf="x.state!='SUCCEEDED' && x.state!='FAILED'">{{x.state}}</td>
-                <td><button type="button" class="btn btn-danger" [disabled]="x.state!='RUNNING'" (click)="killApp(x.applicationId)">{{ 'home.button.service.yarn.app.kill' | translate }}</button></td>
+                <td><div *ngIf="checkAppAvailableToKill(x.state)"><loading-label-small [show]="showBtn===i"></loading-label-small><button *ngIf="!(showBtn===i)" type="button" class="btn btn-danger" [disabled]="false" (click)="killApp(x.applicationId,i)">{{ 'home.button.service.yarn.app.kill' | translate }}</button></div></td>
             </tr>
             </tbody>
         </table>

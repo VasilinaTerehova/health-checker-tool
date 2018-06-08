@@ -14,6 +14,8 @@ You will also need mysql database, class Dataload will generate schemas, only pl
 
 All database properties and port for start are in application.properties file controller\src\main\resources\application.properties
 
+Full technical documentation available at https://docs.google.com/document/d/1VmCzZYXfar-Z1Xn-EjCZJyu6Vdl1WogCUSQMw7nGHh4
+
 ```
 $ mvn clean install - will rebuilt only server side
 ```
